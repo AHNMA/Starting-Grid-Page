@@ -1,0 +1,15 @@
+RewriteEngine On
+
+# Schützt die config.php vor direktem Zugriff
+<Files "config.php">
+    Require all denied
+</Files>
+
+# Leitet alle /api/... Aufrufe an api.php weiter
+RewriteCond %{REQUEST_URI} ^/api/ [NC]
+RewriteRule ^api/(.*)$ api.php?endpoint=$1 [L,QSA]
+
+# Leitet alle anderen Anfragen an index.html weiter (React Router)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.html [L]
