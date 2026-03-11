@@ -44,11 +44,12 @@ jobs:
           set ftp:ssl-force true;
           set ssl:verify-certificate no;
           open -u $FTP_USERNAME,$FTP_PASSWORD $FTP_SERVER;
+          lcd ./dist/
+          cd /public_html/startinggrid/
           mirror -R -v \
             --exclude-glob .git/ \
             --exclude-glob node_modules/ \
             --exclude-glob upload/ \
             --exclude-glob config.php \
-            --parallel=10 \
-            ./dist/ /public_html/startinggrid/
+            --parallel=10
           "
