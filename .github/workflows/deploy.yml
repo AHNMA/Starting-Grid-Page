@@ -1,0 +1,42 @@
+name: Build and Deploy to Hetzner FTP
+
+on:
+  push:
+    branches:
+      - main # Oder 'master', falls das Tool den Branch so nennt
+
+jobs:
+  ftp-deploy:
+    name: 🎉 Build & Deploy Project
+    runs-on: ubuntu-latest
+    steps:
+    - name: 🚚 Get latest code
+      uses: actions/checkout@v4
+
+    - name: 📦 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: 🛠️ Install Dependencies and Build
+      run: |
+        npm install
+        npm run build
+
+    - name: 📂 Sync files to Hetzner via lftp
+      env:
+        FTP_USER: ${{ secrets.FTP_USERNAME }}
+        FTP_PASS: ${{ secrets.FTP_PASSWORD }}
+        FTP_HOST: ${{ secrets.FTP_SERVER }}
+      run: |
+        sudo apt-get update && sudo apt-get install -y lftp
+        lftp <<EOF
+        set ftp:ssl-allow true
+        set ftp:ssl-force true
+        set ftp:ssl-protect-data true
+        set ssl:verify-certificate no
+        open -u $FTP_USER,$FTP_PASS ftp://$FTP_HOST
+        # Lädt nur den fertigen, vom Browser lesbaren Build-Ordner 'dist' hoch
+        mirror -Rnv --exclude .git/ --exclude .github/ ./dist/ /
+        bye
+        EOF
