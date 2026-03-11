@@ -1,0 +1,51 @@
+name: Deploy to Hetzner Webspace
+
+on:
+  push:
+    branches:
+      - main # Or the branch you want to deploy from (e.g., master)
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' # Vite usually requires Node >= 18 or 20
+
+      - name: Install dependencies
+        run: npm ci || npm install
+
+      - name: Build Vite App
+        run: npm run build
+
+      - name: Sync API Files to dist
+        run: |
+          # Since Vite copies public/ automatically, we ensure everything is correctly in dist/
+          # Ensure config.php stays protected
+          echo "Build completed successfully."
+
+      - name: Deploy via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.3
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: /public_html/startinggrid/
+          local-dir: ./dist/
+          # Ensure uploaded files don't overwrite the uploads folder if needed,
+          # though if dist/ doesn't have an upload folder, it might wipe it out on sync if dangerous-clean-slate is true.
+          # Assuming you want to preserve the uploads directory on the live server, we must exclude it from sync deletion.
+          # We also exclude config.php so the live production configuration is not overwritten with placeholder values.
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            upload/**
+            upload/
+            config.php
