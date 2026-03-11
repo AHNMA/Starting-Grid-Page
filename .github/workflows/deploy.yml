@@ -30,23 +30,25 @@ jobs:
           # Ensure config.php stays protected
           echo "Build completed successfully."
 
-      - name: Deploy via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.3
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          protocol: ftps
-          server-dir: /public_html/startinggrid/
-          local-dir: ./dist/
-          # Ensure uploaded files don't overwrite the uploads folder if needed,
-          # though if dist/ doesn't have an upload folder, it might wipe it out on sync if dangerous-clean-slate is true.
-          # Assuming you want to preserve the uploads directory on the live server, we must exclude it from sync deletion.
-          # We also exclude config.php so the live production configuration is not overwritten with placeholder values.
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/node_modules/**
-            upload/**
-            upload/
-            config.php
+      - name: Install lftp
+        run: sudo apt-get update && sudo apt-get install -y lftp
+
+      - name: Deploy via lftp (FTPS)
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+        run: |
+          lftp -c "
+          set ftp:ssl-allow yes;
+          set ftp:ssl-force true;
+          set ssl:verify-certificate no;
+          open -u $FTP_USERNAME,$FTP_PASSWORD $FTP_SERVER;
+          mirror -R -v \
+            --exclude-glob .git/ \
+            --exclude-glob node_modules/ \
+            --exclude-glob upload/ \
+            --exclude-glob config.php \
+            --parallel=10 \
+            ./dist/ /public_html/startinggrid/
+          "
