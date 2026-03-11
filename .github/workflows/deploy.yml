@@ -9,6 +9,9 @@ jobs:
   ftp-deploy:
     name: 🎉 Build & Deploy Project
     runs-on: ubuntu-latest
+    # Diese Variable zwingt GitHub, die neue Node 24 Umgebung zu nutzen und behebt die Warnung
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
     - name: 🚚 Get latest code
       uses: actions/checkout@v4
@@ -16,7 +19,7 @@ jobs:
     - name: 📦 Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '20'
+        node-version: '24' # Hier ebenfalls auf die aktuelle Version 24 angehoben
 
     - name: 🛠️ Install Dependencies and Build
       run: |
