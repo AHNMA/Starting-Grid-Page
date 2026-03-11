@@ -5,13 +5,14 @@ on:
     branches:
       - main # Oder 'master', falls das Tool den Branch so nennt
 
+# Globale Umgebungsvariable, damit der Runner von Anfang an Node 24 nutzt
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   ftp-deploy:
     name: 🎉 Build & Deploy Project
     runs-on: ubuntu-latest
-    # Diese Variable zwingt GitHub, die neue Node 24 Umgebung zu nutzen und behebt die Warnung
-    env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
     - name: 🚚 Get latest code
       uses: actions/checkout@v4
@@ -19,7 +20,7 @@ jobs:
     - name: 📦 Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '24' # Hier ebenfalls auf die aktuelle Version 24 angehoben
+        node-version: '24'
 
     - name: 🛠️ Install Dependencies and Build
       run: |
