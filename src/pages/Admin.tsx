@@ -1,0 +1,827 @@
+import { useEffect, useState } from 'react';
+import { PodcastInfo, Host, Episode, Platform } from '../types';
+import { Save, Plus, Trash2, Edit2, Check, X, Upload, Settings, Users, Mic, Rss } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import Modal from '../components/Modal';
+import Notification from '../components/Notification';
+
+export default function Admin() {
+  const [info, setInfo] = useState<PodcastInfo | null>(null);
+  const [hosts, setHosts] = useState<Host[]>([]);
+  const [episodes, setEpisodes] = useState<Episode[]>([]);
+  const [platforms, setPlatforms] = useState<Platform[]>([]);
+  const [seo, setSeo] = useState<{ title: string; description: string; keywords: string }>({ title: '', description: '', keywords: '' });
+
+  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<'info' | 'hosts' | 'episodes' | 'platforms' | 'seo'>('info');
+  
+  const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+  const [modalConfig, setModalConfig] = useState<{ isOpen: boolean; title: string; message: string; onConfirm: () => void; confirmText?: string } | null>(null);
+
+  const showNotification = (message: string, type: 'success' | 'error' = 'success') => {
+    setNotification({ message, type });
+  };
+
+  const handleImageUpload = async (file: File) => {
+    const formData = new FormData();
+    formData.append('image', file);
+    
+    try {
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData
+      });
+      const data = await res.json();
+      if (data.success) {
+        return data.url;
+      } else {
+        showNotification('Fehler beim Upload: ' + data.error, 'error');
+        return null;
+      }
+    } catch (err) {
+      console.error(err);
+      showNotification('Upload fehlgeschlagen. Stelle sicher, dass die upload.php auf dem Server liegt und CORS erlaubt ist.', 'error');
+      return null;
+    }
+  };
+
+  const handleImportRSS = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch('/api/admin/rss-import', { method: 'POST' });
+      const data = await res.json();
+      if (data.success) {
+        showNotification(`${data.imported} Episoden importiert!`, 'success');
+        // Refresh episodes
+        const e = await fetch('/api/episodes').then(r => r.json());
+        setEpisodes(e);
+      } else {
+        showNotification('Fehler beim Import: ' + data.error, 'error');
+      }
+    } catch (err) {
+      console.error(err);
+      showNotification('Import fehlgeschlagen.', 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    Promise.all([
+      fetch('/api/podcast').then(r => r.json()),
+      fetch('/api/hosts').then(r => r.json()),
+      fetch('/api/episodes').then(r => r.json()),
+      fetch('/api/platforms').then(r => r.json())
+    ]).then(([i, h, e, p]) => {
+      setInfo(i);
+      setHosts(h);
+      setEpisodes(e);
+      setPlatforms(p);
+      if (i) {
+        setSeo({
+          title: i.seo_title || '',
+          description: i.seo_description || '',
+          keywords: i.seo_keywords || ''
+        });
+      }
+      setLoading(false);
+    }).catch(err => {
+      console.error(err);
+      setLoading(false);
+    });
+  }, []);
+
+  const handleSaveInfo = async () => {
+    if (!info) return;
+    await fetch('/api/podcast', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(info)
+    });
+    showNotification('Info gespeichert!', 'success');
+  };
+
+  const handleSaveHost = async (host: Host) => {
+    await fetch(`/api/hosts/${host.id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(host)
+    });
+    showNotification('Host gespeichert!', 'success');
+  };
+
+  const handleSaveEpisode = async (episode: Episode) => {
+    if (episode.id === 0) {
+      const res = await fetch('/api/episodes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(episode)
+      });
+      const data = await res.json();
+      setEpisodes(episodes.map(e => e.id === 0 ? { ...e, id: data.id } : e));
+    } else {
+      await fetch(`/api/episodes/${episode.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(episode)
+      });
+    }
+    showNotification('Episode gespeichert!', 'success');
+  };
+
+  const handleDeleteEpisode = async (id: number) => {
+    setModalConfig({
+      isOpen: true,
+      title: 'Episode löschen',
+      message: 'Möchtest du diese Episode wirklich unwiderruflich löschen?',
+      confirmText: 'Löschen',
+      onConfirm: async () => {
+        await fetch(`/api/episodes/${id}`, { method: 'DELETE' });
+        setEpisodes(episodes.filter(e => e.id !== id));
+        setModalConfig(null);
+        showNotification('Episode gelöscht!', 'success');
+      }
+    });
+  };
+
+  const handleClearEpisodes = async () => {
+    setModalConfig({
+      isOpen: true,
+      title: 'Alle Episoden löschen',
+      message: 'ACHTUNG: Möchtest du wirklich ALLE Episoden unwiderruflich löschen? Dies kann nicht rückgängig gemacht werden.',
+      confirmText: 'Alles löschen',
+      onConfirm: async () => {
+        setLoading(true);
+        try {
+          const res = await fetch('/api/admin/episodes/clear', { method: 'DELETE' });
+          const data = await res.json();
+          if (data.success) {
+            setEpisodes([]);
+            showNotification('Alle Episoden gelöscht!', 'success');
+          } else {
+            showNotification('Fehler beim Löschen: ' + data.error, 'error');
+          }
+        } catch (err) {
+          console.error(err);
+          showNotification('Löschen fehlgeschlagen.', 'error');
+        } finally {
+          setLoading(false);
+          setModalConfig(null);
+        }
+      }
+    });
+  };
+
+  const handleSavePlatform = async (platform: Platform) => {
+    try {
+      await fetch(`/api/platforms/${platform.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(platform)
+      });
+      showNotification('Plattform gespeichert!', 'success');
+    } catch (err) {
+      console.error(err);
+      showNotification('Fehler beim Speichern.', 'error');
+    }
+  };
+
+  const handlePlatformIconUpload = async (platformId: number, file: File) => {
+    const formData = new FormData();
+    formData.append('icon', file);
+    
+    try {
+      const res = await fetch(`/api/platforms/${platformId}/icon`, {
+        method: 'POST',
+        body: formData
+      });
+      const data = await res.json();
+      if (data.success) {
+        setPlatforms(platforms.map(p => p.id === platformId ? { ...p, icon_url: data.icon_url } : p));
+        showNotification('Icon hochgeladen!', 'success');
+      } else {
+        showNotification('Fehler beim Upload: ' + data.error, 'error');
+      }
+    } catch (err) {
+      console.error(err);
+      showNotification('Upload fehlgeschlagen.', 'error');
+    }
+  };
+
+  const handleAddPlatform = async () => {
+    const newPlatform = {
+      name: 'Neue Plattform',
+      url: '',
+      display_order: platforms.length + 1
+    };
+    
+    try {
+      const res = await fetch('/api/platforms', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newPlatform)
+      });
+      const data = await res.json();
+      if (data.success) {
+        setPlatforms([...platforms, { ...newPlatform, id: data.id, icon_name: 'rss' }]);
+        showNotification('Plattform hinzugefügt!', 'success');
+      }
+    } catch (err) {
+      console.error(err);
+      showNotification('Fehler beim Hinzufügen.', 'error');
+    }
+  };
+
+  const handleDeletePlatform = (id: number) => {
+    setModalConfig({
+      isOpen: true,
+      title: 'Plattform löschen',
+      message: 'Möchtest du diese Plattform wirklich löschen? Das kann nicht rückgängig gemacht werden.',
+      confirmText: 'Löschen',
+      onConfirm: async () => {
+        try {
+          await fetch(`/api/platforms/${id}`, { method: 'DELETE' });
+          setPlatforms(platforms.filter(p => p.id !== id));
+          showNotification('Plattform gelöscht!', 'success');
+        } catch (err) {
+          console.error(err);
+          showNotification('Fehler beim Löschen.', 'error');
+        }
+        setModalConfig(null);
+      }
+    });
+  };
+
+  const addEpisode = () => {
+    setEpisodes([{
+      id: 0,
+      title: 'Neue Episode',
+      description: '',
+      audio_url: '',
+      published_at: new Date().toISOString().split('T')[0],
+      is_hero: false
+    }, ...episodes]);
+  };
+
+  if (loading) return <div className="min-h-screen bg-transparent flex items-center justify-center p-8 text-white">Lade Admin...</div>;
+
+  return (
+    <div className="min-h-screen bg-[#141414]/80 backdrop-blur-md text-white p-8 font-sans">
+      <div className="max-w-5xl mx-auto">
+        <div className="flex items-center justify-between mb-12">
+          <h1 className="text-4xl font-black uppercase italic">Admin Dashboard</h1>
+          <Link to="/" className="text-red-500 hover:text-red-400 font-bold uppercase tracking-widest text-sm">Zurück zur Website</Link>
+        </div>
+
+        {/* Tabs */}
+        <div className="flex border-b border-white/10 mb-8 overflow-x-auto">
+          <button 
+            onClick={() => setActiveTab('info')} 
+            className={`flex items-center gap-2 px-6 py-4 font-bold uppercase tracking-widest whitespace-nowrap transition-colors ${activeTab === 'info' ? 'border-b-2 border-red-600 text-red-500' : 'text-gray-400 hover:text-white'}`}
+          >
+            <Settings className="w-5 h-5" />
+            Podcast Info
+          </button>
+          <button 
+            onClick={() => setActiveTab('hosts')} 
+            className={`flex items-center gap-2 px-6 py-4 font-bold uppercase tracking-widest whitespace-nowrap transition-colors ${activeTab === 'hosts' ? 'border-b-2 border-red-600 text-red-500' : 'text-gray-400 hover:text-white'}`}
+          >
+            <Users className="w-5 h-5" />
+            Hosts
+          </button>
+          <button 
+            onClick={() => setActiveTab('episodes')} 
+            className={`flex items-center gap-2 px-6 py-4 font-bold uppercase tracking-widest whitespace-nowrap transition-colors ${activeTab === 'episodes' ? 'border-b-2 border-red-600 text-red-500' : 'text-gray-400 hover:text-white'}`}
+          >
+            <Mic className="w-5 h-5" />
+            Episoden
+          </button>
+          <button 
+            onClick={() => setActiveTab('platforms')} 
+            className={`flex items-center gap-2 px-6 py-4 font-bold uppercase tracking-widest whitespace-nowrap transition-colors ${activeTab === 'platforms' ? 'border-b-2 border-red-600 text-red-500' : 'text-gray-400 hover:text-white'}`}
+          >
+            <Upload className="w-5 h-5" />
+            Plattformen
+          </button>
+          <button 
+            onClick={() => setActiveTab('seo')} 
+            className={`flex items-center gap-2 px-6 py-4 font-bold uppercase tracking-widest whitespace-nowrap transition-colors ${activeTab === 'seo' ? 'border-b-2 border-red-600 text-red-500' : 'text-gray-400 hover:text-white'}`}
+          >
+            <Settings className="w-5 h-5" />
+            SEO
+          </button>
+        </div>
+
+        {/* Podcast Info */}
+        {activeTab === 'info' && (
+          <section className="mb-16 bg-white/5 p-8 rounded-3xl border border-white/10">
+          <h2 className="text-2xl font-bold uppercase italic mb-6 flex items-center gap-3">
+            <span className="w-8 h-1 bg-red-600" />
+            Podcast Info
+          </h2>
+          {info && (
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-mono text-gray-400 mb-2">Titel</label>
+                <input 
+                  type="text" 
+                  value={info.title} 
+                  onChange={e => setInfo({ ...info, title: e.target.value })}
+                  className="w-full bg-[#141414] border border-white/10 rounded-lg p-3 text-white focus:border-red-500 outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-mono text-gray-400 mb-2">Beschreibung</label>
+                <textarea 
+                  value={info.description} 
+                  onChange={e => setInfo({ ...info, description: e.target.value })}
+                  className="w-full bg-[#141414] border border-white/10 rounded-lg p-3 text-white focus:border-red-500 outline-none h-32"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-mono text-gray-400 mb-2">Cover Image URL (Quadratisch)</label>
+                <div className="flex gap-2">
+                  <input 
+                    type="text" 
+                    value={info.cover_image} 
+                    onChange={e => setInfo({ ...info, cover_image: e.target.value })}
+                    className="flex-1 bg-[#141414] border border-white/10 rounded-lg p-3 text-white focus:border-red-500 outline-none"
+                  />
+                  <label className="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg cursor-pointer flex items-center justify-center transition-colors">
+                    <Upload className="w-5 h-5" />
+                    <input type="file" className="hidden" accept="image/*" onChange={async (e) => {
+                      if (e.target.files && e.target.files[0]) {
+                        const url = await handleImageUpload(e.target.files[0]);
+                        if (url) setInfo({ ...info, cover_image: url });
+                      }
+                    }} />
+                  </label>
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-mono text-gray-400 mb-2">Header Logo URL (Transparentes PNG/SVG)</label>
+                <div className="flex gap-2">
+                  <input 
+                    type="text" 
+                    value={info.logo_image || ''} 
+                    onChange={e => setInfo({ ...info, logo_image: e.target.value })}
+                    className="flex-1 bg-[#141414] border border-white/10 rounded-lg p-3 text-white focus:border-red-500 outline-none"
+                    placeholder="Optional: Ersetzt den Text 'Starting Grid' oben in der Leiste"
+                  />
+                  <label className="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg cursor-pointer flex items-center justify-center transition-colors">
+                    <Upload className="w-5 h-5" />
+                    <input type="file" className="hidden" accept="image/*" onChange={async (e) => {
+                      if (e.target.files && e.target.files[0]) {
+                        const url = await handleImageUpload(e.target.files[0]);
+                        if (url) setInfo({ ...info, logo_image: url });
+                      }
+                    }} />
+                  </label>
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-mono text-gray-400 mb-2">Über uns Text (Bio)</label>
+                <textarea 
+                  value={info.about_text || ''} 
+                  onChange={e => setInfo({ ...info, about_text: e.target.value })}
+                  className="w-full bg-[#141414] border border-white/10 rounded-lg p-3 text-white focus:border-red-500 outline-none h-32"
+                  placeholder="Ein kurzer Text über den Podcast..."
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-mono text-gray-400 mb-2">Über uns Bild URL</label>
+                <div className="flex gap-2">
+                  <input 
+                    type="text" 
+                    value={info.about_image || ''} 
+                    onChange={e => setInfo({ ...info, about_image: e.target.value })}
+                    className="flex-1 bg-[#141414] border border-white/10 rounded-lg p-3 text-white focus:border-red-500 outline-none"
+                    placeholder="Optional: Ein Bild für den Über-uns-Bereich"
+                  />
+                  <label className="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg cursor-pointer flex items-center justify-center transition-colors">
+                    <Upload className="w-5 h-5" />
+                    <input type="file" className="hidden" accept="image/*" onChange={async (e) => {
+                      if (e.target.files && e.target.files[0]) {
+                        const url = await handleImageUpload(e.target.files[0]);
+                        if (url) setInfo({ ...info, about_image: url });
+                      }
+                    }} />
+                  </label>
+                </div>
+              </div>
+              <button 
+                onClick={handleSaveInfo}
+                className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-bold flex items-center gap-2"
+              >
+                <Save className="w-4 h-4" /> Speichern
+              </button>
+            </div>
+          )}
+        </section>
+        )}
+
+        {/* Hosts */}
+        {activeTab === 'hosts' && (
+          <section className="mb-16 bg-white/5 p-8 rounded-3xl border border-white/10">
+          <h2 className="text-2xl font-bold uppercase italic mb-6 flex items-center gap-3">
+            <span className="w-8 h-1 bg-red-600" />
+            Hosts
+          </h2>
+          <div className="space-y-8">
+            {hosts.map(host => (
+              <div key={host.id} className="p-6 border border-white/10 rounded-2xl bg-[#141414]">
+                <div className="grid md:grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <label className="block text-sm font-mono text-gray-400 mb-2">Name</label>
+                    <input 
+                      type="text" 
+                      value={host.name} 
+                      onChange={e => setHosts(hosts.map(h => h.id === host.id ? { ...h, name: e.target.value } : h))}
+                      className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:border-red-500 outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-mono text-gray-400 mb-2">Image URL</label>
+                    <div className="flex gap-2">
+                      <input 
+                        type="text" 
+                        value={host.image_url} 
+                        onChange={e => setHosts(hosts.map(h => h.id === host.id ? { ...h, image_url: e.target.value } : h))}
+                        className="flex-1 bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:border-red-500 outline-none"
+                      />
+                      <label className="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg cursor-pointer flex items-center justify-center transition-colors">
+                        <Upload className="w-5 h-5" />
+                        <input type="file" className="hidden" accept="image/*" onChange={async (e) => {
+                          if (e.target.files && e.target.files[0]) {
+                            const url = await handleImageUpload(e.target.files[0]);
+                            if (url) setHosts(hosts.map(h => h.id === host.id ? { ...h, image_url: url } : h));
+                          }
+                        }} />
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div className="mb-4">
+                  <label className="block text-sm font-mono text-gray-400 mb-2">Bio</label>
+                  <textarea 
+                    value={host.bio} 
+                    onChange={e => setHosts(hosts.map(h => h.id === host.id ? { ...h, bio: e.target.value } : h))}
+                    className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:border-red-500 outline-none h-24"
+                  />
+                </div>
+                <div className="grid md:grid-cols-3 gap-4 mb-4">
+                  <div>
+                    <label className="block text-sm font-mono text-gray-400 mb-2">Twitter URL</label>
+                    <input 
+                      type="text" 
+                      value={host.twitter_url} 
+                      onChange={e => setHosts(hosts.map(h => h.id === host.id ? { ...h, twitter_url: e.target.value } : h))}
+                      className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:border-red-500 outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-mono text-gray-400 mb-2">Instagram URL</label>
+                    <input 
+                      type="text" 
+                      value={host.instagram_url} 
+                      onChange={e => setHosts(hosts.map(h => h.id === host.id ? { ...h, instagram_url: e.target.value } : h))}
+                      className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:border-red-500 outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-mono text-gray-400 mb-2">E-Mail Adresse</label>
+                    <input 
+                      type="email" 
+                      value={host.email || ''} 
+                      onChange={e => setHosts(hosts.map(h => h.id === host.id ? { ...h, email: e.target.value } : h))}
+                      className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:border-red-500 outline-none"
+                    />
+                  </div>
+                </div>
+                <button 
+                  onClick={() => handleSaveHost(host)}
+                  className="bg-white/10 hover:bg-white/20 text-white px-6 py-3 rounded-lg font-bold flex items-center gap-2"
+                >
+                  <Save className="w-4 h-4" /> Host Speichern
+                </button>
+              </div>
+            ))}
+          </div>
+        </section>
+        )}
+
+        {/* Episodes */}
+        {activeTab === 'episodes' && (
+          <section className="mb-16 bg-white/5 p-8 rounded-3xl border border-white/10">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold uppercase italic flex items-center gap-3">
+              <span className="w-8 h-1 bg-red-600" />
+              Episoden
+            </h2>
+            <div className="flex gap-3">
+              <button 
+                onClick={handleClearEpisodes}
+                className="bg-red-900/50 hover:bg-red-900 text-red-500 hover:text-white px-4 py-2 rounded-lg font-bold flex items-center gap-2 text-sm transition-colors"
+              >
+                <Trash2 className="w-4 h-4" /> Alle löschen
+              </button>
+              <button 
+                onClick={handleImportRSS}
+                className="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg font-bold flex items-center gap-2 text-sm"
+              >
+                <Rss className="w-4 h-4" /> Import RSS
+              </button>
+              <button 
+                onClick={addEpisode}
+                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-bold flex items-center gap-2 text-sm"
+              >
+                <Plus className="w-4 h-4" /> Neue Episode
+              </button>
+            </div>
+          </div>
+          
+          <div className="space-y-6">
+            {episodes.map(episode => (
+              <div key={episode.id} className="p-6 border border-white/10 rounded-2xl bg-[#141414]">
+                <div className="grid md:grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <label className="block text-sm font-mono text-gray-400 mb-2">Titel</label>
+                    <input 
+                      type="text" 
+                      value={episode.title} 
+                      onChange={e => setEpisodes(episodes.map(ep => ep.id === episode.id ? { ...ep, title: e.target.value } : ep))}
+                      className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:border-red-500 outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-mono text-gray-400 mb-2">Audio URL</label>
+                    <input 
+                      type="text" 
+                      value={episode.audio_url} 
+                      onChange={e => setEpisodes(episodes.map(ep => ep.id === episode.id ? { ...ep, audio_url: e.target.value } : ep))}
+                      className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:border-red-500 outline-none"
+                    />
+                  </div>
+                </div>
+                <div className="mb-4">
+                  <label className="block text-sm font-mono text-gray-400 mb-2">Bild URL (Optional)</label>
+                  <div className="flex gap-4">
+                    <input 
+                      type="text" 
+                      value={episode.image_url || ''} 
+                      onChange={e => setEpisodes(episodes.map(ep => ep.id === episode.id ? { ...ep, image_url: e.target.value } : ep))}
+                      className="flex-1 bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:border-red-500 outline-none"
+                      placeholder="https://..."
+                    />
+                    <div className="relative">
+                      <input 
+                        type="file" 
+                        accept="image/*"
+                        onChange={async (e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            const url = await handleImageUpload(file);
+                            if (url) setEpisodes(episodes.map(ep => ep.id === episode.id ? { ...ep, image_url: url } : ep));
+                          }
+                        }}
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                      />
+                      <button className="bg-white/10 hover:bg-white/20 text-white px-4 py-3 rounded-lg font-bold flex items-center gap-2 h-full">
+                        <Upload className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                  {episode.image_url && (
+                    <div className="mt-4 w-32 h-32 rounded-lg overflow-hidden border border-white/10">
+                      <img src={episode.image_url} alt="Episode Preview" className="w-full h-full object-cover" />
+                    </div>
+                  )}
+                </div>
+                <div className="mb-4">
+                  <label className="block text-sm font-mono text-gray-400 mb-2">Beschreibung</label>
+                  <textarea 
+                    value={episode.description} 
+                    onChange={e => setEpisodes(episodes.map(ep => ep.id === episode.id ? { ...ep, description: e.target.value } : ep))}
+                    className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:border-red-500 outline-none h-24"
+                  />
+                </div>
+                <div className="grid md:grid-cols-2 gap-4 mb-6">
+                  <div>
+                    <label className="block text-sm font-mono text-gray-400 mb-2">Veröffentlichungsdatum</label>
+                    <input 
+                      type="date" 
+                      value={episode.published_at} 
+                      onChange={e => setEpisodes(episodes.map(ep => ep.id === episode.id ? { ...ep, published_at: e.target.value } : ep))}
+                      className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:border-red-500 outline-none"
+                    />
+                  </div>
+                  <div className="flex items-center mt-8">
+                    <label className="flex items-center gap-3 cursor-pointer">
+                      <input 
+                        type="checkbox" 
+                        checked={!!episode.is_hero} 
+                        onChange={e => setEpisodes(episodes.map(ep => ep.id === episode.id ? { ...ep, is_hero: e.target.checked } : ep))}
+                        className="w-5 h-5 rounded border-white/10 bg-white/5 text-red-600 focus:ring-red-500"
+                      />
+                      <span className="text-sm font-mono text-gray-400">Als Hero-Episode markieren</span>
+                    </label>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4">
+                  <button 
+                    onClick={() => handleSaveEpisode(episode)}
+                    className="bg-white/10 hover:bg-white/20 text-white px-6 py-3 rounded-lg font-bold flex items-center gap-2"
+                  >
+                    <Save className="w-4 h-4" /> Speichern
+                  </button>
+                  <button 
+                    onClick={() => handleDeleteEpisode(episode.id)}
+                    className="bg-red-900/50 hover:bg-red-900 text-red-500 hover:text-white px-6 py-3 rounded-lg font-bold flex items-center gap-2 transition-colors"
+                  >
+                    <Trash2 className="w-4 h-4" /> Löschen
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+        )}
+
+        {/* Platforms */}
+        {activeTab === 'platforms' && (
+          <section>
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="text-2xl font-black uppercase italic flex items-center gap-3">
+                <Upload className="w-6 h-6 text-f1red" /> Plattformen verwalten
+              </h2>
+              <button 
+                onClick={handleAddPlatform}
+                className="bg-f1red hover:bg-red-700 text-white px-6 py-3 rounded-lg font-bold flex items-center gap-2 transition-colors uppercase tracking-wider text-sm"
+              >
+                <Plus className="w-4 h-4" /> Neue Plattform
+              </button>
+            </div>
+            <div className="grid gap-6">
+              {platforms.sort((a, b) => (a.display_order || 0) - (b.display_order || 0)).map(platform => (
+                <div key={platform.id} className="bg-white/5 border border-white/10 rounded-xl p-6">
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="w-16 h-16 bg-white/10 rounded-lg flex items-center justify-center overflow-hidden relative group shrink-0">
+                      {platform.icon_url ? (
+                        <img src={platform.icon_url} alt={platform.name} className="w-full h-full object-contain p-2" />
+                      ) : (
+                        <span className="text-xs text-gray-500">{platform.icon_name}</span>
+                      )}
+                      <label className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                        <Upload className="w-6 h-6 text-white" />
+                        <input 
+                          type="file" 
+                          className="hidden" 
+                          accept="image/*"
+                          onChange={(e) => {
+                            if (e.target.files?.[0]) {
+                              handlePlatformIconUpload(platform.id, e.target.files[0]);
+                            }
+                          }}
+                        />
+                      </label>
+                    </div>
+                    <div className="flex-1">
+                      <input 
+                        type="text" 
+                        value={platform.name} 
+                        onChange={e => setPlatforms(platforms.map(p => p.id === platform.id ? { ...p, name: e.target.value } : p))}
+                        className="text-xl font-bold bg-transparent border-b border-transparent hover:border-white/20 focus:border-red-500 outline-none w-full"
+                        placeholder="Plattform Name"
+                      />
+                    </div>
+                    <button 
+                      onClick={() => handleDeletePlatform(platform.id)}
+                      className="text-red-500 hover:text-red-400 p-2"
+                      title="Löschen"
+                    >
+                      <Trash2 className="w-5 h-5" />
+                    </button>
+                  </div>
+
+                  <div className="grid gap-4">
+                    <div className="grid md:grid-cols-4 gap-4">
+                      <div className="md:col-span-3">
+                        <label className="block text-sm font-mono text-gray-400 mb-2">Link URL</label>
+                        <input 
+                          type="text" 
+                          value={platform.url} 
+                          onChange={e => setPlatforms(platforms.map(p => p.id === platform.id ? { ...p, url: e.target.value } : p))}
+                          className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:border-red-500 outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-mono text-gray-400 mb-2">Reihenfolge</label>
+                        <input 
+                          type="number" 
+                          value={platform.display_order || 0} 
+                          onChange={e => setPlatforms(platforms.map(p => p.id === platform.id ? { ...p, display_order: parseInt(e.target.value) } : p))}
+                          className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:border-red-500 outline-none"
+                        />
+                      </div>
+                    </div>
+                    <div className="flex justify-end">
+                      <button 
+                        onClick={() => handleSavePlatform(platform)}
+                        className="bg-white/10 hover:bg-white/20 text-white px-6 py-3 rounded-lg font-bold flex items-center gap-2"
+                      >
+                        <Save className="w-4 h-4" /> Speichern
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* SEO Section */}
+        {activeTab === 'seo' && (
+          <section className="mb-16 bg-white/5 p-8 rounded-3xl border border-white/10">
+            <h2 className="text-2xl font-bold uppercase italic mb-6 flex items-center gap-3">
+              <span className="w-8 h-1 bg-red-600" />
+              Suchmaschinenoptimierung (SEO)
+            </h2>
+            <div className="space-y-6">
+              <div>
+                <label className="block text-sm font-mono text-gray-400 mb-2">SEO Titel (Meta Title)</label>
+                <input 
+                  type="text" 
+                  value={seo.title} 
+                  onChange={e => setSeo({ ...seo, title: e.target.value })}
+                  className="w-full bg-[#141414] border border-white/10 rounded-lg p-3 text-white focus:border-red-500 outline-none"
+                  placeholder="Starting Grid - Der Formel-1-Podcast"
+                />
+                <p className="text-[10px] text-gray-500 mt-1">Empfohlen: 50-60 Zeichen</p>
+              </div>
+              <div>
+                <label className="block text-sm font-mono text-gray-400 mb-2">SEO Beschreibung (Meta Description)</label>
+                <textarea 
+                  value={seo.description} 
+                  onChange={e => setSeo({ ...seo, description: e.target.value })}
+                  className="w-full bg-[#141414] border border-white/10 rounded-lg p-3 text-white focus:border-red-500 outline-none h-32"
+                  placeholder="Alles rund um die Formel 1..."
+                />
+                <p className="text-[10px] text-gray-500 mt-1">Empfohlen: 150-160 Zeichen</p>
+              </div>
+              <div>
+                <label className="block text-sm font-mono text-gray-400 mb-2">Keywords (Kommagetrennt)</label>
+                <input 
+                  type="text" 
+                  value={seo.keywords} 
+                  onChange={e => setSeo({ ...seo, keywords: e.target.value })}
+                  className="w-full bg-[#141414] border border-white/10 rounded-lg p-3 text-white focus:border-red-500 outline-none"
+                  placeholder="Formel 1, Podcast, Motorsport, Racing"
+                />
+              </div>
+              <button 
+                onClick={async () => {
+                  if (!info) return;
+                  const updatedInfo = {
+                    ...info,
+                    seo_title: seo.title,
+                    seo_description: seo.description,
+                    seo_keywords: seo.keywords
+                  };
+                  await fetch('/api/podcast', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(updatedInfo)
+                  });
+                  setInfo(updatedInfo);
+                  showNotification('SEO Einstellungen gespeichert!', 'success');
+                }}
+                className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-bold flex items-center gap-2"
+              >
+                <Save className="w-4 h-4" /> SEO Speichern
+              </button>
+            </div>
+          </section>
+        )}
+      </div>
+
+      {modalConfig && (
+        <Modal 
+          isOpen={modalConfig.isOpen}
+          title={modalConfig.title}
+          message={modalConfig.message}
+          confirmText={modalConfig.confirmText}
+          onClose={() => setModalConfig(null)}
+          onConfirm={modalConfig.onConfirm}
+        />
+      )}
+
+      {notification && (
+        <Notification 
+          message={notification.message}
+          type={notification.type}
+          onClose={() => setNotification(null)}
+        />
+      )}
+    </div>
+  );
+}

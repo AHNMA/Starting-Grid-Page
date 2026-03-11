@@ -1,0 +1,262 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,500;0,700;0,900;1,500;1,700;1,900&family=Inter:ital,wght@0,400;0,500;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Barlow Condensed", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  
+  --color-f1red: #E10600;
+  --color-f1dark: #111111;
+  --color-f1gray: #1a1a1a;
+}
+
+@layer utilities {
+  .bg-carbon {
+    background-color: var(--color-f1dark);
+    background-image: 
+      linear-gradient(45deg, var(--color-f1gray) 25%, transparent 25%, transparent 75%, var(--color-f1gray) 75%, var(--color-f1gray)),
+      linear-gradient(45deg, var(--color-f1gray) 25%, transparent 25%, transparent 75%, var(--color-f1gray) 75%, var(--color-f1gray));
+    background-size: 10px 10px;
+    background-position: 0 0, 5px 5px;
+  }
+
+  .bg-kerb {
+    background: repeating-linear-gradient(
+      to right,
+      var(--color-f1red),
+      var(--color-f1red) 20px,
+      #FFFFFF 20px,
+      #FFFFFF 40px
+    );
+  }
+
+  .bg-checkered {
+    background-color: #111111;
+    background-image: conic-gradient(#ffffff 90deg, transparent 90deg 180deg, #ffffff 180deg 270deg, transparent 270deg);
+    background-size: 32px 32px;
+  }
+
+  .clip-slanted {
+    clip-path: polygon(15px 0, 100% 0, calc(100% - 15px) 100%, 0 100%);
+  }
+}
+
+@keyframes ticker {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-ticker {
+  animation: ticker 40s linear infinite;
+  will-change: transform;
+}
+
+.bg-hero-pattern {
+  position: absolute;
+  inset: -1em;
+  --c: 7px;
+  background-color: #141414;
+  background-image: radial-gradient(
+      circle at 50% 50%,
+      #0000 1.5px,
+      #141414 0 var(--c),
+      #0000 var(--c)
+    ),
+    radial-gradient(
+      circle at 50% 50%,
+      #0000 1.5px,
+      #141414 0 var(--c),
+      #0000 var(--c)
+    ),
+    radial-gradient(circle at 50% 50%, #e10600, #0000 60%),
+    radial-gradient(circle at 50% 50%, #ffffff, #0000 60%),
+    radial-gradient(circle at 50% 50%, #333333, #0000 60%),
+    radial-gradient(ellipse at 50% 50%, #e10600, #0000 60%);
+  background-size:
+    12px 20.7846097px,
+    12px 20.7846097px,
+    200% 200%,
+    200% 200%,
+    200% 200%,
+    200% 20.7846097px;
+  --p: 0px 0px, 6px 10.39230485px;
+  background-position:
+    var(--p),
+    0% 0%,
+    0% 0%,
+    0% 0px;
+  animation: hero-bg-move 40s linear infinite;
+}
+
+@keyframes hero-bg-move {
+  0% {
+    background-position:
+      var(--p),
+      800% 400%,
+      1000% -400%,
+      -1200% -600%,
+      400% 41.5692194px;
+  }
+  to {
+    background-position:
+      var(--p),
+      0% 0%,
+      0% 0%,
+      0% 0%,
+      0% 0%;
+  }
+}
+
+/* Road Ticker Animation */
+.f1-road-container {
+  perspective: 1000px;
+  overflow: visible;
+  padding: 3rem 0;
+  z-index: 20;
+  position: relative;
+}
+
+.f1-road-ticker {
+  width: 100%;
+  height: 140px;
+  background-color: #353535;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.15'/%3E%3C/svg%3E");
+  transform-style: preserve-3d;
+  transform: rotateX(20deg) scale(1.05);
+  position: relative;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+}
+
+/* Moving Dashed Line */
+.f1-road-ticker::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 0;
+  width: 100%;
+  height: 6px;
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,0.3) 0%,
+    rgba(255,255,255,0.3) 50%,
+    transparent 50%,
+    transparent 100%
+  );
+  background-size: 120px;
+  animation: animateRoad 0.4s linear infinite;
+  z-index: 1;
+  pointer-events: none;
+}
+
+@keyframes animateRoad {
+  0% { background-position: 0px; }
+  100% { background-position: -120px; }
+}
+
+/* 3D Bottom Edge */
+.f1-road-ticker::after {
+  content: "";
+  width: 100%;
+  height: 25px;
+  position: absolute;
+  bottom: -25px;
+  background-color: #202020;
+  transform-origin: top;
+  transform: rotateX(-45deg);
+  box-shadow: 0 20px 30px -5px rgba(0,0,0,0.6);
+  z-index: -1;
+}
+
+.f1-curb-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 16px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--color-f1red),
+    var(--color-f1red) 30px,
+    #FFFFFF 30px,
+    #FFFFFF 60px
+  );
+  z-index: 10;
+  border-bottom: 3px solid white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.f1-curb-bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 16px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--color-f1red),
+    var(--color-f1red) 30px,
+    #FFFFFF 30px,
+    #FFFFFF 60px
+  );
+  z-index: 10;
+  border-top: 3px solid white;
+  box-shadow: 0 -2px 4px rgba(0,0,0,0.2);
+}
+
+/* Custom Prose for HTML Content */
+.prose-custom p {
+  margin-bottom: 1rem;
+}
+.prose-custom p:last-child {
+  margin-bottom: 0;
+}
+.prose-custom a {
+  color: var(--color-f1red);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.prose-custom a:hover {
+  text-decoration: underline;
+  color: #ff3333;
+}
+.prose-custom ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+.prose-custom ol {
+  list-style-type: decimal;
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+.prose-custom strong, .prose-custom b {
+  font-weight: 700;
+  color: #e5e7eb; /* gray-200 */
+}
+.prose-custom h1, .prose-custom h2, .prose-custom h3, .prose-custom h4 {
+  color: white;
+  font-weight: 700;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+/* Custom Scrollbar for text areas */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(225, 6, 0, 0.5);
+  border-radius: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(225, 6, 0, 0.8);
+}
+
