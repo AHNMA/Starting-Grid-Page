@@ -196,13 +196,18 @@ export default function CustomPlayer({ episode }: CustomPlayerProps) {
 
   const progressPercentage = duration ? (currentTime / duration) * 100 : 0;
 
+
+  const shareUrl = episode.slug
+    ? `${window.location.origin}/episode/${episode.slug}`
+    : window.location.href;
+
   const handleShare = () => {
     setIsShareOpen(!isShareOpen);
   };
 
   const copyToClipboard = async () => {
     try {
-      await navigator.clipboard.writeText(window.location.href);
+      await navigator.clipboard.writeText(shareUrl);
       setCopySuccess(true);
       setTimeout(() => setCopySuccess(false), 2000);
     } catch (err) {
@@ -212,12 +217,12 @@ export default function CustomPlayer({ episode }: CustomPlayerProps) {
 
   const shareOnX = () => {
     const text = encodeURIComponent(`Hör dir die neue Folge von Starting Grid an: ${episode.title}`);
-    const url = encodeURIComponent(window.location.href);
+    const url = encodeURIComponent(shareUrl);
     window.open(`https://x.com/intent/tweet?text=${text}&url=${url}`, '_blank');
   };
 
   const shareOnWhatsApp = () => {
-    const text = encodeURIComponent(`Hör dir die neue Folge von Starting Grid an: ${episode.title} ${window.location.href}`);
+    const text = encodeURIComponent(`Hör dir die neue Folge von Starting Grid an: ${episode.title} ${shareUrl}`);
     window.open(`https://wa.me/?text=${text}`, '_blank');
   };
 
@@ -289,7 +294,7 @@ export default function CustomPlayer({ episode }: CustomPlayerProps) {
               <input 
                 type="text" 
                 readOnly 
-                value={window.location.href}
+                value={shareUrl}
                 className="bg-transparent text-[10px] text-gray-400 flex-1 outline-none truncate"
               />
               <button 
