@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Play, Pause, AlertCircle, Calendar, Timer } from 'lucide-react';
+import { ArrowLeft, Play, Pause, AlertCircle, Calendar, Timer, Headphones, Apple, Youtube, Rss } from 'lucide-react';
 import AnimatedBackground from '../components/AnimatedBackground';
 import CustomPlayer from '../components/CustomPlayer';
 import { Episode, PodcastInfo, Platform } from '../types';
@@ -70,6 +70,18 @@ function formatDuration(duration: string | undefined): string {
 
 
 
+const getIcon = (name: string) => {
+  switch (name.toLowerCase()) {
+    case 'spotify': return <Headphones className="w-5 h-5" />;
+    case 'apple': return <Apple className="w-5 h-5" />;
+    case 'youtube': return <Youtube className="w-5 h-5" />;
+    case 'rtl': return <Play className="w-5 h-5" />;
+    case 'deezer': return <Headphones className="w-5 h-5" />;
+    default: return <Rss className="w-5 h-5" />;
+  }
+};
+
+
 export default function EpisodeDetail() {
   const { slug } = useParams<{ slug: string }>();
   const [episode, setEpisode] = useState<Episode | null>(null);
@@ -89,7 +101,7 @@ export default function EpisodeDetail() {
         const [epRes, infoRes, platformsRes] = await Promise.all([
           fetch(`/api/episode/${slug}`),
           fetch('/api/podcast'),
-          fetch('/api/podcast-platforms')
+          fetch('/api/platforms')
         ]);
 
         const epData = await epRes.json();
@@ -164,7 +176,7 @@ export default function EpisodeDetail() {
       </header>
 
       {/* Main Content */}
-      <main className="pt-32 px-4 sm:px-6 max-w-5xl mx-auto relative z-10">
+      <main className="pt-32 px-4 sm:px-6 max-w-7xl mx-auto relative z-10">
 
         {/* Breadcrumb / Back Link (for mobile mostly) */}
         <div className="mb-8 hidden sm:block">
@@ -273,8 +285,8 @@ export default function EpisodeDetail() {
                               title={p.name}
                             />
                           ) : (
-                            <span className="text-gray-400 group-hover:text-white transition-colors font-mono text-xs uppercase font-bold tracking-widest truncate px-2">
-                              {p.name}
+                            <span className="text-gray-400 group-hover:text-white transition-colors">
+                              {getIcon(p.icon_name)}
                             </span>
                           )}
                         </a>
