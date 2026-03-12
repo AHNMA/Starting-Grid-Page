@@ -368,8 +368,9 @@ export default function Home() {
 
   if (!info) return <div className="min-h-screen bg-f1dark text-white flex items-center justify-center font-display font-bold text-3xl animate-pulse">Lade Telemetrie...</div>;
 
-  const heroEpisode = episodes.find(e => e.is_hero) || episodes[0];
-  const otherEpisodes = episodes.filter(e => e.id !== heroEpisode?.id);
+  const safeEpisodes = Array.isArray(episodes) ? episodes : [];
+  const heroEpisode = safeEpisodes.find(e => e.is_hero) || safeEpisodes[0];
+  const otherEpisodes = safeEpisodes.filter(e => e.id !== heroEpisode?.id);
   const displayedEpisodes = otherEpisodes.slice(0, visibleEpisodes);
 
   return (
@@ -525,7 +526,7 @@ export default function Home() {
                     
                     {/* Platforms */}
                     <div className="flex items-end justify-between gap-2 md:gap-4 w-full mt-6">
-                      {platforms.map(p => (
+                      {(Array.isArray(platforms) ? platforms : []).map(p => (
                         <a 
                           key={p.id} 
                           href={p.url} 
@@ -653,7 +654,7 @@ export default function Home() {
           </div>
           
           <div className="grid md:grid-cols-2 gap-6 md:gap-8">
-            {hosts.map((host, i) => (
+            {(Array.isArray(hosts) ? hosts : []).map((host, i) => (
               <motion.div 
                 key={host.id}
                 initial={{ opacity: 0, y: 30 }}
