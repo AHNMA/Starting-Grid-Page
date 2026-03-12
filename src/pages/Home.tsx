@@ -3,7 +3,7 @@ import { motion, useMotionValue, useSpring, useTransform } from 'motion/react';
 import { Helmet } from 'react-helmet-async';
 import { PodcastInfo, Host, Episode, Platform } from '../types';
 import { FaXTwitter } from 'react-icons/fa6';
-import { Play, Calendar, Instagram, Headphones, Youtube, Apple, Rss, ChevronRight, Timer, Menu, X, ChevronDown, Mail } from 'lucide-react';
+import { Play, Calendar, Instagram, Headphones, Youtube, Apple, Rss, ChevronRight, Timer, Menu, X, ChevronDown, Mail, ArrowRight } from 'lucide-react';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { Link } from 'react-router-dom';
@@ -442,9 +442,11 @@ export default function Home() {
                   <span className="w-2 h-2 md:w-2.5 md:h-2.5 bg-white rounded-full animate-pulse" />
                   Aktuelle Ausgabe
                 </div>
-                <h2 className="font-display font-black text-3xl sm:text-4xl md:text-5xl lg:text-6xl uppercase leading-none tracking-tight transform -skew-x-6 mb-4 md:mb-6 text-transparent bg-clip-text bg-gradient-to-br from-white via-gray-200 to-gray-500 drop-shadow-2xl py-2">
-                  {heroEpisode?.title || "Keine Episode"}
-                </h2>
+                <Link to={heroEpisode ? `/episode/${heroEpisode.slug}` : '#'} className="group block">
+                  <h2 className="font-display font-black text-3xl sm:text-4xl md:text-5xl lg:text-6xl uppercase leading-none tracking-tight transform -skew-x-6 mb-4 md:mb-6 text-transparent bg-clip-text bg-gradient-to-br from-white via-gray-200 to-gray-500 drop-shadow-2xl py-2 group-hover:text-f1red transition-colors">
+                    {heroEpisode?.title || "Keine Episode"}
+                  </h2>
+                </Link>
 
             {/* Meta Info */}
             <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-[10px] md:text-sm font-mono text-f1red font-bold uppercase tracking-widest">
@@ -544,6 +546,9 @@ export default function Home() {
                   </motion.div>
                 )}
               </div>
+              <Link to={heroEpisode ? `/episode/${heroEpisode.slug}` : '#'} className="mt-8 inline-flex items-center gap-2 text-f1red hover:text-white transition-colors font-mono text-sm uppercase tracking-widest w-max bg-white/5 border border-white/10 hover:border-f1red/50 px-6 py-3 rounded-full">
+                 Zur Episode <ArrowRight className="w-4 h-4" />
+              </Link>
             </div>
           </div>
         </div>

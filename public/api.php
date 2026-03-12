@@ -299,6 +299,17 @@ try {
             echo json_encode($stmt->fetchAll());
             break;
 
+        case (($slug = getPathParam($endpoint, 'episode')) && $method === 'GET'):
+            $stmt = $pdo->prepare("
+                SELECT id, title, description, audio_url, DATE_FORMAT(published_at, '%Y-%m-%d') as published_at, is_hero, duration, image_url, slug
+                FROM episodes
+                WHERE slug = ?
+            ");
+            $stmt->execute([$slug]);
+            $episode = $stmt->fetch();
+            echo json_encode($episode ?: (object)[]);
+            break;
+
         case ($endpoint === 'episodes' && $method === 'POST'):
             if (!empty($inputData['is_hero'])) {
                 $pdo->exec("UPDATE episodes SET is_hero = 0");
