@@ -55,7 +55,7 @@ export default function Admin() {
         showNotification(`${data.imported} Episoden importiert!`, 'success');
         // Refresh episodes
         const e = await fetch('/api/episodes').then(r => r.json());
-        setEpisodes(e);
+        setEpisodes(Array.isArray(e) ? e : []);
       } else {
         showNotification('Fehler beim Import: ' + data.error, 'error');
       }
@@ -75,9 +75,9 @@ export default function Admin() {
       fetch('/api/platforms').then(r => r.json())
     ]).then(([i, h, e, p]) => {
       setInfo(i);
-      setHosts(h);
+      setHosts(Array.isArray(h) ? h : []);
       setEpisodes(e);
-      setPlatforms(p);
+      setPlatforms(Array.isArray(p) ? p : []);
 
       setLoading(false);
     }).catch(err => {
@@ -113,7 +113,7 @@ export default function Admin() {
         body: JSON.stringify(episode)
       });
       const data = await res.json();
-      setEpisodes(episodes.map(e => e.id === 0 ? { ...e, id: data.id } : e));
+      setEpisodes((Array.isArray(episodes) ? episodes : []).map(e => e.id === 0 ? { ...e, id: data.id } : e));
     } else {
       await fetch(`/api/episodes/${episode.id}`, {
         method: 'PUT',
@@ -132,7 +132,7 @@ export default function Admin() {
       confirmText: 'Löschen',
       onConfirm: async () => {
         await fetch(`/api/episodes/${id}`, { method: 'DELETE' });
-        setEpisodes(episodes.filter(e => e.id !== id));
+        setEpisodes((Array.isArray(episodes) ? episodes : []).filter(e => e.id !== id));
         setModalConfig(null);
         showNotification('Episode gelöscht!', 'success');
       }
@@ -192,7 +192,7 @@ export default function Admin() {
       });
       const data = await res.json();
       if (data.success) {
-        setPlatforms(platforms.map(p => p.id === platformId ? { ...p, icon_url: data.icon_url } : p));
+        setPlatforms((Array.isArray(platforms) ? platforms : []).map(p => p.id === platformId ? { ...p, icon_url: data.icon_url } : p));
         showNotification('Icon hochgeladen!', 'success');
       } else {
         showNotification('Fehler beim Upload: ' + data.error, 'error');
@@ -218,7 +218,7 @@ export default function Admin() {
       });
       const data = await res.json();
       if (data.success) {
-        setPlatforms([...platforms, { ...newPlatform, id: data.id, icon_name: 'rss' }]);
+        setPlatforms([...(Array.isArray(platforms) ? platforms : []), { ...newPlatform, id: data.id, icon_name: 'rss' }]);
         showNotification('Plattform hinzugefügt!', 'success');
       }
     } catch (err) {
@@ -236,7 +236,7 @@ export default function Admin() {
       onConfirm: async () => {
         try {
           await fetch(`/api/platforms/${id}`, { method: 'DELETE' });
-          setPlatforms(platforms.filter(p => p.id !== id));
+          setPlatforms((Array.isArray(platforms) ? platforms : []).filter(p => p.id !== id));
           showNotification('Plattform gelöscht!', 'success');
         } catch (err) {
           console.error(err);
@@ -255,7 +255,7 @@ export default function Admin() {
       audio_url: '',
       published_at: new Date().toISOString().split('T')[0],
       is_hero: false
-    }, ...episodes]);
+    }, ...(Array.isArray(episodes) ? episodes : [])]);
   };
 
   if (loading) return <div className="min-h-screen bg-transparent flex items-center justify-center p-8 text-white">Lade Admin...</div>;
@@ -520,7 +520,7 @@ export default function Admin() {
             Hosts
           </h2>
           <div className="space-y-8">
-            {hosts.map(host => (
+            {(Array.isArray(hosts) ? hosts : []).map(host => (
               <div key={host.id} className="p-6 border border-white/10 rounded-2xl bg-[#141414]">
                 <div className="grid md:grid-cols-2 gap-4 mb-4">
                   <div>
@@ -528,7 +528,7 @@ export default function Admin() {
                     <input 
                       type="text" 
                       value={host.name} 
-                      onChange={e => setHosts(hosts.map(h => h.id === host.id ? { ...h, name: e.target.value } : h))}
+                      onChange={e => setHosts((Array.isArray(hosts) ? hosts : []).map(h => h.id === host.id ? { ...h, name: e.target.value } : h))}
                       className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:border-red-500 outline-none"
                     />
                   </div>
@@ -538,7 +538,7 @@ export default function Admin() {
                       <input 
                         type="text" 
                         value={host.image_url} 
-                        onChange={e => setHosts(hosts.map(h => h.id === host.id ? { ...h, image_url: e.target.value } : h))}
+                        onChange={e => setHosts((Array.isArray(hosts) ? hosts : []).map(h => h.id === host.id ? { ...h, image_url: e.target.value } : h))}
                         className="flex-1 bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:border-red-500 outline-none"
                       />
                       <label className="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg cursor-pointer flex items-center justify-center transition-colors">
@@ -546,7 +546,7 @@ export default function Admin() {
                         <input type="file" className="hidden" accept="image/*" onChange={async (e) => {
                           if (e.target.files && e.target.files[0]) {
                             const url = await handleImageUpload(e.target.files[0]);
-                            if (url) setHosts(hosts.map(h => h.id === host.id ? { ...h, image_url: url } : h));
+                            if (url) setHosts((Array.isArray(hosts) ? hosts : []).map(h => h.id === host.id ? { ...h, image_url: url } : h));
                           }
                         }} />
                       </label>
@@ -557,7 +557,7 @@ export default function Admin() {
                   <label className="block text-sm font-mono text-gray-400 mb-2">Bio</label>
                   <textarea 
                     value={host.bio} 
-                    onChange={e => setHosts(hosts.map(h => h.id === host.id ? { ...h, bio: e.target.value } : h))}
+                    onChange={e => setHosts((Array.isArray(hosts) ? hosts : []).map(h => h.id === host.id ? { ...h, bio: e.target.value } : h))}
                     className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:border-red-500 outline-none h-24"
                   />
                 </div>
@@ -567,7 +567,7 @@ export default function Admin() {
                     <input 
                       type="text" 
                       value={host.twitter_url} 
-                      onChange={e => setHosts(hosts.map(h => h.id === host.id ? { ...h, twitter_url: e.target.value } : h))}
+                      onChange={e => setHosts((Array.isArray(hosts) ? hosts : []).map(h => h.id === host.id ? { ...h, twitter_url: e.target.value } : h))}
                       className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:border-red-500 outline-none"
                     />
                   </div>
@@ -576,7 +576,7 @@ export default function Admin() {
                     <input 
                       type="text" 
                       value={host.instagram_url} 
-                      onChange={e => setHosts(hosts.map(h => h.id === host.id ? { ...h, instagram_url: e.target.value } : h))}
+                      onChange={e => setHosts((Array.isArray(hosts) ? hosts : []).map(h => h.id === host.id ? { ...h, instagram_url: e.target.value } : h))}
                       className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:border-red-500 outline-none"
                     />
                   </div>
@@ -585,7 +585,7 @@ export default function Admin() {
                     <input 
                       type="email" 
                       value={host.email || ''} 
-                      onChange={e => setHosts(hosts.map(h => h.id === host.id ? { ...h, email: e.target.value } : h))}
+                      onChange={e => setHosts((Array.isArray(hosts) ? hosts : []).map(h => h.id === host.id ? { ...h, email: e.target.value } : h))}
                       className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:border-red-500 outline-none"
                     />
                   </div>
@@ -639,7 +639,7 @@ export default function Admin() {
           </div>
           
           <div className="space-y-6">
-            {episodes.map(episode => (
+            {(Array.isArray(episodes) ? episodes : []).map(episode => (
               <div key={episode.id} className="p-6 border border-white/10 rounded-2xl bg-[#141414]">
                 <div className="grid md:grid-cols-2 gap-4 mb-4">
                   <div>
@@ -647,7 +647,7 @@ export default function Admin() {
                     <input 
                       type="text" 
                       value={episode.title} 
-                      onChange={e => setEpisodes(episodes.map(ep => ep.id === episode.id ? { ...ep, title: e.target.value } : ep))}
+                      onChange={e => setEpisodes((Array.isArray(episodes) ? episodes : []).map(ep => ep.id === episode.id ? { ...ep, title: e.target.value } : ep))}
                       className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:border-red-500 outline-none"
                     />
                   </div>
@@ -656,7 +656,7 @@ export default function Admin() {
                     <input 
                       type="text" 
                       value={episode.audio_url} 
-                      onChange={e => setEpisodes(episodes.map(ep => ep.id === episode.id ? { ...ep, audio_url: e.target.value } : ep))}
+                      onChange={e => setEpisodes((Array.isArray(episodes) ? episodes : []).map(ep => ep.id === episode.id ? { ...ep, audio_url: e.target.value } : ep))}
                       className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:border-red-500 outline-none"
                     />
                   </div>
@@ -667,7 +667,7 @@ export default function Admin() {
                     <input 
                       type="text" 
                       value={episode.image_url || ''} 
-                      onChange={e => setEpisodes(episodes.map(ep => ep.id === episode.id ? { ...ep, image_url: e.target.value } : ep))}
+                      onChange={e => setEpisodes((Array.isArray(episodes) ? episodes : []).map(ep => ep.id === episode.id ? { ...ep, image_url: e.target.value } : ep))}
                       className="flex-1 bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:border-red-500 outline-none"
                       placeholder="https://..."
                     />
@@ -679,7 +679,7 @@ export default function Admin() {
                           const file = e.target.files?.[0];
                           if (file) {
                             const url = await handleImageUpload(file);
-                            if (url) setEpisodes(episodes.map(ep => ep.id === episode.id ? { ...ep, image_url: url } : ep));
+                            if (url) setEpisodes((Array.isArray(episodes) ? episodes : []).map(ep => ep.id === episode.id ? { ...ep, image_url: url } : ep));
                           }
                         }}
                         className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
@@ -699,7 +699,7 @@ export default function Admin() {
                   <label className="block text-sm font-mono text-gray-400 mb-2">Beschreibung</label>
                   <textarea 
                     value={episode.description} 
-                    onChange={e => setEpisodes(episodes.map(ep => ep.id === episode.id ? { ...ep, description: e.target.value } : ep))}
+                    onChange={e => setEpisodes((Array.isArray(episodes) ? episodes : []).map(ep => ep.id === episode.id ? { ...ep, description: e.target.value } : ep))}
                     className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:border-red-500 outline-none h-24"
                   />
                 </div>
@@ -709,7 +709,7 @@ export default function Admin() {
                     <input 
                       type="date" 
                       value={episode.published_at} 
-                      onChange={e => setEpisodes(episodes.map(ep => ep.id === episode.id ? { ...ep, published_at: e.target.value } : ep))}
+                      onChange={e => setEpisodes((Array.isArray(episodes) ? episodes : []).map(ep => ep.id === episode.id ? { ...ep, published_at: e.target.value } : ep))}
                       className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:border-red-500 outline-none"
                     />
                   </div>
@@ -718,7 +718,7 @@ export default function Admin() {
                       <input 
                         type="checkbox" 
                         checked={!!episode.is_hero} 
-                        onChange={e => setEpisodes(episodes.map(ep => ep.id === episode.id ? { ...ep, is_hero: e.target.checked } : ep))}
+                        onChange={e => setEpisodes((Array.isArray(episodes) ? episodes : []).map(ep => ep.id === episode.id ? { ...ep, is_hero: e.target.checked } : ep))}
                         className="w-5 h-5 rounded border-white/10 bg-white/5 text-red-600 focus:ring-red-500"
                       />
                       <span className="text-sm font-mono text-gray-400">Als Hero-Episode markieren</span>
@@ -787,7 +787,7 @@ export default function Admin() {
                       <input 
                         type="text" 
                         value={platform.name} 
-                        onChange={e => setPlatforms(platforms.map(p => p.id === platform.id ? { ...p, name: e.target.value } : p))}
+                        onChange={e => setPlatforms((Array.isArray(platforms) ? platforms : []).map(p => p.id === platform.id ? { ...p, name: e.target.value } : p))}
                         className="text-xl font-bold bg-transparent border-b border-transparent hover:border-white/20 focus:border-red-500 outline-none w-full"
                         placeholder="Plattform Name"
                       />
@@ -808,7 +808,7 @@ export default function Admin() {
                         <input 
                           type="text" 
                           value={platform.url} 
-                          onChange={e => setPlatforms(platforms.map(p => p.id === platform.id ? { ...p, url: e.target.value } : p))}
+                          onChange={e => setPlatforms((Array.isArray(platforms) ? platforms : []).map(p => p.id === platform.id ? { ...p, url: e.target.value } : p))}
                           className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:border-red-500 outline-none"
                         />
                       </div>
@@ -817,7 +817,7 @@ export default function Admin() {
                         <input 
                           type="number" 
                           value={platform.display_order || 0} 
-                          onChange={e => setPlatforms(platforms.map(p => p.id === platform.id ? { ...p, display_order: parseInt(e.target.value) } : p))}
+                          onChange={e => setPlatforms((Array.isArray(platforms) ? platforms : []).map(p => p.id === platform.id ? { ...p, display_order: parseInt(e.target.value) } : p))}
                           className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:border-red-500 outline-none"
                         />
                       </div>
