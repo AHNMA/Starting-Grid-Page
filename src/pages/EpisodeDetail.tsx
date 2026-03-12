@@ -175,30 +175,14 @@ export default function EpisodeDetail() {
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-f1red/10 blur-[100px] rounded-full pointer-events-none" />
 
           <div className="p-6 md:p-12 relative z-10">
-            <div className="flex flex-col md:flex-row gap-8 md:gap-12 items-start">
+            <div className="flex flex-col gap-6 md:gap-8 relative z-10">
 
-              {/* Image Section */}
-              <div className="w-full md:w-1/3 shrink-0">
-                <div className="aspect-square rounded-2xl overflow-hidden border border-white/10 shadow-2xl group relative">
-                    {imageUrl ? (
-                         <img
-                         src={imageUrl}
-                         alt={episode.title}
-                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                       />
-                    ) : (
-                        <div className="w-full h-full bg-gray-800 flex items-center justify-center">
-                            <span className="text-gray-500 font-bold">Kein Bild</span>
-                        </div>
-                    )}
-
-                  {/* Decorative Elements */}
-                  <div className="absolute top-0 left-0 w-full h-full inset-ring border border-white/20 rounded-2xl pointer-events-none"></div>
-                </div>
-              </div>
-
-              {/* Content Section */}
-              <div className="w-full md:w-2/3 flex flex-col pt-2 md:pt-4">
+              {/* Header Section: Title and Meta */}
+              <div className="w-full">
+                {/* Title */}
+                <h1 className="font-display font-black text-3xl sm:text-4xl md:text-5xl lg:text-6xl uppercase leading-none tracking-tight transform -skew-x-6 mb-4 md:mb-6 text-transparent bg-clip-text bg-gradient-to-br from-white via-gray-200 to-gray-500 drop-shadow-2xl py-2">
+                  {episode.title}
+                </h1>
 
                 {/* Meta Info */}
                 <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-[10px] md:text-sm font-mono text-f1red font-bold uppercase tracking-widest mb-4">
@@ -221,24 +205,44 @@ export default function EpisodeDetail() {
                     </>
                   )}
                 </div>
+              </div>
 
-                {/* Title */}
-                <h1 className="font-display font-black text-3xl md:text-4xl lg:text-5xl uppercase tracking-tight text-transparent bg-clip-text bg-gradient-to-br from-white via-gray-200 to-gray-500 drop-shadow-lg mb-6">
-                  {episode.title}
-                </h1>
+              {/* Description Section: Full Width */}
+              <div className="w-full mt-4">
+                <DynamicEpisodeText
+                  description={episode.description}
+                  className="text-xs md:text-sm text-gray-300 leading-relaxed font-mono"
+                />
+              </div>
 
-                {/* Audio Player */}
+              {/* Media Section: Image and Player */}
+              <div className="grid lg:grid-cols-2 gap-8 items-stretch mt-8 pt-8 border-t border-white/10">
+                {/* Image Section */}
+                <div className="hidden lg:block w-full">
+                  <div className="aspect-square rounded-2xl overflow-hidden border border-white/10 shadow-2xl group relative max-w-sm">
+                      {imageUrl ? (
+                          <img
+                          src={imageUrl}
+                          alt={episode.title}
+                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        />
+                      ) : (
+                          <div className="w-full h-full bg-gray-800 flex items-center justify-center">
+                              <span className="text-gray-500 font-bold">Kein Bild</span>
+                          </div>
+                      )}
+                    <div className="absolute top-0 left-0 w-full h-full inset-ring border border-white/20 rounded-2xl pointer-events-none"></div>
+                  </div>
+                </div>
+
+                {/* Player Section */}
                 {episode.audio_url && episode.audio_url !== '#' && (
-                  <div className="mb-8">
-                     <CustomPlayer episode={episode} />
+                  <div className="w-full max-w-full flex flex-col justify-start overflow-hidden h-full">
+                    <div className="w-full min-w-0">
+                      <CustomPlayer episode={episode} />
+                    </div>
                   </div>
                 )}
-
-                {/* Description */}
-                <div className="mt-4 border-t border-white/10 pt-8">
-                    <h2 className="text-sm font-bold uppercase tracking-widest text-white/50 mb-6">Episoden-Notizen</h2>
-                    <DynamicEpisodeText description={episode.description} className="text-lg md:text-xl font-light text-gray-300 leading-relaxed" />
-                </div>
               </div>
 
             </div>
