@@ -359,21 +359,22 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-f1dark text-white font-sans antialiased selection:bg-f1red selection:text-white overflow-x-hidden">
       <Helmet>
-        <title>{info?.seo_title || info?.title || 'Starting Grid - Der Formel-1-Podcast'}</title>
-        <meta name="description" content={info?.seo_description || info?.description || 'Der wöchentliche Formel-1-Podcast.'} />
+        <title>{info?.seo_title || 'Starting Grid - Der Formel-1-Podcast'}</title>
+        <meta name="description" content={info?.seo_description || 'Der wöchentliche Formel-1-Podcast.'} />
         {info?.seo_keywords && <meta name="keywords" content={info.seo_keywords} />}
+        {info?.favicon_image && <link rel="icon" href={info.favicon_image} />}
         
         {/* Open Graph / Facebook */}
         <meta property="og:type" content="website" />
-        <meta property="og:title" content={info?.seo_title || info?.title} />
-        <meta property="og:description" content={info?.seo_description || info?.description} />
-        <meta property="og:image" content={info?.cover_image} />
+        <meta property="og:title" content={info?.seo_title || 'Starting Grid - Der Formel-1-Podcast'} />
+        <meta property="og:description" content={info?.seo_description || 'Der wöchentliche Formel-1-Podcast.'} />
+        <meta property="og:image" content={info?.social_image || info?.cover_image} />
         
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={info?.seo_title || info?.title} />
-        <meta name="twitter:description" content={info?.seo_description || info?.description} />
-        <meta name="twitter:image" content={info?.cover_image} />
+        <meta name="twitter:title" content={info?.seo_title || 'Starting Grid - Der Formel-1-Podcast'} />
+        <meta name="twitter:description" content={info?.seo_description || 'Der wöchentliche Formel-1-Podcast.'} />
+        <meta name="twitter:image" content={info?.social_image || info?.cover_image} />
       </Helmet>
       {/* Header */}
       <header className="fixed top-0 w-full z-50 bg-f1dark/95 border-b-2 border-f1red shadow-lg">

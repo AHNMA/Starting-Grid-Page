@@ -114,7 +114,9 @@ try {
                 about_image VARCHAR(255),
                 seo_title VARCHAR(255),
                 seo_description TEXT,
-                seo_keywords TEXT
+                seo_keywords TEXT,
+                favicon_image VARCHAR(255),
+                social_image VARCHAR(255)
               )
             ");
 
@@ -161,8 +163,8 @@ try {
 
             if ($count == 0) {
                  $pdo->exec("
-                    INSERT INTO podcast_info (id, title, description, cover_image, logo_image, about_text, about_image)
-                    VALUES (1, 'Starting Grid - Der Formel-1-Podcast', 'Der wöchentliche Formel-1-Podcast mit Kevin Scheuren und Dennis Lewandowski. Wir besprechen alles rund um die Königsklasse des Motorsports.', 'https://storage.googleapis.com/aistudio-user-content-prod-eu-west2/0b4d4559-4592-4217-91a0-5e36746f3d9b/startinggrid_logo.png', '', 'Wir sind Starting Grid, der Formel-1-Podcast. Hier gibt es jede Woche die neuesten Infos, Analysen und Meinungen zur Königsklasse des Motorsports.', '')
+                    INSERT INTO podcast_info (id, title, description, cover_image, logo_image, about_text, about_image, favicon_image, social_image)
+                    VALUES (1, 'Starting Grid - Der Formel-1-Podcast', 'Der wöchentliche Formel-1-Podcast mit Kevin Scheuren und Dennis Lewandowski. Wir besprechen alles rund um die Königsklasse des Motorsports.', 'https://storage.googleapis.com/aistudio-user-content-prod-eu-west2/0b4d4559-4592-4217-91a0-5e36746f3d9b/startinggrid_logo.png', '', 'Wir sind Starting Grid, der Formel-1-Podcast. Hier gibt es jede Woche die neuesten Infos, Analysen und Meinungen zur Königsklasse des Motorsports.', '', '', '')
                  ");
 
                  $pdo->exec("
@@ -199,7 +201,7 @@ try {
         case ($endpoint === 'podcast' && $method === 'PUT'):
             $stmt = $pdo->prepare("
                 UPDATE podcast_info
-                SET title = ?, description = ?, cover_image = ?, logo_image = ?, about_text = ?, about_image = ?, seo_title = ?, seo_description = ?, seo_keywords = ?
+                SET title = ?, description = ?, cover_image = ?, logo_image = ?, about_text = ?, about_image = ?, seo_title = ?, seo_description = ?, seo_keywords = ?, favicon_image = ?, social_image = ?
                 WHERE id = 1
             ");
             $stmt->execute([
@@ -211,7 +213,9 @@ try {
                 $inputData['about_image'] ?? '',
                 $inputData['seo_title'] ?? '',
                 $inputData['seo_description'] ?? '',
-                $inputData['seo_keywords'] ?? ''
+                $inputData['seo_keywords'] ?? '',
+                $inputData['favicon_image'] ?? '',
+                $inputData['social_image'] ?? ''
             ]);
             echo json_encode(["success" => true]);
             break;
