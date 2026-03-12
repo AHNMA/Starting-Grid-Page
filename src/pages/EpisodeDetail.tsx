@@ -1,3 +1,4 @@
+import Footer from '../components/Footer';
 import { useState, useEffect, useRef } from 'react';
 import DynamicEpisodeText from "../components/DynamicEpisodeText";
 import { useParams, Link } from 'react-router-dom';
@@ -268,6 +269,8 @@ export default function EpisodeDetail() {
         </article>
 
       </main>
+
+      <Footer />
     </div>
   );
 }
