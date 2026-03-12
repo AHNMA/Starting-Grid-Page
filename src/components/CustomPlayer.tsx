@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { Episode } from '../types';
-import { Play, Pause, RotateCcw, RotateCw, Volume2, VolumeX, Share2, Copy, Twitter, MessageCircle, X as CloseIcon } from 'lucide-react';
+import { FaXTwitter } from 'react-icons/fa6';
+import { Play, Pause, RotateCcw, RotateCw, Volume2, VolumeX, Share2, Copy, MessageCircle, X as CloseIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 interface CustomPlayerProps {
@@ -209,10 +210,10 @@ export default function CustomPlayer({ episode }: CustomPlayerProps) {
     }
   };
 
-  const shareOnTwitter = () => {
+  const shareOnX = () => {
     const text = encodeURIComponent(`Hör dir die neue Folge von Starting Grid an: ${episode.title}`);
     const url = encodeURIComponent(window.location.href);
-    window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank');
+    window.open(`https://x.com/intent/tweet?text=${text}&url=${url}`, '_blank');
   };
 
   const shareOnWhatsApp = () => {
@@ -251,13 +252,14 @@ export default function CustomPlayer({ episode }: CustomPlayerProps) {
             
             <div className="flex gap-6 mb-8">
               <button 
-                onClick={shareOnTwitter}
+                onClick={shareOnX}
                 className="flex flex-col items-center gap-2 group"
               >
                 <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-f1red transition-colors">
-                  <Twitter className="w-5 h-5 text-white" />
+                  {/* @ts-expect-error type issue */}
+<FaXTwitter className="w-5 h-5 text-white" />
                 </div>
-                <span className="text-[10px] uppercase font-bold text-gray-400 group-hover:text-white">Twitter</span>
+                <span className="text-[10px] uppercase font-bold text-gray-400 group-hover:text-white">X</span>
               </button>
               
               <button 

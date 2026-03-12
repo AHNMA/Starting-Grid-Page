@@ -78,13 +78,7 @@ export default function Admin() {
       setHosts(h);
       setEpisodes(e);
       setPlatforms(p);
-      if (i) {
-        setSeo({
-          title: i.seo_title || '',
-          description: i.seo_description || '',
-          keywords: i.seo_keywords || ''
-        });
-      }
+
       setLoading(false);
     }).catch(err => {
       console.error(err);
@@ -377,7 +371,7 @@ export default function Admin() {
               </div>
 
               <div>
-                <label className="block text-sm font-mono text-gray-400 mb-2">Globales Social-Media-Bild (Open Graph/Twitter)</label>
+                <label className="block text-sm font-mono text-gray-400 mb-2">Globales Social-Media-Bild (Open Graph/X)</label>
                 <div className="flex gap-2">
                   <input 
                     type="text" 
@@ -569,7 +563,7 @@ export default function Admin() {
                 </div>
                 <div className="grid md:grid-cols-3 gap-4 mb-4">
                   <div>
-                    <label className="block text-sm font-mono text-gray-400 mb-2">Twitter URL</label>
+                    <label className="block text-sm font-mono text-gray-400 mb-2">X (Twitter) URL</label>
                     <input 
                       type="text" 
                       value={host.twitter_url} 
