@@ -171,34 +171,28 @@ export default function EpisodeDetail() {
 
         <article className="bg-gradient-to-br from-f1gray to-f1dark border border-white/5 rounded-3xl overflow-hidden shadow-2xl relative">
 
-          {/* Subtle Background Glow based on F1 Red */}
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-f1red/10 blur-[100px] rounded-full pointer-events-none" />
+
 
           <div className="p-6 md:p-12 relative z-10">
-            <div className="flex flex-col md:flex-row gap-8 md:gap-12 items-start">
+            <div className="flex flex-col gap-8 md:gap-12 items-start">
 
               {/* Image Section */}
-              <div className="w-full md:w-1/3 shrink-0">
-                <div className="aspect-square rounded-2xl overflow-hidden border border-white/10 shadow-2xl group relative">
-                    {imageUrl ? (
-                         <img
-                         src={imageUrl}
-                         alt={episode.title}
-                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                       />
-                    ) : (
-                        <div className="w-full h-full bg-gray-800 flex items-center justify-center">
-                            <span className="text-gray-500 font-bold">Kein Bild</span>
-                        </div>
-                    )}
-
-                  {/* Decorative Elements */}
-                  <div className="absolute top-0 left-0 w-full h-full inset-ring border border-white/20 rounded-2xl pointer-events-none"></div>
-                </div>
+              <div className="w-full relative aspect-[16/9]">
+                {imageUrl ? (
+                  <img
+                    src={imageUrl}
+                    alt={episode.title}
+                    className="relative z-10 w-full h-full object-cover rounded-xl border border-white/10 shadow-lg pointer-events-none"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-white/5 rounded-xl pointer-events-none flex items-center justify-center border border-white/5 shadow-lg">
+                    <span className="text-gray-500 font-bold">Kein Bild</span>
+                  </div>
+                )}
               </div>
 
               {/* Content Section */}
-              <div className="w-full md:w-2/3 flex flex-col pt-2 md:pt-4">
+              <div className="w-full flex flex-col pt-2 md:pt-4">
 
                 {/* Meta Info */}
                 <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-[10px] md:text-sm font-mono text-f1red font-bold uppercase tracking-widest mb-4">
@@ -237,7 +231,7 @@ export default function EpisodeDetail() {
                 {/* Description */}
                 <div className="mt-4 border-t border-white/10 pt-8">
                     <h2 className="text-sm font-bold uppercase tracking-widest text-white/50 mb-6">Episoden-Notizen</h2>
-                    <DynamicEpisodeText description={episode.description} className="text-lg md:text-xl font-light text-gray-300 leading-relaxed" />
+                    <DynamicEpisodeText description={episode.description} className="text-lg md:text-xl font-mono text-gray-300 leading-relaxed" />
                 </div>
               </div>
 
