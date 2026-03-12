@@ -125,7 +125,7 @@ function ArchiveEpisodeCard({ episode, info, platforms, index }: any) {
           {/* Description Section: Full Width */}
           <div className="w-full">
             <DynamicEpisodeText 
-              description={episode.description} 
+              description={episode.description} stripFeedback={true}
               className="text-xs md:text-sm text-gray-300 leading-relaxed font-mono"
             />
           </div>
@@ -334,7 +334,7 @@ export default function Home() {
                 <DynamicEpisodeText 
                   description={heroEpisode?.description || ''} 
                   className="text-xs md:text-sm text-gray-300 leading-relaxed font-mono"
-                  expandable={true}
+                  expandable={true} stripFeedback={true}
                 />
               </motion.div>
 
