@@ -2,7 +2,8 @@ import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'motion/react';
 import { Helmet } from 'react-helmet-async';
 import { PodcastInfo, Host, Episode, Platform } from '../types';
-import { Play, Calendar, Twitter, Instagram, Headphones, Youtube, Apple, Rss, ChevronRight, Timer, Menu, X, ChevronDown, Mail } from 'lucide-react';
+import { FaXTwitter } from 'react-icons/fa6';
+import { Play, Calendar, Instagram, Headphones, Youtube, Apple, Rss, ChevronRight, Timer, Menu, X, ChevronDown, Mail } from 'lucide-react';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { Link } from 'react-router-dom';
@@ -668,7 +669,8 @@ export default function Home() {
                       <div className="flex gap-3">
                         {host.twitter_url && (
                           <a href={host.twitter_url} target="_blank" rel="noreferrer" className="w-12 h-12 md:w-14 md:h-14 bg-white/5 border border-white/10 flex items-center justify-center hover:bg-f1red hover:border-f1red transition-all group shadow-lg overflow-hidden rounded-xl">
-                            <Twitter className="w-5 h-5 md:w-6 md:h-6 text-gray-400 group-hover:text-white transition-colors" />
+                            {/* @ts-expect-error type issue */}
+<FaXTwitter className="w-5 h-5 md:w-6 md:h-6 text-gray-400 group-hover:text-white transition-colors" />
                           </a>
                         )}
                         {host.instagram_url && (
