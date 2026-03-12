@@ -244,9 +244,11 @@ function ArchiveEpisodeCard({ episode, info, platforms, index }: any) {
           {/* Header Section: Title and Meta */}
           <div className="w-full">
             {/* Title */}
-            <h4 className="font-display font-black text-2xl md:text-3xl lg:text-4xl uppercase tracking-tight text-transparent bg-clip-text bg-gradient-to-br from-white via-gray-200 to-gray-500 drop-shadow-lg mb-4 md:mb-6">
-              {episode.title}
-            </h4>
+            <Link to={`/episode/${episode.slug}`} className="group block mb-4 md:mb-6">
+              <h4 className="font-display font-black text-2xl md:text-3xl lg:text-4xl uppercase tracking-tight text-transparent bg-clip-text bg-gradient-to-br from-white via-gray-200 to-gray-500 drop-shadow-lg group-hover:text-f1red transition-colors">
+                {episode.title}
+              </h4>
+            </Link>
             
             {/* Meta Info */}
             <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-[10px] md:text-sm font-mono text-f1red font-bold uppercase tracking-widest">
@@ -283,7 +285,9 @@ function ArchiveEpisodeCard({ episode, info, platforms, index }: any) {
           <div className="grid lg:grid-cols-2 gap-8 items-stretch">
             {/* Image Section */}
             <div className="hidden lg:block w-full">
-              <HeroImage info={info} episode={episode} />
+              <Link to={`/episode/${episode.slug}`} className="block hover:opacity-90 transition-opacity">
+                <HeroImage info={info} episode={episode} />
+              </Link>
             </div>
             
             {/* Player & Platforms Section */}
@@ -494,7 +498,9 @@ export default function Home() {
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.8, delay: 0.2 }}
                 >
-                  <HeroImage info={info} episode={heroEpisode} />
+                  <Link to={heroEpisode ? `/episode/${heroEpisode.slug}` : '#'} className="block hover:opacity-90 transition-opacity">
+                    <HeroImage info={info} episode={heroEpisode} />
+                  </Link>
                 </motion.div>
 
                 {/* Player & Platforms Section */}
@@ -546,9 +552,7 @@ export default function Home() {
                   </motion.div>
                 )}
               </div>
-              <Link to={heroEpisode ? `/episode/${heroEpisode.slug}` : '#'} className="mt-8 inline-flex items-center gap-2 text-f1red hover:text-white transition-colors font-mono text-sm uppercase tracking-widest w-max bg-white/5 border border-white/10 hover:border-f1red/50 px-6 py-3 rounded-full">
-                 Zur Episode <ArrowRight className="w-4 h-4" />
-              </Link>
+
             </div>
           </div>
         </div>
