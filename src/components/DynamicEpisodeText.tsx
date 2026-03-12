@@ -4,11 +4,13 @@ import { ChevronDown } from 'lucide-react';
 export default function DynamicEpisodeText({
   description,
   className,
-  expandable = false
+  expandable = false,
+  stripFeedback = false
 }: {
   description: string,
   className?: string,
-  expandable?: boolean
+  expandable?: boolean,
+  stripFeedback?: boolean
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -16,9 +18,20 @@ export default function DynamicEpisodeText({
     if (!description) return '';
     if (typeof window === 'undefined') return description;
 
+    // If it's pure text (no HTML tags), wrap paragraphs so it renders nicely
+    let workingDescription = description;
+    if (!/<[a-z][\s\S]*>/i.test(workingDescription)) {
+        workingDescription = workingDescription
+          .split('\n\n')
+          .map(p => `<p>${p}</p>`)
+          .join('');
+    }
+
+    if (!stripFeedback) return workingDescription;
+
     try {
       const parser = new DOMParser();
-      const doc = parser.parseFromString(description, 'text/html');
+      const doc = parser.parseFromString(workingDescription, 'text/html');
       const feedbackText = "Euer Feedback ist uns wichtig!";
 
       let found = false;
@@ -63,9 +76,9 @@ export default function DynamicEpisodeText({
       findAndStrip(doc.body);
       return doc.body.innerHTML.trim();
     } catch (e) {
-      return description;
+      return workingDescription;
     }
-  }, [description]);
+  }, [description, stripFeedback]);
 
   const { excerptHtml, isTruncatable } = useMemo(() => {
     if (!cleanDescription || typeof window === 'undefined') return { excerptHtml: cleanDescription, isTruncatable: false };
