@@ -696,6 +696,13 @@ export default function Admin() {
                   )}
                 </div>
                 <div className="mb-4">
+                  <label className="block text-sm font-mono text-gray-400 mb-2">URL-Slug (leer für Auto-Generierung)</label>
+                  <input
+                    type="text"
+                    value={episode.slug || ''}
+                    onChange={e => setEpisodes((Array.isArray(episodes) ? episodes : []).map(ep => ep.id === episode.id ? { ...ep, slug: e.target.value } : ep))}
+                    className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:border-red-500 outline-none mb-4"
+                  />
                   <label className="block text-sm font-mono text-gray-400 mb-2">Beschreibung</label>
                   <textarea 
                     value={episode.description} 
