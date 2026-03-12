@@ -50,21 +50,34 @@ function formatDuration(duration: string): string {
 function HeroImage({ info, episode }: { info: PodcastInfo | null, episode?: Episode | null }) {
   const imageUrl = episode?.image_url || info?.cover_image;
 
-  return (
-    <div className="relative w-full aspect-[16/9]">
+  const content = (
+    <div className="relative w-full aspect-[16/9] group cursor-pointer overflow-hidden rounded-xl">
       {imageUrl ? (
-        <img 
-          src={imageUrl} 
-          alt="Podcast Cover" 
-          className="relative z-10 w-full h-full object-cover rounded-xl border border-white/10 pointer-events-none shadow-lg" 
-        />
+        <>
+          <img
+            src={imageUrl}
+            alt="Podcast Cover"
+            className="relative z-10 w-full h-full object-cover border border-white/10 shadow-lg transform transition-transform duration-700 group-hover:scale-105"
+          />
+          <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20 flex items-center justify-center backdrop-blur-sm">
+            <span className="bg-f1red text-white font-display font-bold uppercase tracking-widest px-6 py-3 rounded-full flex items-center gap-2 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
+              <Play className="w-4 h-4 fill-current" />
+              Zur Episode
+            </span>
+          </div>
+        </>
       ) : (
-        <div className="w-full h-full bg-white/5 rounded-xl pointer-events-none flex items-center justify-center border border-white/5 shadow-lg">
+        <div className="w-full h-full bg-white/5 pointer-events-none flex items-center justify-center border border-white/5 shadow-lg transition-transform duration-700 group-hover:scale-105">
           <Headphones className="w-24 h-24 text-white/20" />
         </div>
       )}
     </div>
   );
+
+  if (episode) {
+    return <Link to={`/episode/${episode.slug || episode.id}`}>{content}</Link>;
+  }
+  return content;
 }
 
 const getIcon = (name: string) => {
@@ -244,9 +257,11 @@ function ArchiveEpisodeCard({ episode, info, platforms, index }: any) {
           {/* Header Section: Title and Meta */}
           <div className="w-full">
             {/* Title */}
-            <h4 className="font-display font-black text-2xl md:text-3xl lg:text-4xl uppercase tracking-tight text-transparent bg-clip-text bg-gradient-to-br from-white via-gray-200 to-gray-500 drop-shadow-lg mb-4 md:mb-6">
-              {episode.title}
-            </h4>
+            <Link to={`/episode/${episode.slug || episode.id}`}>
+              <h4 className="font-display font-black text-2xl md:text-3xl lg:text-4xl uppercase tracking-tight text-transparent bg-clip-text bg-gradient-to-br from-white via-gray-200 to-gray-500 drop-shadow-lg mb-4 md:mb-6 hover:text-white transition-all cursor-pointer hover:underline decoration-f1red decoration-4 underline-offset-8">
+                {episode.title}
+              </h4>
+            </Link>
             
             {/* Meta Info */}
             <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-[10px] md:text-sm font-mono text-f1red font-bold uppercase tracking-widest">
@@ -441,9 +456,11 @@ export default function Home() {
                   <span className="w-2 h-2 md:w-2.5 md:h-2.5 bg-white rounded-full animate-pulse" />
                   Aktuelle Ausgabe
                 </div>
-                <h2 className="font-display font-black text-3xl sm:text-4xl md:text-5xl lg:text-6xl uppercase leading-none tracking-tight transform -skew-x-6 mb-4 md:mb-6 text-transparent bg-clip-text bg-gradient-to-br from-white via-gray-200 to-gray-500 drop-shadow-2xl py-2">
-                  {heroEpisode?.title || "Keine Episode"}
-                </h2>
+                <Link to={`/episode/${heroEpisode?.slug || heroEpisode?.id}`}>
+                  <h2 className="font-display font-black text-3xl sm:text-4xl md:text-5xl lg:text-6xl uppercase leading-none tracking-tight transform -skew-x-6 mb-4 md:mb-6 text-transparent bg-clip-text bg-gradient-to-br from-white via-gray-200 to-gray-500 drop-shadow-2xl py-2 hover:text-white transition-all cursor-pointer hover:underline decoration-f1red decoration-4 underline-offset-8">
+                    {heroEpisode?.title || "Keine Episode"}
+                  </h2>
+                </Link>
 
             {/* Meta Info */}
             <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-[10px] md:text-sm font-mono text-f1red font-bold uppercase tracking-widest">

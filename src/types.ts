@@ -32,6 +32,7 @@ export interface Episode {
   is_hero: boolean;
   guid?: string;
   duration?: string;
+  slug?: string;
   image_url?: string;
 }
 
