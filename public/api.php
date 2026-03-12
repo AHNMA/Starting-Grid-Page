@@ -342,8 +342,14 @@ try {
 
             $importedCount = 0;
             $stmtCheck = $pdo->prepare("SELECT id, duration FROM episodes WHERE guid = ?");
+            $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 0;
+            $currentIndex = 0;
 
             foreach ($xml->channel->item as $item) {
+                if ($limit > 0 && $currentIndex >= $limit) {
+                    break;
+                }
+                $currentIndex++;
                 $title = (string)$item->title;
                 $guid = (string)$item->guid;
                 if (!$title || !$guid) continue;
