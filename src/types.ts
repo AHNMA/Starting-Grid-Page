@@ -9,6 +9,8 @@ export interface PodcastInfo {
   seo_title?: string;
   seo_description?: string;
   seo_keywords?: string;
+  favicon_image?: string;
+  social_image?: string;
 }
 
 export interface Host {

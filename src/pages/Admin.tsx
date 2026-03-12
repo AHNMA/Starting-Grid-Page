@@ -10,10 +10,10 @@ export default function Admin() {
   const [hosts, setHosts] = useState<Host[]>([]);
   const [episodes, setEpisodes] = useState<Episode[]>([]);
   const [platforms, setPlatforms] = useState<Platform[]>([]);
-  const [seo, setSeo] = useState<{ title: string; description: string; keywords: string }>({ title: '', description: '', keywords: '' });
+
 
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'info' | 'hosts' | 'episodes' | 'platforms' | 'seo'>('info');
+  const [activeTab, setActiveTab] = useState<'info' | 'about' | 'hosts' | 'episodes' | 'platforms'>('info');
   
   const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [modalConfig, setModalConfig] = useState<{ isOpen: boolean; title: string; message: string; onConfirm: () => void; confirmText?: string } | null>(null);
@@ -280,7 +280,14 @@ export default function Admin() {
             className={`flex items-center gap-2 px-6 py-4 font-bold uppercase tracking-widest whitespace-nowrap transition-colors ${activeTab === 'info' ? 'border-b-2 border-red-600 text-red-500' : 'text-gray-400 hover:text-white'}`}
           >
             <Settings className="w-5 h-5" />
-            Podcast Info
+            Website-Einstellungen
+          </button>
+          <button
+            onClick={() => setActiveTab('about')}
+            className={`flex items-center gap-2 px-6 py-4 font-bold uppercase tracking-widest whitespace-nowrap transition-colors ${activeTab === 'about' ? 'border-b-2 border-red-600 text-red-500' : 'text-gray-400 hover:text-white'}`}
+          >
+            <Settings className="w-5 h-5" />
+            Über uns
           </button>
           <button 
             onClick={() => setActiveTab('hosts')} 
@@ -303,47 +310,99 @@ export default function Admin() {
             <Upload className="w-5 h-5" />
             Plattformen
           </button>
-          <button 
-            onClick={() => setActiveTab('seo')} 
-            className={`flex items-center gap-2 px-6 py-4 font-bold uppercase tracking-widest whitespace-nowrap transition-colors ${activeTab === 'seo' ? 'border-b-2 border-red-600 text-red-500' : 'text-gray-400 hover:text-white'}`}
-          >
-            <Settings className="w-5 h-5" />
-            SEO
-          </button>
         </div>
 
-        {/* Podcast Info */}
+        {/* Website Settings */}
         {activeTab === 'info' && (
           <section className="mb-16 bg-white/5 p-8 rounded-3xl border border-white/10">
           <h2 className="text-2xl font-bold uppercase italic mb-6 flex items-center gap-3">
             <span className="w-8 h-1 bg-red-600" />
-            Podcast Info
+            Website-Einstellungen
           </h2>
           {info && (
-            <div className="space-y-4">
+            <div className="space-y-6">
               <div>
-                <label className="block text-sm font-mono text-gray-400 mb-2">Titel</label>
+                <label className="block text-sm font-mono text-gray-400 mb-2">Website Titel (Meta Title)</label>
                 <input 
                   type="text" 
-                  value={info.title} 
-                  onChange={e => setInfo({ ...info, title: e.target.value })}
+                  value={info.seo_title || ''}
+                  onChange={e => setInfo({ ...info, seo_title: e.target.value })}
                   className="w-full bg-[#141414] border border-white/10 rounded-lg p-3 text-white focus:border-red-500 outline-none"
+                  placeholder="Starting Grid - Der Formel-1-Podcast"
                 />
+                <p className="text-[10px] text-gray-500 mt-1">Empfohlen: 50-60 Zeichen</p>
               </div>
               <div>
-                <label className="block text-sm font-mono text-gray-400 mb-2">Beschreibung</label>
+                <label className="block text-sm font-mono text-gray-400 mb-2">Website Beschreibung (Meta Description)</label>
                 <textarea 
-                  value={info.description} 
-                  onChange={e => setInfo({ ...info, description: e.target.value })}
+                  value={info.seo_description || ''}
+                  onChange={e => setInfo({ ...info, seo_description: e.target.value })}
                   className="w-full bg-[#141414] border border-white/10 rounded-lg p-3 text-white focus:border-red-500 outline-none h-32"
+                  placeholder="Alles rund um die Formel 1..."
                 />
+                <p className="text-[10px] text-gray-500 mt-1">Empfohlen: 150-160 Zeichen</p>
               </div>
               <div>
-                <label className="block text-sm font-mono text-gray-400 mb-2">Cover Image URL (Quadratisch)</label>
+                <label className="block text-sm font-mono text-gray-400 mb-2">Keywords (Kommagetrennt)</label>
+                <input
+                  type="text"
+                  value={info.seo_keywords || ''}
+                  onChange={e => setInfo({ ...info, seo_keywords: e.target.value })}
+                  className="w-full bg-[#141414] border border-white/10 rounded-lg p-3 text-white focus:border-red-500 outline-none"
+                  placeholder="Formel 1, Podcast, Motorsport, Racing"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-mono text-gray-400 mb-2">Favicon (16x16 oder 32x32)</label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={info.favicon_image || ''}
+                    onChange={e => setInfo({ ...info, favicon_image: e.target.value })}
+                    className="flex-1 bg-[#141414] border border-white/10 rounded-lg p-3 text-white focus:border-red-500 outline-none"
+                    placeholder="Wird als kleines Icon im Browser-Tab angezeigt"
+                  />
+                  <label className="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg cursor-pointer flex items-center justify-center transition-colors">
+                    <Upload className="w-5 h-5" />
+                    <input type="file" className="hidden" accept="image/*" onChange={async (e) => {
+                      if (e.target.files && e.target.files[0]) {
+                        const url = await handleImageUpload(e.target.files[0]);
+                        if (url) setInfo({ ...info, favicon_image: url });
+                      }
+                    }} />
+                  </label>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-mono text-gray-400 mb-2">Globales Social-Media-Bild (Open Graph/Twitter)</label>
                 <div className="flex gap-2">
                   <input 
                     type="text" 
-                    value={info.cover_image} 
+                    value={info.social_image || ''}
+                    onChange={e => setInfo({ ...info, social_image: e.target.value })}
+                    className="flex-1 bg-[#141414] border border-white/10 rounded-lg p-3 text-white focus:border-red-500 outline-none"
+                    placeholder="Optional: Ein Bild für geteilte Links auf Plattformen"
+                  />
+                  <label className="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg cursor-pointer flex items-center justify-center transition-colors">
+                    <Upload className="w-5 h-5" />
+                    <input type="file" className="hidden" accept="image/*" onChange={async (e) => {
+                      if (e.target.files && e.target.files[0]) {
+                        const url = await handleImageUpload(e.target.files[0]);
+                        if (url) setInfo({ ...info, social_image: url });
+                      }
+                    }} />
+                  </label>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-mono text-gray-400 mb-2">Podcast Cover Image (Quadratisch)</label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={info.cover_image || ''}
                     onChange={e => setInfo({ ...info, cover_image: e.target.value })}
                     className="flex-1 bg-[#141414] border border-white/10 rounded-lg p-3 text-white focus:border-red-500 outline-none"
                   />
@@ -358,6 +417,7 @@ export default function Admin() {
                   </label>
                 </div>
               </div>
+
               <div>
                 <label className="block text-sm font-mono text-gray-400 mb-2">Header Logo URL (Transparentes PNG/SVG)</label>
                 <div className="flex gap-2">
@@ -379,6 +439,34 @@ export default function Admin() {
                   </label>
                 </div>
               </div>
+              <button
+                onClick={async () => {
+                  if (!info) return;
+                  await fetch('/api/podcast', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(info)
+                  });
+                  showNotification('Website-Einstellungen gespeichert!', 'success');
+                }}
+                className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-bold flex items-center gap-2"
+              >
+                <Save className="w-4 h-4" /> Speichern
+              </button>
+            </div>
+          )}
+          </section>
+        )}
+
+        {/* About Section */}
+        {activeTab === 'about' && (
+          <section className="mb-16 bg-white/5 p-8 rounded-3xl border border-white/10">
+          <h2 className="text-2xl font-bold uppercase italic mb-6 flex items-center gap-3">
+            <span className="w-8 h-1 bg-red-600" />
+            Über uns (Bio)
+          </h2>
+          {info && (
+            <div className="space-y-6">
               <div>
                 <label className="block text-sm font-mono text-gray-400 mb-2">Über uns Text (Bio)</label>
                 <textarea 
@@ -410,15 +498,24 @@ export default function Admin() {
                 </div>
               </div>
               <button 
-                onClick={handleSaveInfo}
+                onClick={async () => {
+                  if (!info) return;
+                  await fetch('/api/podcast', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(info)
+                  });
+                  showNotification('Über-uns-Einstellungen gespeichert!', 'success');
+                }}
                 className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-bold flex items-center gap-2"
               >
                 <Save className="w-4 h-4" /> Speichern
               </button>
             </div>
           )}
-        </section>
+          </section>
         )}
+
 
         {/* Hosts */}
         {activeTab === 'hosts' && (
@@ -739,69 +836,6 @@ export default function Admin() {
           </section>
         )}
 
-        {/* SEO Section */}
-        {activeTab === 'seo' && (
-          <section className="mb-16 bg-white/5 p-8 rounded-3xl border border-white/10">
-            <h2 className="text-2xl font-bold uppercase italic mb-6 flex items-center gap-3">
-              <span className="w-8 h-1 bg-red-600" />
-              Suchmaschinenoptimierung (SEO)
-            </h2>
-            <div className="space-y-6">
-              <div>
-                <label className="block text-sm font-mono text-gray-400 mb-2">SEO Titel (Meta Title)</label>
-                <input 
-                  type="text" 
-                  value={seo.title} 
-                  onChange={e => setSeo({ ...seo, title: e.target.value })}
-                  className="w-full bg-[#141414] border border-white/10 rounded-lg p-3 text-white focus:border-red-500 outline-none"
-                  placeholder="Starting Grid - Der Formel-1-Podcast"
-                />
-                <p className="text-[10px] text-gray-500 mt-1">Empfohlen: 50-60 Zeichen</p>
-              </div>
-              <div>
-                <label className="block text-sm font-mono text-gray-400 mb-2">SEO Beschreibung (Meta Description)</label>
-                <textarea 
-                  value={seo.description} 
-                  onChange={e => setSeo({ ...seo, description: e.target.value })}
-                  className="w-full bg-[#141414] border border-white/10 rounded-lg p-3 text-white focus:border-red-500 outline-none h-32"
-                  placeholder="Alles rund um die Formel 1..."
-                />
-                <p className="text-[10px] text-gray-500 mt-1">Empfohlen: 150-160 Zeichen</p>
-              </div>
-              <div>
-                <label className="block text-sm font-mono text-gray-400 mb-2">Keywords (Kommagetrennt)</label>
-                <input 
-                  type="text" 
-                  value={seo.keywords} 
-                  onChange={e => setSeo({ ...seo, keywords: e.target.value })}
-                  className="w-full bg-[#141414] border border-white/10 rounded-lg p-3 text-white focus:border-red-500 outline-none"
-                  placeholder="Formel 1, Podcast, Motorsport, Racing"
-                />
-              </div>
-              <button 
-                onClick={async () => {
-                  if (!info) return;
-                  const updatedInfo = {
-                    ...info,
-                    seo_title: seo.title,
-                    seo_description: seo.description,
-                    seo_keywords: seo.keywords
-                  };
-                  await fetch('/api/podcast', {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(updatedInfo)
-                  });
-                  setInfo(updatedInfo);
-                  showNotification('SEO Einstellungen gespeichert!', 'success');
-                }}
-                className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-bold flex items-center gap-2"
-              >
-                <Save className="w-4 h-4" /> SEO Speichern
-              </button>
-            </div>
-          </section>
-        )}
       </div>
 
       {modalConfig && (
