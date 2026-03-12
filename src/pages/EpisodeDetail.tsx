@@ -169,34 +169,37 @@ export default function EpisodeDetail() {
 
 
           <div className="p-6 md:p-12 relative z-10">
-            <div className="flex flex-col gap-8 md:gap-12 items-start">
+            <div className="flex flex-col gap-6 md:gap-8 items-start">
 
-              {/* Meta Info */}
-              <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-[10px] md:text-sm font-mono text-f1red font-bold uppercase tracking-widest mb-4 w-full">
-                <span className="flex items-center gap-2">
-                  <Calendar className="w-3 h-3 md:w-4 h-4" />
-                  <span className="sm:hidden">
-                    {episode.published_at && format(new Date(episode.published_at), 'dd.MM.yyyy')}
-                  </span>
-                  <span className="hidden sm:inline">
-                    {episode.published_at && format(new Date(episode.published_at), 'dd. MMMM yyyy', { locale: de })}
-                  </span>
-                </span>
-                {episode.duration && (
-                  <>
-                    <span className="hidden sm:inline text-gray-600">|</span>
-                    <span className="flex items-center gap-2">
-                      <Timer className="w-3 h-3 md:w-4 h-4" />
-                      {formatDuration(episode.duration)}
+              {/* Header Section: Title and Meta */}
+              <div className="w-full">
+                {/* Title */}
+                <h1 className="font-display font-black text-3xl md:text-4xl lg:text-5xl uppercase tracking-tight text-transparent bg-clip-text bg-gradient-to-br from-white via-gray-200 to-gray-500 drop-shadow-lg mb-4 md:mb-6 w-full">
+                  {episode.title}
+                </h1>
+
+                {/* Meta Info */}
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-[10px] md:text-sm font-mono text-f1red font-bold uppercase tracking-widest">
+                  <span className="flex items-center gap-2">
+                    <Calendar className="w-3 h-3 md:w-4 h-4" />
+                    <span className="sm:hidden">
+                      {episode.published_at && format(new Date(episode.published_at), 'dd.MM.yyyy')}
                     </span>
-                  </>
-                )}
+                    <span className="hidden sm:inline">
+                      {episode.published_at && format(new Date(episode.published_at), 'dd. MMMM yyyy', { locale: de })}
+                    </span>
+                  </span>
+                  {episode.duration && (
+                    <>
+                      <span className="hidden sm:inline text-gray-600">|</span>
+                      <span className="flex items-center gap-2">
+                        <Timer className="w-3 h-3 md:w-4 h-4" />
+                        {formatDuration(episode.duration)}
+                      </span>
+                    </>
+                  )}
+                </div>
               </div>
-
-              {/* Title */}
-              <h1 className="font-display font-black text-3xl md:text-4xl lg:text-5xl uppercase tracking-tight text-transparent bg-clip-text bg-gradient-to-br from-white via-gray-200 to-gray-500 drop-shadow-lg mb-6 w-full">
-                {episode.title}
-              </h1>
 
               {/* Media Section: Image and Player/Platforms */}
               <div className="grid lg:grid-cols-2 gap-8 items-stretch w-full">
