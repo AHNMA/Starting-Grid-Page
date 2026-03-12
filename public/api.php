@@ -138,6 +138,7 @@ function ensureDatabaseInitialized($pdo) {
             audio_url VARCHAR(255),
             published_at DATE,
             is_hero BOOLEAN DEFAULT 0,
+            slug VARCHAR(255) UNIQUE,
             guid VARCHAR(255) UNIQUE,
             duration VARCHAR(50),
             image_url VARCHAR(255)
@@ -245,10 +246,27 @@ try {
             echo json_encode(["success" => true]);
             break;
 
+        // --- Episode by Slug ---
+        case (preg_match('/^episodes\/slug\/([^\/]+)$/', $endpoint, $matches) && $method === 'GET'):
+            $slug = $matches[1];
+            $stmt = $pdo->prepare("
+                SELECT id, title, description, audio_url, DATE_FORMAT(published_at, '%Y-%m-%d') as published_at, is_hero, duration, image_url, slug
+                FROM episodes WHERE slug = ?
+            ");
+            $stmt->execute([$slug]);
+            $episode = $stmt->fetch();
+            if ($episode) {
+                echo json_encode($episode);
+            } else {
+                http_response_code(404);
+                echo json_encode(["error" => "Episode not found"]);
+            }
+            break;
+
         // --- Episodes ---
         case ($endpoint === 'episodes' && $method === 'GET'):
             $stmt = $pdo->query("
-                SELECT id, title, description, audio_url, DATE_FORMAT(published_at, '%Y-%m-%d') as published_at, is_hero, duration, image_url
+                SELECT id, title, description, audio_url, DATE_FORMAT(published_at, '%Y-%m-%d') as published_at, is_hero, duration, image_url, slug
                 FROM episodes
                 ORDER BY published_at DESC
             ");
@@ -261,8 +279,8 @@ try {
             }
             $dateStr = !empty($inputData['published_at']) ? explode('T', $inputData['published_at'])[0] : null;
             $stmt = $pdo->prepare("
-                INSERT INTO episodes (title, description, audio_url, published_at, is_hero, image_url, duration)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO episodes (title, description, audio_url, published_at, is_hero, image_url, duration, slug)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             ");
             $stmt->execute([
                 $inputData['title'] ?? '',
@@ -271,7 +289,8 @@ try {
                 $dateStr,
                 !empty($inputData['is_hero']) ? 1 : 0,
                 $inputData['image_url'] ?? '',
-                $inputData['duration'] ?? ''
+                $inputData['duration'] ?? '',
+                ensureUniqueSlug($pdo, generateSlug($inputData['title'] ?? ''))
             ]);
             echo json_encode(["id" => $pdo->lastInsertId()]);
             break;
@@ -283,7 +302,7 @@ try {
             $dateStr = !empty($inputData['published_at']) ? explode('T', $inputData['published_at'])[0] : null;
             $stmt = $pdo->prepare("
                 UPDATE episodes
-                SET title = ?, description = ?, audio_url = ?, published_at = ?, is_hero = ?, image_url = ?, duration = ?
+                SET title = ?, description = ?, audio_url = ?, published_at = ?, is_hero = ?, image_url = ?, duration = ?, slug = ?
                 WHERE id = ?
             ");
             $stmt->execute([
@@ -294,6 +313,7 @@ try {
                 !empty($inputData['is_hero']) ? 1 : 0,
                 $inputData['image_url'] ?? '',
                 $inputData['duration'] ?? '',
+                ensureUniqueSlug($pdo, generateSlug($inputData['title'] ?? ''), $id),
                 $id
             ]);
             echo json_encode(["success" => true]);
@@ -389,10 +409,10 @@ try {
 
                 if (!$existing) {
                     $stmtIns = $pdo->prepare("
-                        INSERT INTO episodes (title, description, audio_url, published_at, is_hero, guid, duration)
-                        VALUES (?, ?, ?, ?, 0, ?, ?)
+                        INSERT INTO episodes (title, description, audio_url, published_at, is_hero, guid, duration, slug)
+                        VALUES (?, ?, ?, ?, 0, ?, ?, ?)
                     ");
-                    $stmtIns->execute([$title, $description, $audioUrl, $dateStr, $guid, $duration]);
+                    $stmtIns->execute([$title, $description, $audioUrl, $dateStr, $guid, $duration, ensureUniqueSlug($pdo, generateSlug($title))]);
                     $importedCount++;
                 } else {
                     $stmtUpd = $pdo->prepare("
