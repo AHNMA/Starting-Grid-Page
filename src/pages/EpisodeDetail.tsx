@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import DynamicEpisodeText from "../components/DynamicEpisodeText";
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Play, Pause, AlertCircle, Calendar, Timer, Headphones, Apple, Youtube, Rss } from 'lucide-react';
 import AnimatedBackground from '../components/AnimatedBackground';
@@ -6,28 +7,6 @@ import CustomPlayer from '../components/CustomPlayer';
 import { Episode, PodcastInfo, Platform } from '../types';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
-
-// Dynamic text rendering for description (reused from Home.tsx logic)
-function DynamicEpisodeText({ description, className = "" }: { description: string, className?: string }) {
-  // If description contains HTML tags
-  if (/<[a-z][\s\S]*>/i.test(description)) {
-    return (
-      <div
-        className={`prose prose-invert prose-p:text-gray-400 prose-a:text-f1red hover:prose-a:text-white transition-colors max-w-none [&>p]:mb-4 last:[&>p]:mb-0 ${className}`}
-        dangerouslySetInnerHTML={{ __html: description }}
-      />
-    );
-  }
-
-  // If plain text
-  return (
-    <div className={`space-y-4 text-gray-400 leading-relaxed ${className}`}>
-      {description.split('\n\n').map((paragraph, i) => (
-        <p key={i}>{paragraph}</p>
-      ))}
-    </div>
-  );
-}
 
 // Helper functions
 function formatDuration(duration: string | undefined): string {
