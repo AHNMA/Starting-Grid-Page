@@ -144,13 +144,6 @@ export default function EpisodeDetail() {
       {/* Main Content */}
       <main className="pt-32 pb-16 md:pb-32 px-4 sm:px-6 max-w-7xl mx-auto relative z-10 flex-1 w-full">
 
-        {/* Breadcrumb / Back Link (for mobile mostly) */}
-        <div className="mb-8 hidden sm:block">
-            <Link to="/" className="inline-flex items-center gap-2 text-f1red hover:text-white transition-colors font-mono text-sm uppercase tracking-wider">
-                <ArrowLeft className="w-4 h-4" /> Alle Episoden
-            </Link>
-        </div>
-
         <article className="bg-gradient-to-br from-f1gray to-f1dark border border-white/5 rounded-3xl overflow-hidden shadow-2xl relative">
 
 
@@ -160,6 +153,13 @@ export default function EpisodeDetail() {
 
               {/* Header Section: Title and Meta */}
               <div className="w-full">
+                {/* Breadcrumb / Back Link */}
+                <div className="mb-4 md:mb-6">
+                  <Link to="/" className="inline-flex items-center gap-2 text-f1red hover:text-white transition-colors font-mono text-sm uppercase tracking-wider">
+                    <ArrowLeft className="w-4 h-4" /> Alle Episoden
+                  </Link>
+                </div>
+
                 {/* Title */}
                 <h1 className="font-display font-black text-3xl md:text-4xl lg:text-5xl uppercase tracking-tight text-transparent bg-clip-text bg-gradient-to-br from-white via-gray-200 to-gray-500 drop-shadow-lg mb-4 md:mb-6 w-full">
                   {episode.title}
