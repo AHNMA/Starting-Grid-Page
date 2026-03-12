@@ -242,6 +242,43 @@ export default function EpisodeDetail() {
                     <div className="w-full min-w-0">
                       <CustomPlayer episode={episode} />
                     </div>
+
+                    {/* Platforms */}
+                    {platforms && platforms.length > 0 && (
+                      <div className="flex items-end justify-between gap-2 md:gap-4 w-full mt-6">
+                        {(Array.isArray(platforms) ? platforms : []).map(p => (
+                          <a
+                            key={p.id}
+                            href={p.url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="flex-1 h-10 md:h-16 bg-white/5 border border-white/10 flex items-center justify-center hover:bg-f1red hover:border-f1red transition-all group shadow-lg overflow-hidden rounded-xl min-w-0"
+                            title={p.name}
+                          >
+                            {p.icon_url ? (
+                              <div
+                                className="w-5 h-5 md:w-8 md:h-8 bg-gray-400 group-hover:bg-white transition-colors"
+                                style={{
+                                  WebkitMaskImage: `url(${p.icon_url})`,
+                                  WebkitMaskSize: 'contain',
+                                  WebkitMaskRepeat: 'no-repeat',
+                                  WebkitMaskPosition: 'center',
+                                  maskImage: `url(${p.icon_url})`,
+                                  maskSize: 'contain',
+                                  maskRepeat: 'no-repeat',
+                                  maskPosition: 'center',
+                                }}
+                                title={p.name}
+                              />
+                            ) : (
+                              <span className="text-gray-400 group-hover:text-white transition-colors">
+                                {getIcon(p.icon_name)}
+                              </span>
+                            )}
+                          </a>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
@@ -255,45 +292,7 @@ export default function EpisodeDetail() {
                     <DynamicEpisodeText description={episode.description} className="text-xs md:text-sm font-mono text-gray-300 leading-relaxed" />
                 </div>
 
-                {/* Platforms */}
-                {platforms && platforms.length > 0 && (
-                  <div className="mt-8 border-t border-white/10 pt-8 w-full">
-                    <h2 className="text-sm font-bold uppercase tracking-widest text-white/50 mb-6">Auf anderen Plattformen hören</h2>
-                    <div className="flex items-center gap-2 md:gap-4 w-full">
-                      {(Array.isArray(platforms) ? platforms : []).map(p => (
-                        <a
-                          key={p.id}
-                          href={p.url}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="flex-1 h-10 md:h-16 bg-white/5 border border-white/10 flex items-center justify-center hover:bg-f1red hover:border-f1red transition-all group shadow-lg overflow-hidden rounded-xl min-w-0"
-                          title={p.name}
-                        >
-                          {p.icon_url ? (
-                            <div
-                              className="w-5 h-5 md:w-8 md:h-8 bg-gray-400 group-hover:bg-white transition-colors"
-                              style={{
-                                WebkitMaskImage: `url(${p.icon_url})`,
-                                WebkitMaskSize: 'contain',
-                                WebkitMaskRepeat: 'no-repeat',
-                                WebkitMaskPosition: 'center',
-                                maskImage: `url(${p.icon_url})`,
-                                maskSize: 'contain',
-                                maskRepeat: 'no-repeat',
-                                maskPosition: 'center',
-                              }}
-                              title={p.name}
-                            />
-                          ) : (
-                            <span className="text-gray-400 group-hover:text-white transition-colors">
-                              {getIcon(p.icon_name)}
-                            </span>
-                          )}
-                        </a>
-                      ))}
-                    </div>
-                  </div>
-                )}
+
               </div>
 
             </div>
