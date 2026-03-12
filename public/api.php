@@ -48,6 +48,32 @@ if ($method === 'POST' || $method === 'PUT') {
 }
 
 // --- Helper Functions ---
+function generateSlug($string) {
+    // Basic slug generation
+    $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $string)));
+    return empty($slug) ? 'episode' : trim($slug, '-');
+}
+
+function ensureUniqueSlug($pdo, $slug, $excludeId = null) {
+    $originalSlug = $slug;
+    $count = 1;
+    while (true) {
+        if ($excludeId) {
+            $stmt = $pdo->prepare("SELECT COUNT(*) FROM episodes WHERE slug = ? AND id != ?");
+            $stmt->execute([$slug, $excludeId]);
+        } else {
+            $stmt = $pdo->prepare("SELECT COUNT(*) FROM episodes WHERE slug = ?");
+            $stmt->execute([$slug]);
+        }
+        if ($stmt->fetchColumn() == 0) {
+            break;
+        }
+        $slug = $originalSlug . '-' . $count;
+        $count++;
+    }
+    return $slug;
+}
+
 function getPathParam($endpoint, $prefix) {
     $pattern = '@^' . preg_quote($prefix, '@') . '/([^/]+)$@';
     if (preg_match($pattern, $endpoint, $matches)) {
