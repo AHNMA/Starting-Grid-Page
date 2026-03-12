@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Play, Pause, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Play, Pause, AlertCircle, Calendar, Timer } from 'lucide-react';
+import AnimatedBackground from '../components/AnimatedBackground';
+import CustomPlayer from '../components/CustomPlayer';
 import { Episode, PodcastInfo } from '../types';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
@@ -27,104 +29,46 @@ function DynamicEpisodeText({ description, className = "" }: { description: stri
   );
 }
 
-// Custom Player Component
-function CustomPlayer({ episode }: { episode: Episode }) {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const audioRef = useRef<HTMLAudioElement>(null);
-
-  useEffect(() => {
-    if (audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.play().catch(e => console.error("Error playing audio:", e));
-      } else {
-        audioRef.current.pause();
-      }
-    }
-  }, [isPlaying]);
-
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    const updateProgress = () => {
-      if (audio.duration) {
-        setProgress((audio.currentTime / audio.duration) * 100);
-      }
-    };
-
-    audio.addEventListener('timeupdate', updateProgress);
-    return () => audio.removeEventListener('timeupdate', updateProgress);
-  }, []);
-
-  const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const audio = audioRef.current;
-    if (audio) {
-      const newTime = (Number(e.target.value) / 100) * audio.duration;
-      audio.currentTime = newTime;
-      setProgress(Number(e.target.value));
-    }
-  };
-
-  return (
-    <div className="mt-8 bg-[#1a1a1a] rounded-xl p-4 sm:p-6 border border-white/5 shadow-2xl">
-      <div className="flex flex-col sm:flex-row items-center gap-6">
-        <button
-          onClick={(e) => {
-            e.preventDefault();
-            setIsPlaying(!isPlaying);
-          }}
-          className="w-16 h-16 shrink-0 flex items-center justify-center bg-f1red hover:bg-f1red-dark text-white rounded-full transition-all hover:scale-105 hover:shadow-[0_0_20px_rgba(225,6,0,0.4)]"
-        >
-          {isPlaying ? <Pause className="w-8 h-8" /> : <Play className="w-8 h-8 ml-1" />}
-        </button>
-
-        <div className="flex-1 w-full space-y-2">
-          <div className="flex justify-between text-xs font-mono text-gray-400 mb-2">
-            <span>{audioRef.current ? formatTime(audioRef.current.currentTime) : '0:00'}</span>
-            <span>{episode.duration ? formatDuration(episode.duration) : (audioRef.current?.duration ? formatTime(audioRef.current.duration) : '0:00')}</span>
-          </div>
-          <input
-            type="range"
-            min="0"
-            max="100"
-            value={progress}
-            onChange={handleSeek}
-            className="w-full h-2 bg-gray-800 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:bg-f1red [&::-webkit-slider-thumb]:rounded-full hover:[&::-webkit-slider-thumb]:scale-125 transition-all"
-            style={{
-              background: `linear-gradient(to right, #e10600 ${progress}%, #374151 ${progress}%)`
-            }}
-          />
-        </div>
-      </div>
-      <audio ref={audioRef} src={episode.audio_url} preload="metadata" />
-    </div>
-  );
-}
-
 // Helper functions
-function formatDuration(durationStr: string | undefined): string {
-  if (!durationStr) return '';
-  const parts = durationStr.split(':');
-  if (parts.length === 3) {
-    const hours = parseInt(parts[0], 10);
-    const mins = parseInt(parts[1], 10);
-    if (hours > 0) return `${hours} Std ${mins} Min`;
-    return `${mins} Min`;
-  } else if (parts.length === 2) {
-    return `${parseInt(parts[0], 10)} Min`;
+function formatDuration(duration: string | undefined): string {
+  if (!duration) return "";
+
+  let hours = 0;
+  let minutes = 0;
+  let seconds = 0;
+
+  if (duration.includes(':')) {
+    const parts = duration.split(':').map(Number);
+    if (parts.length === 3) {
+      [hours, minutes, seconds] = parts;
+    } else if (parts.length === 2) {
+      [minutes, seconds] = parts;
+    }
+  } else {
+    const totalSeconds = parseInt(duration, 10);
+    if (!isNaN(totalSeconds)) {
+      hours = Math.floor(totalSeconds / 3600);
+      minutes = Math.floor((totalSeconds % 3600) / 60);
+      seconds = totalSeconds % 60;
+    }
   }
-  return durationStr;
+
+  const parts = [];
+  if (hours > 0) {
+    parts.push(`${hours} Std.`);
+  }
+  if (minutes > 0) {
+    parts.push(`${minutes} Min.`);
+  }
+  if (hours === 0 && minutes === 0 && seconds > 0) {
+      parts.push(`${seconds} Sek.`);
+  }
+
+  return parts.join(' ') || duration;
 }
 
-function formatTime(seconds: number): string {
-  if (!seconds || isNaN(seconds)) return '0:00';
-  const h = Math.floor(seconds / 3600);
-  const m = Math.floor((seconds % 3600) / 60);
-  const s = Math.floor(seconds % 60);
-  if (h > 0) return `${h}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-  return `${m}:${s.toString().padStart(2, '0')}`;
-}
+
+
 
 export default function EpisodeDetail() {
   const { slug } = useParams<{ slug: string }>();
@@ -196,6 +140,7 @@ export default function EpisodeDetail() {
 
   return (
     <div className="min-h-screen bg-f1dark text-white font-sans selection:bg-f1red selection:text-white pb-24">
+      <AnimatedBackground />
       {/* Header Bar */}
       <header className="fixed top-0 w-full z-50 bg-f1dark/80 backdrop-blur-xl border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
@@ -203,7 +148,7 @@ export default function EpisodeDetail() {
              {info?.logo_image ? (
                 <img src={info.logo_image} alt="Logo" className="h-8 object-contain" />
               ) : (
-                <div className="text-2xl font-black italic tracking-tighter">
+                <div className="text-2xl font-display font-black tracking-tighter">
                   STARTING<span className="text-f1red">GRID</span>
                 </div>
               )}
@@ -215,7 +160,7 @@ export default function EpisodeDetail() {
       </header>
 
       {/* Main Content */}
-      <main className="pt-32 px-4 sm:px-6 max-w-5xl mx-auto">
+      <main className="pt-32 px-4 sm:px-6 max-w-5xl mx-auto relative z-10">
 
         {/* Breadcrumb / Back Link (for mobile mostly) */}
         <div className="mb-8 hidden sm:block">
@@ -224,7 +169,7 @@ export default function EpisodeDetail() {
             </Link>
         </div>
 
-        <article className="bg-[#141414] rounded-3xl border border-white/10 overflow-hidden shadow-2xl relative">
+        <article className="bg-gradient-to-br from-f1gray to-f1dark border border-white/5 rounded-3xl overflow-hidden shadow-2xl relative">
 
           {/* Subtle Background Glow based on F1 Red */}
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-f1red/10 blur-[100px] rounded-full pointer-events-none" />
@@ -256,21 +201,29 @@ export default function EpisodeDetail() {
               <div className="w-full md:w-2/3 flex flex-col pt-2 md:pt-4">
 
                 {/* Meta Info */}
-                <div className="flex flex-wrap items-center gap-4 text-xs font-mono tracking-widest text-f1red mb-4 uppercase">
-                  {episode.published_at && (
-                    <span className="bg-f1red/10 px-3 py-1.5 rounded-full border border-f1red/20">
-                      {format(new Date(episode.published_at), 'dd. MMMM yyyy', { locale: de })}
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-[10px] md:text-sm font-mono text-f1red font-bold uppercase tracking-widest mb-4">
+                  <span className="flex items-center gap-2">
+                    <Calendar className="w-3 h-3 md:w-4 h-4" />
+                    <span className="sm:hidden">
+                      {episode.published_at && format(new Date(episode.published_at), 'dd.MM.yyyy')}
                     </span>
-                  )}
+                    <span className="hidden sm:inline">
+                      {episode.published_at && format(new Date(episode.published_at), 'dd. MMMM yyyy', { locale: de })}
+                    </span>
+                  </span>
                   {episode.duration && (
-                    <span className="bg-white/5 px-3 py-1.5 rounded-full border border-white/10 text-gray-400">
-                      {formatDuration(episode.duration)}
-                    </span>
+                    <>
+                      <span className="hidden sm:inline text-gray-600">|</span>
+                      <span className="flex items-center gap-2">
+                        <Timer className="w-3 h-3 md:w-4 h-4" />
+                        {formatDuration(episode.duration)}
+                      </span>
+                    </>
                   )}
                 </div>
 
                 {/* Title */}
-                <h1 className="text-3xl md:text-4xl lg:text-5xl font-black uppercase tracking-tight leading-[1.1] mb-6 drop-shadow-lg">
+                <h1 className="font-display font-black text-3xl md:text-4xl lg:text-5xl uppercase tracking-tight text-transparent bg-clip-text bg-gradient-to-br from-white via-gray-200 to-gray-500 drop-shadow-lg mb-6">
                   {episode.title}
                 </h1>
 
