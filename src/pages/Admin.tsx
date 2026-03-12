@@ -641,7 +641,7 @@ export default function Admin() {
           <div className="space-y-6">
             {(Array.isArray(episodes) ? episodes : []).map(episode => (
               <div key={episode.id} className="p-6 border border-white/10 rounded-2xl bg-[#141414]">
-                <div className="grid md:grid-cols-2 gap-4 mb-4">
+                <div className="grid md:grid-cols-3 gap-4 mb-4">
                   <div>
                     <label className="block text-sm font-mono text-gray-400 mb-2">Titel</label>
                     <input 
@@ -649,6 +649,16 @@ export default function Admin() {
                       value={episode.title} 
                       onChange={e => setEpisodes((Array.isArray(episodes) ? episodes : []).map(ep => ep.id === episode.id ? { ...ep, title: e.target.value } : ep))}
                       className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:border-red-500 outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-mono text-gray-400 mb-2">URL Slug (Unterseite)</label>
+                    <input
+                      type="text"
+                      value={episode.slug || ''}
+                      onChange={e => setEpisodes((Array.isArray(episodes) ? episodes : []).map(ep => ep.id === episode.id ? { ...ep, slug: e.target.value } : ep))}
+                      className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:border-red-500 outline-none font-mono text-sm"
+                      placeholder="wird-automatisch-generiert"
                     />
                   </div>
                   <div>

@@ -334,7 +334,7 @@ try {
                 !empty($inputData['is_hero']) ? 1 : 0,
                 $inputData['image_url'] ?? '',
                 $inputData['duration'] ?? '',
-                ensureUniqueSlug($pdo, generateSlug($inputData['title'] ?? ''))
+                ensureUniqueSlug($pdo, !empty($inputData['slug']) ? generateSlug($inputData['slug']) : generateSlug($inputData['title'] ?? ''))
             ]);
             echo json_encode(["id" => $pdo->lastInsertId()]);
             break;
@@ -357,7 +357,7 @@ try {
                 !empty($inputData['is_hero']) ? 1 : 0,
                 $inputData['image_url'] ?? '',
                 $inputData['duration'] ?? '',
-                ensureUniqueSlug($pdo, generateSlug($inputData['title'] ?? ''), $id),
+                ensureUniqueSlug($pdo, !empty($inputData['slug']) ? generateSlug($inputData['slug']) : generateSlug($inputData['title'] ?? ''), $id),
                 $id
             ]);
             echo json_encode(["success" => true]);
