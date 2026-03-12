@@ -136,13 +136,13 @@ export default function EpisodeDetail() {
   const imageUrl = episode.image_url || info?.cover_image;
 
   return (
-    <div className="min-h-screen bg-f1dark text-white font-sans selection:bg-f1red selection:text-white pb-24">
+    <div className="min-h-screen bg-f1dark text-white font-sans selection:bg-f1red selection:text-white flex flex-col">
       <AnimatedBackground />
       {/* Header Bar */}
       <Header info={info} />
 
       {/* Main Content */}
-      <main className="pt-32 px-4 sm:px-6 max-w-7xl mx-auto relative z-10">
+      <main className="pt-32 pb-16 md:pb-32 px-4 sm:px-6 max-w-7xl mx-auto relative z-10 flex-1 w-full">
 
         {/* Breadcrumb / Back Link (for mobile mostly) */}
         <div className="mb-8 hidden sm:block">
