@@ -231,7 +231,7 @@ export default function EpisodeDetail() {
                 {/* Description */}
                 <div className="mt-4 border-t border-white/10 pt-8">
                     <h2 className="text-sm font-bold uppercase tracking-widest text-white/50 mb-6">Episoden-Notizen</h2>
-                    <DynamicEpisodeText description={episode.description} className="text-lg md:text-xl font-mono text-gray-300 leading-relaxed" />
+                    <DynamicEpisodeText description={episode.description} className="text-xs md:text-sm font-mono text-gray-300 leading-relaxed" />
                 </div>
               </div>
 
