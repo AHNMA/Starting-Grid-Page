@@ -292,7 +292,7 @@ try {
         // --- Episodes ---
         case ($endpoint === 'episodes' && $method === 'GET'):
             $stmt = $pdo->query("
-                SELECT id, title, description, audio_url, DATE_FORMAT(published_at, '%Y-%m-%d') as published_at, is_hero, duration, image_url
+                SELECT id, title, description, audio_url, DATE_FORMAT(published_at, '%Y-%m-%d') as published_at, is_hero, duration, image_url, slug
                 FROM episodes
                 ORDER BY published_at DESC
             ");
