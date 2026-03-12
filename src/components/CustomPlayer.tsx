@@ -222,7 +222,7 @@ export default function CustomPlayer({ episode }: CustomPlayerProps) {
 
   const playerContent = (
     <div className={`spotify-card ${isPinned && hasPlayed ? 'is-pinned' : ''}`}>
-      <audio ref={audioRef} src={episode.audio_url} preload="metadata" />
+
       
       <button 
         onClick={handleShare}
@@ -613,6 +613,7 @@ export default function CustomPlayer({ episode }: CustomPlayerProps) {
         .time-total { right: 0; }
       `}</style>
       
+      <audio ref={audioRef} src={episode.audio_url} preload="metadata" />
       <div ref={containerRef} className="w-full">
         {isPinned && hasPlayed 
           ? createPortal(playerContent, document.body) 
