@@ -127,7 +127,7 @@ function ArchiveEpisodeCard({ episode, info, platforms, index }: any) {
           {/* Description Section: Full Width */}
           <div className="w-full">
             <DynamicEpisodeText 
-              description={episode.description} stripFeedback={true}
+              description={episode.description} stripFeedback={true} maxParagraphs={2}
               className="text-xs md:text-sm text-gray-300 leading-relaxed font-mono"
             />
           </div>
