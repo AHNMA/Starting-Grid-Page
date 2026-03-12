@@ -3,6 +3,7 @@ import DynamicEpisodeText from "../components/DynamicEpisodeText";
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Play, Pause, AlertCircle, Calendar, Timer, Headphones, Apple, Youtube, Rss } from 'lucide-react';
 import AnimatedBackground from '../components/AnimatedBackground';
+import Header from '../components/Header';
 import CustomPlayer from '../components/CustomPlayer';
 import { Episode, PodcastInfo, Platform } from '../types';
 import { format } from 'date-fns';
@@ -137,22 +138,7 @@ export default function EpisodeDetail() {
     <div className="min-h-screen bg-f1dark text-white font-sans selection:bg-f1red selection:text-white pb-24">
       <AnimatedBackground />
       {/* Header Bar */}
-      <header className="fixed top-0 w-full z-50 bg-f1dark/80 backdrop-blur-xl border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-4 group">
-             {info?.logo_image ? (
-                <img src={info.logo_image} alt="Logo" className="h-8 object-contain" />
-              ) : (
-                <div className="text-2xl font-display font-black tracking-tighter">
-                  STARTING<span className="text-f1red">GRID</span>
-                </div>
-              )}
-          </Link>
-          <Link to="/" className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors font-bold uppercase text-xs tracking-widest">
-            <ArrowLeft className="w-4 h-4" /> Zurück
-          </Link>
-        </div>
-      </header>
+      <Header info={info} />
 
       {/* Main Content */}
       <main className="pt-32 px-4 sm:px-6 max-w-7xl mx-auto relative z-10">

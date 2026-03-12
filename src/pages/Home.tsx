@@ -4,12 +4,13 @@ import { motion, useMotionValue, useSpring, useTransform } from 'motion/react';
 import { Helmet } from 'react-helmet-async';
 import { PodcastInfo, Host, Episode, Platform } from '../types';
 import { FaXTwitter } from 'react-icons/fa6';
-import { Play, Calendar, Instagram, Headphones, Youtube, Apple, Rss, ChevronRight, Timer, Menu, X, ChevronDown, Mail, ArrowRight } from 'lucide-react';
+import { Play, Calendar, Instagram, Headphones, Youtube, Apple, Rss, ChevronRight, Timer, ChevronDown, Mail, ArrowRight } from 'lucide-react';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { Link } from 'react-router-dom';
 import CustomPlayer from '../components/CustomPlayer';
 import AnimatedBackground from '../components/AnimatedBackground';
+import Header from '../components/Header';
 
 function formatDuration(duration: string): string {
   if (!duration) return "";
@@ -194,8 +195,7 @@ export default function Home() {
   const [hosts, setHosts] = useState<Host[]>([]);
   const [episodes, setEpisodes] = useState<Episode[]>([]);
   const [platforms, setPlatforms] = useState<Platform[]>([]);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [visibleEpisodes, setVisibleEpisodes] = useState(3);
+    const [visibleEpisodes, setVisibleEpisodes] = useState(3);
 
   useEffect(() => {
     fetch('/api/podcast').then(r => r.json()).then(setInfo);
@@ -232,49 +232,7 @@ export default function Home() {
         <meta name="twitter:image" content={info?.social_image || info?.cover_image} />
       </Helmet>
       {/* Header */}
-      <header className="fixed top-0 w-full z-50 bg-f1dark/95 border-b-2 border-f1red shadow-lg">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 md:h-20 flex items-center justify-between">
-          <div className="flex items-center gap-3 md:gap-4 group cursor-pointer">
-            {info.logo_image ? (
-              <>
-                <img src={info.logo_image} alt="Starting Grid Logo" className="hidden md:block h-8 md:h-10 object-contain group-hover:scale-105 transition-transform duration-300" />
-                <h1 className="md:hidden text-2xl font-display font-black tracking-wide uppercase italic mt-1">Starting Grid</h1>
-              </>
-            ) : (
-              <>
-                {info.cover_image ? (
-                  <img src={info.cover_image} alt="Logo" className="hidden md:block h-10 w-10 md:h-12 md:w-12 rounded-full object-cover border-2 border-f1red group-hover:scale-110 transition-transform duration-300" />
-                ) : (
-                  <div className="hidden md:block h-10 w-10 md:h-12 md:w-12 rounded-full border-2 border-f1red bg-white/10" />
-                )}
-                <h1 className="text-2xl md:text-3xl font-display font-black tracking-wide uppercase italic mt-1">Starting Grid</h1>
-              </>
-            )}
-          </div>
-          <nav className="hidden md:flex gap-8 text-sm font-display font-bold uppercase tracking-widest text-gray-400">
-            <a href="#hero" className="hover:text-white hover:text-shadow-glow transition-all">Aktuelle Ausgabe</a>
-            <a href="#about" className="hover:text-white hover:text-shadow-glow transition-all">Der Podcast</a>
-            <a href="#hosts" className="hover:text-white hover:text-shadow-glow transition-all">Unsere Hosts</a>
-            <a href="#episodes" className="hover:text-white hover:text-shadow-glow transition-all">Archiv</a>
-          </nav>
-          <button 
-            className="md:hidden text-white p-2"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          >
-            {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
-        </div>
-        
-        {/* Mobile Menu */}
-        {isMobileMenuOpen && (
-          <div className="md:hidden bg-f1dark border-b border-white/10 px-4 py-4 flex flex-col gap-4 font-display font-bold uppercase tracking-widest text-lg">
-            <a href="#hero" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-f1red transition-colors">Aktuelle Ausgabe</a>
-            <a href="#about" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-f1red transition-colors">Der Podcast</a>
-            <a href="#hosts" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-f1red transition-colors">Unsere Hosts</a>
-            <a href="#episodes" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-f1red transition-colors">Archiv</a>
-          </div>
-        )}
-      </header>
+      <Header info={info} />
 
       {/* Hero Section */}
       <section id="hero" className="pt-24 pb-6 md:pt-32 md:pb-10 px-4 sm:px-6 relative overflow-hidden min-h-[85vh] md:min-h-[90vh] flex items-center">
