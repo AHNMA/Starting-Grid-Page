@@ -315,10 +315,21 @@ try {
         case ($endpoint === 'admin/rss-import' && $method === 'POST'):
             $rssUrl = 'https://meinsportpodcast.de/motorsport/starting-grid/feed/';
 
-            // Allow suppressing warnings during XML fetch to catch errors manually
-            $xmlString = @file_get_contents($rssUrl);
-            if ($xmlString === false) {
-                 throw new Exception("Fehler beim Abrufen des RSS-Feeds.");
+            // Fetch RSS using cURL to bypass potential User-Agent blocks (like Cloudflare)
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $rssUrl);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+            curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36');
+
+            $xmlString = curl_exec($ch);
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            $curlError = curl_error($ch);
+            curl_close($ch);
+
+            if ($xmlString === false || $httpCode !== 200) {
+                 throw new Exception("Fehler beim Abrufen des RSS-Feeds. HTTP Code: $httpCode, cURL Error: $curlError");
             }
 
             $xml = @simplexml_load_string($xmlString, 'SimpleXMLElement', LIBXML_NOCDATA);
