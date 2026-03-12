@@ -18,14 +18,10 @@ export default function DynamicEpisodeText({
     if (!description) return '';
     if (typeof window === 'undefined') return description;
 
-    // If it's pure text (no HTML tags), wrap paragraphs so it renders nicely
-    let workingDescription = description;
-    if (!/<[a-z][\s\S]*>/i.test(workingDescription)) {
-        workingDescription = workingDescription
-          .split('\n\n')
-          .map(p => `<p>${p}</p>`)
-          .join('');
-    }
+    // Convert raw text newlines to <br> tags so they render correctly, even when mixed with HTML.
+    let workingDescription = description.replace(/\r\n/g, '\n');
+    workingDescription = workingDescription.replace(/\n\n+/g, '<br /><br />');
+    workingDescription = workingDescription.replace(/\n/g, '<br />');
 
     if (!stripFeedback) return workingDescription;
 
