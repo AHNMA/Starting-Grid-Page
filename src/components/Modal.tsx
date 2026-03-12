@@ -1,4 +1,5 @@
 import { X } from 'lucide-react';
+import { createPortal } from 'react-dom';
 
 interface ModalProps {
   isOpen: boolean;
@@ -13,9 +14,9 @@ interface ModalProps {
 export default function Modal({ isOpen, onClose, onConfirm, title, message, confirmText = 'Bestätigen', cancelText = 'Abbrechen' }: ModalProps) {
   if (!isOpen) return null;
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <div className="bg-[#141414] border border-white/10 rounded-xl p-6 w-full max-w-md shadow-2xl relative">
+  return createPortal(
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+      <div className="bg-[#1a1a1a] border border-white/20 rounded-xl p-6 w-full max-w-md shadow-2xl relative z-[10000]">
         <button 
           onClick={onClose}
           className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
@@ -41,6 +42,7 @@ export default function Modal({ isOpen, onClose, onConfirm, title, message, conf
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
