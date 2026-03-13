@@ -20,7 +20,16 @@ export default function Admin() {
   const [isUploadingMedia, setIsUploadingMedia] = useState(false);
   
   const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
-  const [modalConfig, setModalConfig] = useState<{ isOpen: boolean; title: string; message: string; onConfirm: () => void; confirmText?: string } | null>(null);
+  const [modalConfig, setModalConfig] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    onConfirm: (val?: string) => void;
+    confirmText?: string;
+    inputMode?: boolean;
+    inputValue?: string;
+    onInputChange?: (value: string) => void;
+  } | null>(null);
   const [mediaSelectorTarget, setMediaSelectorTarget] = useState<{ type: string; id?: number } | null>(null);
 
   const showNotification = (message: string, type: 'success' | 'error' = 'success') => {
@@ -178,26 +187,42 @@ export default function Admin() {
   };
 
   const handleRenameMedia = async (file: MediaFile) => {
-    const newName = window.prompt(`Neuer Dateiname für "${file.name}":`, file.name);
-    if (!newName || newName === file.name) return;
+    setModalConfig({
+      isOpen: true,
+      title: 'Bild umbenennen',
+      message: `Neuer Dateiname für "${file.name}":`,
+      inputMode: true,
+      inputValue: file.name,
+      confirmText: 'Umbenennen',
+      onInputChange: (val: string) => {
+        setModalConfig((prev) => prev ? { ...prev, inputValue: val } : null);
+      },
+      onConfirm: async (val?: string) => {
+        if (!val || val === file.name) {
+          setModalConfig(null);
+          return;
+        }
 
-    try {
-      const res = await fetch('/api/media', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ oldName: file.name, newName })
-      });
-
-      const data = await res.json();
-      if (res.ok && data.success) {
-        showNotification('Bild erfolgreich umbenannt', 'success');
-        fetchAllData();
-      } else {
-        throw new Error(data.error || 'Fehler beim Umbenennen');
+        try {
+          const res = await fetch('/api/media', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ oldName: file.name, newName: val })
+          });
+          const data = await res.json();
+          if (res.ok && data.success) {
+            showNotification('Bild erfolgreich umbenannt', 'success');
+            fetchAllData();
+          } else {
+            throw new Error(data.error || 'Fehler beim Umbenennen');
+          }
+        } catch (error: any) {
+          showNotification(error.message, 'error');
+        } finally {
+          setModalConfig(null);
+        }
       }
-    } catch (error: any) {
-      showNotification(error.message, 'error');
-    }
+    });
   };
 
 
@@ -1149,6 +1174,9 @@ export default function Admin() {
           confirmText={modalConfig.confirmText}
           onClose={() => setModalConfig(null)}
           onConfirm={modalConfig.onConfirm}
+          inputMode={modalConfig.inputMode}
+          inputValue={modalConfig.inputValue}
+          onInputChange={modalConfig.onInputChange}
         />
       )}
 
