@@ -11,3 +11,13 @@
 8:00:36 AM [vite] (client) page reload vite_output.txt
 8:01:32 AM [vite] (client) page reload verify_impressum.spec.ts
 8:01:32 AM [vite] (client) page reload vite_output.txt
+8:10:59 AM [vite] (client) hmr update /src/pages/Admin.tsx, /src/index.css
+8:10:59 AM [vite] (client) page reload vite_output.txt
+8:11:11 AM [vite] (client) hmr update /src/pages/Admin.tsx, /src/index.css
+8:11:11 AM [vite] (client) page reload vite_output.txt
+8:11:55 AM [vite] (client) hmr update /src/pages/Admin.tsx, /src/index.css
+8:11:55 AM [vite] (client) page reload vite_output.txt
+8:11:57 AM [vite] (client) hmr update /src/pages/Admin.tsx, /src/index.css
+8:11:57 AM [vite] (client) page reload vite_output.txt
+8:12:38 AM [vite] (client) hmr update /src/pages/Admin.tsx, /src/index.css
+8:12:38 AM [vite] (client) page reload vite_output.txt
