@@ -754,6 +754,16 @@ export default function Admin() {
                 />
               </div>
 
+              <div className="md:col-span-2">
+                <label className="block text-sm font-mono text-gray-400 mb-2">Datenschutz (Unterstützt Markdown & HTML)</label>
+                <textarea
+                  value={info.privacy_text || ''}
+                  onChange={e => setInfo({ ...info, privacy_text: e.target.value })}
+                  className="w-full bg-[#141414] border border-white/10 rounded-lg p-3 text-white focus:border-red-500 outline-none h-48 font-mono text-sm"
+                  placeholder="# Datenschutzerklärung&#10;&#10;Wir nehmen den Schutz Ihrer persönlichen Daten sehr ernst..."
+                />
+              </div>
+
               <button
                 onClick={async () => {
                   if (!info) return;
