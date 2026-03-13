@@ -9,7 +9,27 @@ export default function Footer() {
         </div>
         <span className="font-display font-bold text-xl uppercase tracking-widest">Starting Grid</span>
       </div>
-      <p>© {new Date().getFullYear()} Starting Grid - Der Formel-1-Podcast. Alle Rechte vorbehalten.</p>
+      <p>
+        Dieser Podcast wird vermarktet von der{' '}
+        <a
+          href="https://www.podcastbu.de/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-f1red transition-colors hover:text-white"
+        >
+          Podcastbude
+        </a>
+        . Starting Grid ist ein Produkt von{' '}
+        <a
+          href="https://meinsportpodcast.de/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-f1red transition-colors hover:text-white"
+        >
+          meinsportpodcast.de
+        </a>{' '}
+        © {new Date().getFullYear()}
+      </p>
       <Link to="/admin" className="text-f1red/50 hover:text-f1red transition-colors uppercase tracking-widest text-xs border border-f1red/20 px-4 py-2 rounded hover:bg-f1red/10">
         Telemetrie Zugang (Admin)
       </Link>
