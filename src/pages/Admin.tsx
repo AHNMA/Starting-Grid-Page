@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
-import { PodcastInfo, Host, Episode, Platform } from '../types';
-import { Save, Plus, Trash2, Edit2, Check, X, Upload, Settings, Users, Mic, Rss } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { PodcastInfo, Host, Episode, Platform, MediaFile } from '../types';
+import { Save, Plus, Trash2, Edit2, Check, X, Upload, Settings, Users, Mic, Rss, Image as LucideImage, RefreshCw, ArrowUpCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Modal from '../components/Modal';
 import Notification from '../components/Notification';
@@ -13,7 +13,9 @@ export default function Admin() {
 
 
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'info' | 'about' | 'hosts' | 'episodes' | 'platforms'>('info');
+  const [activeTab, setActiveTab] = useState<'info' | 'about' | 'hosts' | 'episodes' | 'platforms' | 'media'>('info');
+  const [mediaFiles, setMediaFiles] = useState<MediaFile[]>([]);
+  const [isUploadingMedia, setIsUploadingMedia] = useState(false);
   
   const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [modalConfig, setModalConfig] = useState<{ isOpen: boolean; title: string; message: string; onConfirm: () => void; confirmText?: string } | null>(null);
@@ -67,24 +69,134 @@ export default function Admin() {
     }
   };
 
-  useEffect(() => {
-    Promise.all([
-      fetch('/api/podcast').then(r => r.json()),
-      fetch('/api/hosts').then(r => r.json()),
-      fetch('/api/episodes').then(r => r.json()),
-      fetch('/api/platforms').then(r => r.json())
-    ]).then(([i, h, e, p]) => {
+  const loadMedia = async () => {
+    try {
+      const res = await fetch('/api/media');
+      if (res.ok) {
+        const data = await res.json();
+        setMediaFiles(data);
+      }
+    } catch (error) {
+      console.error('Failed to load media files:', error);
+    }
+  };
+
+  const fetchAllData = async () => {
+    try {
+      const [i, h, e, p] = await Promise.all([
+        fetch('/api/podcast').then(r => r.json()),
+        fetch('/api/hosts').then(r => r.json()),
+        fetch('/api/episodes').then(r => r.json()),
+        fetch('/api/platforms').then(r => r.json()),
+        loadMedia()
+      ]);
+
       setInfo(i);
       setHosts(Array.isArray(h) ? h : []);
       setEpisodes(e);
       setPlatforms(Array.isArray(p) ? p : []);
-
-      setLoading(false);
-    }).catch(err => {
+    } catch (err) {
       console.error(err);
+    } finally {
       setLoading(false);
-    });
+    }
+  };
+
+  useEffect(() => {
+    fetchAllData();
   }, []);
+
+
+  // --- Media Center Handlers ---
+  const handleMediaUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploadingMedia(true);
+    const formData = new FormData();
+    formData.append('image', file);
+
+    try {
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        showNotification('Bild erfolgreich hochgeladen', 'success');
+        loadMedia(); // Reload media
+      } else {
+        throw new Error(data.error || 'Upload failed');
+      }
+    } catch (error: any) {
+      showNotification(error.message || 'Fehler beim Upload', 'error');
+    } finally {
+      setIsUploadingMedia(false);
+      e.target.value = '';
+    }
+  };
+
+  const deleteMedia = async (filename: string) => {
+    try {
+      const res = await fetch('/api/media', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ filename })
+      });
+
+      if (res.ok) {
+        showNotification('Bild gelöscht', 'success');
+        loadMedia();
+      } else {
+        const err = await res.json();
+        throw new Error(err.error || 'Fehler beim Löschen');
+      }
+    } catch (error: any) {
+      showNotification(error.message, 'error');
+    }
+  };
+
+  const confirmDeleteMedia = (file: MediaFile) => {
+    const message = file.inUse
+      ? `Achtung: Das Bild "${file.name}" wird aktuell verwendet. Wenn du es löschst, wird es an den entsprechenden Stellen auf der Webseite fehlen. Möchtest du es wirklich löschen?`
+      : `Möchtest du das Bild "${file.name}" wirklich löschen?`;
+
+    setModalConfig({
+      isOpen: true,
+      title: 'Bild löschen',
+      message,
+      confirmText: 'Löschen',
+      onConfirm: () => {
+        deleteMedia(file.name);
+        setModalConfig(null);
+      }
+    });
+  };
+
+  const handleRenameMedia = async (file: MediaFile) => {
+    const newName = window.prompt(`Neuer Dateiname für "${file.name}":`, file.name);
+    if (!newName || newName === file.name) return;
+
+    try {
+      const res = await fetch('/api/media', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ oldName: file.name, newName })
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success) {
+        showNotification('Bild erfolgreich umbenannt', 'success');
+        fetchAllData();
+      } else {
+        throw new Error(data.error || 'Fehler beim Umbenennen');
+      }
+    } catch (error: any) {
+      showNotification(error.message, 'error');
+    }
+  };
+
 
   const handleSaveInfo = async () => {
     if (!info) return;
@@ -305,6 +417,15 @@ export default function Admin() {
             <Upload className="w-5 h-5" />
             Plattformen
           </button>
+
+          <button
+            onClick={() => setActiveTab('media')}
+            className={`flex items-center gap-2 px-6 py-4 font-bold uppercase tracking-widest whitespace-nowrap transition-colors ${activeTab === 'media' ? 'border-b-2 border-red-600 text-red-500' : 'text-gray-400 hover:text-white'}`}
+          >
+            <LucideImage className="w-4 h-4" />
+            Media
+          </button>
+
         </div>
 
         {/* Website Settings */}
@@ -843,6 +964,90 @@ export default function Admin() {
             </div>
           </section>
         )}
+
+
+        {/* --- Media Center Tab --- */}
+        {activeTab === 'media' && (
+          <section className="space-y-8 animate-fade-in">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+              <div>
+                <h2 className="text-2xl font-bold uppercase tracking-wider mb-1">Media Center</h2>
+                <p className="text-gray-400">Verwalte alle hochgeladenen Bilder im Ordner "upload".</p>
+              </div>
+              <div className="relative">
+                <input
+                  type="file"
+                  accept="image/*"
+                  id="media-upload"
+                  className="hidden"
+                  onChange={handleMediaUpload}
+                  disabled={isUploadingMedia}
+                />
+                <label
+                  htmlFor="media-upload"
+                  className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 font-bold uppercase tracking-wider transition-colors cursor-pointer group"
+                >
+                  {isUploadingMedia ? <RefreshCw className="w-4 h-4 animate-spin" /> : <ArrowUpCircle className="w-4 h-4 transition-transform group-hover:-translate-y-1" />}
+                  {isUploadingMedia ? 'Lädt...' : 'Bild hochladen'}
+                </label>
+              </div>
+            </div>
+
+            {mediaFiles.length === 0 ? (
+              <div className="p-12 text-center bg-zinc-900/50 border border-red-600/20">
+                <p className="text-gray-400">Keine Bilder im Upload-Ordner gefunden.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+                {mediaFiles.map((file) => (
+                  <div key={file.name} className="bg-zinc-900 border border-zinc-800 hover:border-red-600/50 transition-colors group relative flex flex-col">
+
+                    {/* Visual indicator for 'in use' */}
+                    <div
+                      className={`absolute top-2 right-2 z-10 w-3 h-3 rounded-full ${file.inUse ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.6)]'}`}
+                      title={file.inUse ? 'Wird aktuell verwendet' : 'Nicht in Verwendung'}
+                    ></div>
+
+                    <div className="aspect-square relative overflow-hidden bg-zinc-950 p-2 flex items-center justify-center">
+                      <img
+                        src={file.url}
+                        alt={file.name}
+                        className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-500"
+                      />
+                    </div>
+
+                    <div className="p-3 flex flex-col flex-1">
+                      <div className="text-xs text-gray-300 truncate mb-1" title={file.name}>
+                        {file.name}
+                      </div>
+                      <div className="text-[10px] text-gray-500 mb-3">
+                        {(file.size / 1024).toFixed(1)} KB • {new Date(file.modified * 1000).toLocaleDateString()}
+                      </div>
+
+                      <div className="flex justify-between items-center mt-auto">
+                        <button
+                          onClick={() => handleRenameMedia(file)}
+                          className="p-1.5 text-gray-400 hover:text-white hover:bg-zinc-800 transition-colors rounded"
+                          title="Umbenennen"
+                        >
+                          <Edit2 className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          onClick={() => confirmDeleteMedia(file)}
+                          className="p-1.5 text-red-500 hover:text-white hover:bg-red-600 transition-colors rounded"
+                          title="Löschen"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+        )}
+
 
       </div>
 

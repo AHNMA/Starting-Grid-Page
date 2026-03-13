@@ -44,3 +44,11 @@ export interface Platform {
   icon_url?: string;
   display_order?: number;
 }
+
+export interface MediaFile {
+  name: string;
+  url: string;
+  size: number;
+  modified: number;
+  inUse: boolean;
+}
