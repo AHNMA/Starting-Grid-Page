@@ -785,6 +785,15 @@ export default function Admin() {
                 />
               </div>
               <div>
+                <label className="block text-sm font-mono text-gray-400 mb-2">Impressum (Unterstützt Markdown & HTML)</label>
+                <textarea
+                  value={info.imprint_text || ''}
+                  onChange={e => setInfo({ ...info, imprint_text: e.target.value })}
+                  className="w-full bg-[#141414] border border-white/10 rounded-lg p-3 text-white focus:border-red-500 outline-none h-48 font-mono text-sm"
+                  placeholder="# Impressum&#10;&#10;Angaben gemäß § 5 TMG..."
+                />
+              </div>
+              <div>
                 <label className="block text-sm font-mono text-gray-400 mb-2">Über uns Bild URL</label>
                 <div className="flex gap-2">
                   <input 

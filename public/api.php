@@ -202,9 +202,20 @@ function ensureDatabaseInitialized($pdo) {
             seo_description TEXT,
             seo_keywords TEXT,
             favicon_image VARCHAR(255),
-            social_image VARCHAR(255)
+            social_image VARCHAR(255),
+            imprint_text TEXT
           )
         ");
+
+        // Add imprint_text column to existing podcast_info table if it doesn't exist
+        try {
+            $stmt = $pdo->query("SHOW COLUMNS FROM podcast_info LIKE 'imprint_text'");
+            if ($stmt->rowCount() === 0) {
+                $pdo->exec("ALTER TABLE podcast_info ADD COLUMN imprint_text TEXT");
+            }
+        } catch (PDOException $e) {
+            // Ignore if table doesn't exist yet
+        }
 
         $pdo->exec("
           CREATE TABLE IF NOT EXISTS hosts (
@@ -267,8 +278,8 @@ function ensureDatabaseInitialized($pdo) {
 
         if ($count == 0) {
              $pdo->exec("
-                INSERT INTO podcast_info (id, title, description, cover_image, logo_image, about_text, about_image, favicon_image, social_image)
-                VALUES (1, 'Starting Grid - Der Formel-1-Podcast', 'Der wöchentliche Formel-1-Podcast mit Kevin Scheuren und Dennis Lewandowski. Wir besprechen alles rund um die Königsklasse des Motorsports.', 'https://storage.googleapis.com/aistudio-user-content-prod-eu-west2/0b4d4559-4592-4217-91a0-5e36746f3d9b/startinggrid_logo.png', '', 'Wir sind Starting Grid, der Formel-1-Podcast. Hier gibt es jede Woche die neuesten Infos, Analysen und Meinungen zur Königsklasse des Motorsports.', '', '', '')
+                INSERT INTO podcast_info (id, title, description, cover_image, logo_image, about_text, about_image, favicon_image, social_image, imprint_text)
+                VALUES (1, 'Starting Grid - Der Formel-1-Podcast', 'Der wöchentliche Formel-1-Podcast mit Kevin Scheuren und Dennis Lewandowski. Wir besprechen alles rund um die Königsklasse des Motorsports.', 'https://storage.googleapis.com/aistudio-user-content-prod-eu-west2/0b4d4559-4592-4217-91a0-5e36746f3d9b/startinggrid_logo.png', '', 'Wir sind Starting Grid, der Formel-1-Podcast. Hier gibt es jede Woche die neuesten Infos, Analysen und Meinungen zur Königsklasse des Motorsports.', '', '', '', '# Impressum\\n\\nHier steht das Impressum.')
              ");
 
              $pdo->exec("
@@ -349,7 +360,7 @@ try {
         case ($endpoint === 'podcast' && $method === 'PUT'):
             $stmt = $pdo->prepare("
                 UPDATE podcast_info
-                SET title = ?, description = ?, cover_image = ?, logo_image = ?, about_text = ?, about_image = ?, seo_title = ?, seo_description = ?, seo_keywords = ?, favicon_image = ?, social_image = ?
+                SET title = ?, description = ?, cover_image = ?, logo_image = ?, about_text = ?, about_image = ?, seo_title = ?, seo_description = ?, seo_keywords = ?, favicon_image = ?, social_image = ?, imprint_text = ?
                 WHERE id = 1
             ");
             $stmt->execute([
@@ -363,7 +374,8 @@ try {
                 $inputData['seo_description'] ?? '',
                 $inputData['seo_keywords'] ?? '',
                 $inputData['favicon_image'] ?? '',
-                $inputData['social_image'] ?? ''
+                $inputData['social_image'] ?? '',
+                $inputData['imprint_text'] ?? ''
             ]);
             echo json_encode(["success" => true]);
             break;
