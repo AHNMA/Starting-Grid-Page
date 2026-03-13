@@ -95,7 +95,7 @@ function ArchiveEpisodeCard({ episode, info, platforms, index }: any) {
           {/* Header Section: Title and Meta */}
           <div className="w-full">
             {/* Title */}
-            <Link to={`/episode/${episode.slug}`} className="group block mb-4 md:mb-6">
+            <Link to={`/episode/${episode.slug}`} className="group block mb-0 md:mb-6">
               <h4 className="font-display font-black text-2xl md:text-3xl lg:text-4xl uppercase tracking-tight text-transparent bg-clip-text bg-gradient-to-br from-white via-gray-200 to-gray-500 drop-shadow-lg group-hover:bg-none group-hover:text-f1red transition-colors">
                 {episode.title}
               </h4>
@@ -255,7 +255,7 @@ export default function Home() {
                   Aktuelle Ausgabe
                 </div>
                 <Link to={heroEpisode ? `/episode/${heroEpisode.slug}` : '#'} className="group block">
-                  <h2 className="font-display font-black text-3xl sm:text-4xl md:text-5xl lg:text-6xl uppercase leading-none tracking-tight transform -skew-x-6 mb-4 md:mb-6 text-transparent bg-clip-text bg-gradient-to-br from-white via-gray-200 to-gray-500 drop-shadow-2xl py-2 group-hover:bg-none group-hover:text-f1red transition-colors">
+                  <h2 className="font-display font-black text-3xl sm:text-4xl md:text-5xl lg:text-6xl uppercase leading-none tracking-tight transform -skew-x-6 mb-0 md:mb-6 text-transparent bg-clip-text bg-gradient-to-br from-white via-gray-200 to-gray-500 drop-shadow-2xl py-2 group-hover:bg-none group-hover:text-f1red transition-colors">
                     {heroEpisode?.title || "Keine Episode"}
                   </h2>
                 </Link>
