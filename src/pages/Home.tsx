@@ -236,10 +236,10 @@ export default function Home() {
       <Header info={info} />
 
       {/* Hero Section */}
-      <section id="hero" className="pt-24 pb-16 md:pt-32 md:pb-32 px-4 sm:px-6 relative overflow-hidden">
+      <section id="hero" className="pt-20 pb-16 md:pt-32 md:pb-32 px-4 sm:px-6 relative overflow-hidden">
         <AnimatedBackground opacity={0.8} />
 
-        <div className="max-w-7xl mx-auto w-full mt-8 md:mt-0">
+        <div className="max-w-7xl mx-auto w-full mt-2 md:mt-0">
           <div className="relative w-full bg-gradient-to-br from-f1gray to-f1dark border border-white/5 p-5 md:p-12 lg:p-16 rounded-xl overflow-hidden">
             
             <div className="flex flex-col gap-6 md:gap-8 relative z-10">
