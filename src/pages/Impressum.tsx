@@ -68,7 +68,7 @@ export default function Impressum() {
                   </h1>
                 </div>
 
-                <div className="prose prose-invert prose-p:text-gray-300 prose-a:text-f1red hover:prose-a:text-red-400 prose-a:no-underline prose-headings:font-display prose-headings:uppercase prose-headings:tracking-wider prose-headings:text-white prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl prose-li:text-gray-300 prose-strong:text-white max-w-none font-mono">
+                <div className="prose prose-invert prose-p:text-gray-300 prose-a:text-f1red hover:prose-a:text-red-400 prose-a:no-underline prose-headings:font-display prose-headings:uppercase prose-headings:tracking-wider prose-headings:text-white prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl prose-li:text-gray-300 prose-strong:text-white max-w-none font-mono whitespace-pre-wrap">
                   {info?.imprint_text ? (
                     <ReactMarkdown
                       remarkPlugins={[remarkGfm, remarkBreaks]}

@@ -487,8 +487,7 @@ export default function Home() {
                       <div className="flex gap-3">
                         {host.twitter_url && (
                           <a href={host.twitter_url} target="_blank" rel="noreferrer" className="w-12 h-12 md:w-14 md:h-14 bg-white/5 border border-white/10 flex items-center justify-center hover:bg-f1red hover:border-f1red transition-all group shadow-lg overflow-hidden rounded-xl">
-                            {/* @ts-expect-error type issue */}
-<FaXTwitter className="w-5 h-5 md:w-6 md:h-6 text-gray-400 group-hover:text-white transition-colors" />
+                            <FaXTwitter className="w-5 h-5 md:w-6 md:h-6 text-gray-400 group-hover:text-white transition-colors" />
                           </a>
                         )}
                         {host.instagram_url && (

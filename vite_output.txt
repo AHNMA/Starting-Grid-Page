@@ -18,3 +18,9 @@
 8:44:26 AM [vite] (client) page reload vite_output.txt
 8:45:35 AM [vite] (client) hmr update /src/pages/Impressum.tsx, /src/index.css
 8:45:35 AM [vite] (client) page reload vite_output.txt
+9:04:08 AM [vite] (client) hmr update /src/pages/Impressum.tsx, /src/index.css
+9:04:08 AM [vite] (client) page reload vite_output.txt
+9:06:36 AM [vite] (client) hmr update /src/components/CustomPlayer.tsx, /src/index.css
+9:06:36 AM [vite] (client) page reload vite_output.txt
+9:06:42 AM [vite] (client) hmr update /src/pages/Home.tsx, /src/index.css
+9:06:42 AM [vite] (client) page reload vite_output.txt

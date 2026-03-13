@@ -261,8 +261,7 @@ export default function CustomPlayer({ episode }: CustomPlayerProps) {
                 className="flex flex-col items-center gap-2 group"
               >
                 <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-f1red transition-colors">
-                  {/* @ts-expect-error type issue */}
-<FaXTwitter className="w-5 h-5 text-white" />
+                  <FaXTwitter className="w-5 h-5 text-white" />
                 </div>
                 <span className="text-[10px] uppercase font-bold text-gray-400 group-hover:text-white">X</span>
               </button>
