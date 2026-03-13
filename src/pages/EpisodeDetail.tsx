@@ -140,6 +140,19 @@ export default function EpisodeDetail() {
     <div className="min-h-screen bg-f1dark text-white font-sans selection:bg-f1red selection:text-white flex flex-col">
       <Helmet>
         <title>{`Starting Grid – Der Formel-1-Podcast - ${episode.title}`}</title>
+        <meta name="description" content={episode.description || info?.seo_description || 'Der wöchentliche Formel-1-Podcast.'} />
+
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="article" />
+        <meta property="og:title" content={`${episode.title} - Starting Grid`} />
+        <meta property="og:description" content={episode.description || info?.seo_description || 'Der wöchentliche Formel-1-Podcast.'} />
+        <meta property="og:image" content={episode.image_url || info?.social_image || info?.cover_image} />
+
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={`${episode.title} - Starting Grid`} />
+        <meta name="twitter:description" content={episode.description || info?.seo_description || 'Der wöchentliche Formel-1-Podcast.'} />
+        <meta name="twitter:image" content={episode.image_url || info?.social_image || info?.cover_image} />
       </Helmet>
       <AnimatedBackground />
       {/* Header Bar */}
