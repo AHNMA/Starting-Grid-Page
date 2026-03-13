@@ -401,7 +401,7 @@ export default function Home() {
             </div>
           </div>
           
-          <div className="grid md:grid-cols-2 gap-8 md:gap-16 items-center">
+          <div className="grid md:grid-cols-2 gap-8 md:gap-16 items-start">
             <motion.div 
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -517,7 +517,7 @@ export default function Home() {
       <section id="episodes" className="py-16 md:py-32 px-4 sm:px-6 relative bg-f1dark overflow-hidden">
         <AnimatedBackground opacity={0.4} />
         <div className="max-w-7xl mx-auto relative z-10">
-          <div className="flex items-end justify-between mb-8 md:mb-12">
+          <div className="flex items-end justify-between mb-8 md:mb-16">
             <div>
               <p className="text-f1red font-mono font-bold tracking-widest uppercase mb-1 md:mb-2 text-sm md:text-base">Archiv</p>
               <h3 className="text-4xl sm:text-5xl md:text-7xl font-display font-black uppercase italic">Letzte Ausgaben</h3>
