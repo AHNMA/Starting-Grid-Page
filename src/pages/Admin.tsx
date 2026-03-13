@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { PodcastInfo, Host, Episode, Platform, MediaFile } from '../types';
 import { Save, Plus, Trash2, Edit2, Check, X, Upload, Settings, Users, Mic, Rss, Image as LucideImage, RefreshCw, ArrowUpCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -374,6 +375,9 @@ export default function Admin() {
 
   return (
     <div className="min-h-screen bg-[#141414]/80 backdrop-blur-md text-white p-8 font-sans">
+      <Helmet>
+        <title>Starting Grid – Der Formel-1-Podcast - Admin</title>
+      </Helmet>
       <div className="max-w-5xl mx-auto">
         <div className="flex items-center justify-between mb-12">
           <h1 className="text-4xl font-black uppercase italic">Admin Dashboard</h1>
