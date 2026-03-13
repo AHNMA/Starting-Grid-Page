@@ -521,7 +521,6 @@ export default function Home() {
               <p className="text-f1red font-mono font-bold tracking-widest uppercase mb-1 md:mb-2 text-sm md:text-base">Archiv</p>
               <h3 className="text-4xl sm:text-5xl md:text-7xl font-display font-black uppercase italic">Letzte Ausgaben</h3>
             </div>
-            <Timer className="w-8 h-8 md:w-12 md:h-12 text-white/20" />
           </div>
           
           <div className="flex flex-col gap-6">
