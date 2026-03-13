@@ -1,5 +1,8 @@
 RewriteEngine On
 
+# Standardmäßig index.php (SSR für SEO) laden, bevor index.html geladen wird
+DirectoryIndex index.php index.html
+
 # Schützt die config.php vor direktem Zugriff
 <Files "config.php">
     Require all denied
