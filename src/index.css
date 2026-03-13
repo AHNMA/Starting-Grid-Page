@@ -54,7 +54,9 @@
 
 .bg-hero-pattern {
   position: absolute;
-  inset: -1em;
+  inset: -2em;
+  width: calc(100% + 4em);
+  height: calc(100% + 4em);
   --c: 7px;
   background-color: #141414;
   background-image: radial-gradient(
