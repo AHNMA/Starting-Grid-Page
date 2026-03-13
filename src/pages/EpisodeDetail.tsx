@@ -1,5 +1,6 @@
 import Footer from '../components/Footer';
 import { useState, useEffect, useRef } from 'react';
+import { Helmet } from 'react-helmet-async';
 import DynamicEpisodeText from "../components/DynamicEpisodeText";
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Play, Pause, AlertCircle, Calendar, Timer, Headphones, Apple, Youtube, Rss } from 'lucide-react';
@@ -137,6 +138,9 @@ export default function EpisodeDetail() {
 
   return (
     <div className="min-h-screen bg-f1dark text-white font-sans selection:bg-f1red selection:text-white flex flex-col">
+      <Helmet>
+        <title>{`Starting Grid – Der Formel-1-Podcast - ${episode.title}`}</title>
+      </Helmet>
       <AnimatedBackground />
       {/* Header Bar */}
       <Header info={info} />
