@@ -35,6 +35,10 @@ export default function Footer() {
         <Link to="/impressum" className="hover:text-f1red transition-colors">
           Impressum
         </Link>
+        <span className="text-gray-600">|</span>
+        <Link to="/datenschutz" className="hover:text-f1red transition-colors">
+          Datenschutz
+        </Link>
       </div>
     </footer>
   );

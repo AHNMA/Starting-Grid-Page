@@ -4,6 +4,7 @@ import Home from './pages/Home';
 import Admin from './pages/Admin';
 import EpisodeDetail from './pages/EpisodeDetail';
 import Impressum from './pages/Impressum';
+import Datenschutz from './pages/Datenschutz';
 import GlobalBackground from './components/GlobalBackground';
 
 export default function App() {
@@ -18,6 +19,7 @@ export default function App() {
           <Route path="/admin" element={<Admin />} />
           <Route path="/episode/:slug" element={<EpisodeDetail />} />
           <Route path="/impressum" element={<Impressum />} />
+          <Route path="/datenschutz" element={<Datenschutz />} />
         </Routes>
       </BrowserRouter>
     </HelmetProvider>

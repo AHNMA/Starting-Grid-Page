@@ -12,6 +12,7 @@ export interface PodcastInfo {
   favicon_image?: string;
   social_image?: string;
   imprint_text?: string;
+  privacy_text?: string;
 }
 
 export interface Host {
