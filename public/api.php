@@ -49,8 +49,22 @@ if ($method === 'POST' || $method === 'PUT') {
 
 // --- Helper Functions ---
 function generateSlug($string) {
+    // Convert German umlauts and sharp S
+    $search = ['Ä', 'Ö', 'Ü', 'ä', 'ö', 'ü', 'ß'];
+    $replace = ['Ae', 'Oe', 'Ue', 'ae', 'oe', 'ue', 'ss'];
+    $string = str_replace($search, $replace, $string);
+
+    // Convert accented characters to their basic ASCII equivalent
+    // e.g., é -> e, ñ -> n
+    if (function_exists('iconv')) {
+        $string = @iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $string);
+    }
+
     // Basic slug generation
     $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $string)));
+    // Remove consecutive dashes
+    $slug = preg_replace('/-+/', '-', $slug);
+
     return empty($slug) ? 'episode' : trim($slug, '-');
 }
 
