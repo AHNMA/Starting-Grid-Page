@@ -36,9 +36,9 @@ if (!is_dir($uploadDir)) {
 $endpoint = isset($_GET['endpoint']) ? rtrim($_GET['endpoint'], '/') : '';
 $method = $_SERVER['REQUEST_METHOD'];
 
-// Parse JSON Body for POST/PUT requests
+// Parse JSON Body for POST/PUT/DELETE requests
 $inputData = [];
-if ($method === 'POST' || $method === 'PUT') {
+if ($method === 'POST' || $method === 'PUT' || $method === 'DELETE') {
     $json = file_get_contents('php://input');
     if ($json) {
         $inputData = json_decode($json, true) ?? [];
