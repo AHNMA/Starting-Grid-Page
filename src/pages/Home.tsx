@@ -102,7 +102,7 @@ function ArchiveEpisodeCard({ episode, info, platforms, index }: any) {
             </Link>
             
             {/* Meta Info */}
-            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-[10px] md:text-sm font-mono text-f1red font-bold uppercase tracking-widest">
+            <div className="hidden md:flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-[10px] md:text-sm font-mono text-f1red font-bold uppercase tracking-widest">
               <span className="flex items-center gap-2">
                 <Calendar className="w-3 h-3 md:w-4 h-4" />
                 <span className="sm:hidden">
@@ -261,7 +261,7 @@ export default function Home() {
                 </Link>
 
             {/* Meta Info */}
-            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-[10px] md:text-sm font-mono text-f1red font-bold uppercase tracking-widest">
+            <div className="hidden md:flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-[10px] md:text-sm font-mono text-f1red font-bold uppercase tracking-widest">
               <span className="flex items-center gap-2">
                 <Calendar className="w-3 h-3 md:w-4 h-4" />
                 <span className="sm:hidden">
