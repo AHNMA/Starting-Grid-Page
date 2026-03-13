@@ -16,7 +16,7 @@ export default function Header({ info }: HeaderProps) {
           {info?.logo_image ? (
             <>
               <img src={info.logo_image} alt="Starting Grid Logo" className="h-6 sm:h-8 md:h-10 object-contain group-hover:scale-105 transition-transform duration-300" />
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-display font-black tracking-wide uppercase italic mt-1">Starting Grid</h1>
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-display font-black tracking-wide uppercase italic -translate-y-[2px]">Starting Grid</h1>
             </>
           ) : (
             <>
@@ -25,7 +25,7 @@ export default function Header({ info }: HeaderProps) {
               ) : (
                 <div className="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 rounded-full border-2 border-f1red bg-white/10" />
               )}
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-display font-black tracking-wide uppercase italic mt-1">Starting Grid</h1>
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-display font-black tracking-wide uppercase italic -translate-y-[2px]">Starting Grid</h1>
             </>
           )}
         </a>
