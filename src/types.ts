@@ -11,6 +11,7 @@ export interface PodcastInfo {
   seo_keywords?: string;
   favicon_image?: string;
   social_image?: string;
+  imprint_text?: string;
 }
 
 export interface Host {

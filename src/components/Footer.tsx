@@ -30,6 +30,12 @@ export default function Footer() {
         </a>{' '}
         © {new Date().getFullYear()}
       </p>
+
+      <div className="flex gap-4 font-mono text-xs opacity-70">
+        <Link to="/impressum" className="hover:text-f1red transition-colors">
+          Impressum
+        </Link>
+      </div>
     </footer>
   );
 }
