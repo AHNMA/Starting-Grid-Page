@@ -419,13 +419,14 @@ export default function CustomPlayer({ episode }: CustomPlayerProps) {
 
         @media (max-width: 768px) {
           .spotify-card.is-pinned {
-            bottom: 0;
-            right: 0;
-            left: 0;
-            width: 100%;
-            border-radius: 12px 12px 0 0;
+            bottom: 8px;
+            right: 8px;
+            left: 8px;
+            width: auto;
+            border-radius: 12px;
             padding: 16px;
             z-index: 999999;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
           }
         }
 
@@ -499,6 +500,18 @@ export default function CustomPlayer({ episode }: CustomPlayerProps) {
           border-radius: 2px;
           cursor: pointer;
           position: relative;
+          touch-action: manipulation;
+        }
+
+        /* Klickbare Hitbox für Mobile vergrößern */
+        .spotify-time::before {
+          content: '';
+          position: absolute;
+          top: -10px;
+          bottom: -10px;
+          left: 0;
+          right: 0;
+          z-index: 10;
         }
 
         .spotify-elapsed {
@@ -506,6 +519,7 @@ export default function CustomPlayer({ episode }: CustomPlayerProps) {
           height: 100%;
           border-radius: 2px;
           position: relative;
+          pointer-events: none; /* Hitbox wird nur über spotify-time gesteuert */
         }
         
         .spotify-elapsed::after {
@@ -520,9 +534,11 @@ export default function CustomPlayer({ episode }: CustomPlayerProps) {
           border-radius: 50%;
           opacity: 0;
           transition: opacity 0.2s;
+          pointer-events: none;
         }
 
-        .spotify-time:hover .spotify-elapsed::after {
+        .spotify-time:hover .spotify-elapsed::after,
+        .spotify-time:active .spotify-elapsed::after {
           opacity: 1;
         }
 
@@ -545,6 +561,9 @@ export default function CustomPlayer({ episode }: CustomPlayerProps) {
           cursor: pointer;
           transition: 0.2s;
           color: #d1d5db;
+          padding: 8px; /* Größere Hitbox auf Mobile */
+          margin: -8px; /* Optischen Abstand beibehalten */
+          touch-action: manipulation;
         }
 
         .spotify-btn:hover {
@@ -556,13 +575,21 @@ export default function CustomPlayer({ episode }: CustomPlayerProps) {
           color: white;
           background: #e10600;
           border-radius: 50%;
-          width: 40px;
-          height: 40px;
+          width: 48px;
+          height: 48px;
           transition: 0.2s;
           box-shadow: 0 4px 12px rgba(225, 6, 0, 0.3);
           display: flex;
           align-items: center;
           justify-content: center;
+          touch-action: manipulation;
+        }
+
+        @media (min-width: 768px) {
+          .spotify-play-btn {
+            width: 40px;
+            height: 40px;
+          }
         }
 
         .spotify-play-btn:hover {
@@ -582,6 +609,12 @@ export default function CustomPlayer({ episode }: CustomPlayerProps) {
           transition: 0.2s;
         }
         
+        .spotify-volume button {
+          padding: 8px; /* Größere Hitbox für Mute-Button */
+          margin: -8px;
+          touch-action: manipulation;
+        }
+
         .spotify-card:hover .spotify-volume {
           opacity: 1;
         }
