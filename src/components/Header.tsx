@@ -12,20 +12,20 @@ export default function Header({ info }: HeaderProps) {
   return (
     <header className="fixed top-0 w-full z-50 bg-f1dark/95 border-b-2 border-f1red shadow-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 md:h-20 flex items-center justify-between">
-        <a href="/" className="flex items-center gap-3 md:gap-4 group cursor-pointer">
+        <a href="/" className="flex items-center gap-2 sm:gap-3 md:gap-4 group cursor-pointer">
           {info?.logo_image ? (
             <>
-              <img src={info.logo_image} alt="Starting Grid Logo" className="hidden md:block h-8 md:h-10 object-contain group-hover:scale-105 transition-transform duration-300" />
-              <h1 className="md:hidden text-2xl font-display font-black tracking-wide uppercase italic mt-1">Starting Grid</h1>
+              <img src={info.logo_image} alt="Starting Grid Logo" className="h-6 sm:h-8 md:h-10 object-contain group-hover:scale-105 transition-transform duration-300" />
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-display font-black tracking-wide uppercase italic mt-1">Starting Grid</h1>
             </>
           ) : (
             <>
               {info?.cover_image ? (
-                <img src={info.cover_image} alt="Logo" className="hidden md:block h-10 w-10 md:h-12 md:w-12 rounded-full object-cover border-2 border-f1red group-hover:scale-110 transition-transform duration-300" />
+                <img src={info.cover_image} alt="Logo" className="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 rounded-full object-cover border-2 border-f1red group-hover:scale-110 transition-transform duration-300" />
               ) : (
-                <div className="hidden md:block h-10 w-10 md:h-12 md:w-12 rounded-full border-2 border-f1red bg-white/10" />
+                <div className="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 rounded-full border-2 border-f1red bg-white/10" />
               )}
-              <h1 className="text-2xl md:text-3xl font-display font-black tracking-wide uppercase italic mt-1">Starting Grid</h1>
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-display font-black tracking-wide uppercase italic mt-1">Starting Grid</h1>
             </>
           )}
         </a>
