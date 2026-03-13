@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import remarkBreaks from 'remark-breaks';
 import rehypeRaw from 'rehype-raw';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -70,7 +71,7 @@ export default function Impressum() {
                 <div className="prose prose-invert prose-p:text-gray-300 prose-a:text-f1red hover:prose-a:text-red-400 prose-a:no-underline prose-headings:font-display prose-headings:uppercase prose-headings:tracking-wider prose-headings:text-white prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl prose-li:text-gray-300 prose-strong:text-white max-w-none font-mono">
                   {info?.imprint_text ? (
                     <ReactMarkdown
-                      remarkPlugins={[remarkGfm]}
+                      remarkPlugins={[remarkGfm, remarkBreaks]}
                       rehypePlugins={[rehypeRaw]}
                     >
                       {info.imprint_text}
