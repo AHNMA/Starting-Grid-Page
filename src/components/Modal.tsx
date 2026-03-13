@@ -4,14 +4,28 @@ import { createPortal } from 'react-dom';
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: () => void;
+  onConfirm: (val?: string) => void;
   title: string;
   message: string;
   confirmText?: string;
   cancelText?: string;
+  inputMode?: boolean;
+  inputValue?: string;
+  onInputChange?: (value: string) => void;
 }
 
-export default function Modal({ isOpen, onClose, onConfirm, title, message, confirmText = 'Bestätigen', cancelText = 'Abbrechen' }: ModalProps) {
+export default function Modal({
+  isOpen,
+  onClose,
+  onConfirm,
+  title,
+  message,
+  confirmText = 'Bestätigen',
+  cancelText = 'Abbrechen',
+  inputMode = false,
+  inputValue = '',
+  onInputChange
+}: ModalProps) {
   if (!isOpen) return null;
 
   return createPortal(
@@ -25,9 +39,21 @@ export default function Modal({ isOpen, onClose, onConfirm, title, message, conf
         </button>
         
         <h3 className="text-xl font-bold uppercase italic mb-4 text-white">{title}</h3>
-        <p className="text-gray-300 mb-8">{message}</p>
+        <p className="text-gray-300 mb-4">{message}</p>
         
-        <div className="flex justify-end gap-3">
+        {inputMode && (
+          <div className="mb-8">
+            <input
+              type="text"
+              value={inputValue}
+              onChange={(e) => onInputChange?.(e.target.value)}
+              className="w-full bg-[#141414] border border-white/10 rounded-lg p-3 text-white focus:border-red-500 outline-none"
+              autoFocus
+            />
+          </div>
+        )}
+
+        <div className={`flex justify-end gap-3 ${!inputMode ? 'mt-8' : ''}`}>
           <button 
             onClick={onClose}
             className="px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-white font-bold transition-colors"
@@ -35,7 +61,7 @@ export default function Modal({ isOpen, onClose, onConfirm, title, message, conf
             {cancelText}
           </button>
           <button 
-            onClick={onConfirm}
+            onClick={() => onConfirm(inputMode ? inputValue : undefined)}
             className="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-bold transition-colors"
           >
             {confirmText}
