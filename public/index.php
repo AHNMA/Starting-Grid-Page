@@ -97,11 +97,15 @@ if (!file_exists($htmlFile)) {
 if (file_exists($htmlFile)) {
     $html = file_get_contents($htmlFile);
 
-    // Replace the <title> tag
-    $html = preg_replace('/<title>.*?<\/title>/i', '<title>' . htmlspecialchars($finalTitle, ENT_QUOTES, 'UTF-8') . '</title>', $html);
+    // Replace the <title> tag safely
+    $html = preg_replace_callback('/<title>.*?<\/title>/i', function() use ($finalTitle) {
+        return '<title>' . htmlspecialchars($finalTitle, ENT_QUOTES, 'UTF-8') . '</title>';
+    }, $html);
 
-    // Replace the <meta name="description"> tag
-    $html = preg_replace('/<meta name="description" content=".*?"\s*\/?>/i', '<meta name="description" content="' . htmlspecialchars($finalDescription, ENT_QUOTES, 'UTF-8') . '" />', $html);
+    // Replace the <meta name="description"> tag safely
+    $html = preg_replace_callback('/<meta name="description" content=".*?"\s*\/?>/i', function() use ($finalDescription) {
+        return '<meta name="description" content="' . htmlspecialchars($finalDescription, ENT_QUOTES, 'UTF-8') . '" />';
+    }, $html);
 
     // Inject OG and Twitter tags
     $html = str_replace('<!-- OG Placeholder -->', $ogTags, $html);
