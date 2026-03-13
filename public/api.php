@@ -542,6 +542,155 @@ try {
             }
             break;
 
+        // --- Media Center ---
+        case ($endpoint === 'media' && $method === 'GET'):
+            $mediaDir = __DIR__ . '/upload';
+            $files = [];
+
+            if (is_dir($mediaDir)) {
+                $dir = opendir($mediaDir);
+                while (false !== ($file = readdir($dir))) {
+                    if ($file !== '.' && $file !== '..' && !is_dir($mediaDir . '/' . $file)) {
+                        $filepath = $mediaDir . '/' . $file;
+                        $urlPath = '/upload/' . $file;
+                        $size = filesize($filepath);
+                        $mtime = filemtime($filepath);
+
+                        // Check if file is in use
+                        $inUse = false;
+
+                        // 1. Check podcast_info
+                        $stmt = $pdo->prepare("SELECT COUNT(*) FROM podcast_info WHERE cover_image = ? OR logo_image = ? OR about_image = ? OR favicon_image = ? OR social_image = ?");
+                        $stmt->execute([$urlPath, $urlPath, $urlPath, $urlPath, $urlPath]);
+                        if ($stmt->fetchColumn() > 0) $inUse = true;
+
+                        // 2. Check hosts
+                        if (!$inUse) {
+                            $stmt = $pdo->prepare("SELECT COUNT(*) FROM hosts WHERE image_url = ?");
+                            $stmt->execute([$urlPath]);
+                            if ($stmt->fetchColumn() > 0) $inUse = true;
+                        }
+
+                        // 3. Check episodes
+                        if (!$inUse) {
+                            $stmt = $pdo->prepare("SELECT COUNT(*) FROM episodes WHERE image_url = ?");
+                            $stmt->execute([$urlPath]);
+                            if ($stmt->fetchColumn() > 0) $inUse = true;
+                        }
+
+                        // 4. Check platforms
+                        if (!$inUse) {
+                            $stmt = $pdo->prepare("SELECT COUNT(*) FROM platforms WHERE icon_url = ?");
+                            $stmt->execute([$urlPath]);
+                            if ($stmt->fetchColumn() > 0) $inUse = true;
+                        }
+
+                        $files[] = [
+                            'name' => $file,
+                            'url' => $urlPath,
+                            'size' => $size,
+                            'modified' => $mtime,
+                            'inUse' => $inUse
+                        ];
+                    }
+                }
+                closedir($dir);
+            }
+
+            // Sort by modified date descending
+            usort($files, function($a, $b) {
+                return $b['modified'] - $a['modified'];
+            });
+
+            echo json_encode($files);
+            break;
+
+        case ($endpoint === 'media' && $method === 'DELETE'):
+            $filename = basename($inputData['filename'] ?? '');
+            if (empty($filename)) {
+                http_response_code(400);
+                echo json_encode(['error' => 'No filename provided']);
+                break;
+            }
+
+            $filepath = __DIR__ . '/upload/' . $filename;
+            if (file_exists($filepath)) {
+                if (unlink($filepath)) {
+                    echo json_encode(['success' => true]);
+                } else {
+                    http_response_code(500);
+                    echo json_encode(['error' => 'Failed to delete file']);
+                }
+            } else {
+                http_response_code(404);
+                echo json_encode(['error' => 'File not found']);
+            }
+            break;
+
+        case ($endpoint === 'media' && $method === 'PUT'):
+            $oldName = basename($inputData['oldName'] ?? '');
+            $newName = basename($inputData['newName'] ?? '');
+
+            if (empty($oldName) || empty($newName)) {
+                http_response_code(400);
+                echo json_encode(['error' => 'Missing old or new filename']);
+                break;
+            }
+
+            // Basic sanitization for new name
+            $newName = preg_replace('/[^a-zA-Z0-9_\-\.]/', '', $newName);
+            if (empty($newName)) {
+                 http_response_code(400);
+                 echo json_encode(['error' => 'Invalid new filename']);
+                 break;
+            }
+
+            // Ensure extension remains image
+            $allowedExts = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
+            $ext = strtolower(pathinfo($newName, PATHINFO_EXTENSION));
+            if (!in_array($ext, $allowedExts)) {
+                 http_response_code(400);
+                 echo json_encode(['error' => 'New filename must have a valid image extension']);
+                 break;
+            }
+
+            $oldPath = __DIR__ . '/upload/' . $oldName;
+            $newPath = __DIR__ . '/upload/' . $newName;
+
+            if (!file_exists($oldPath)) {
+                http_response_code(404);
+                echo json_encode(['error' => 'File not found']);
+                break;
+            }
+
+            if (file_exists($newPath)) {
+                http_response_code(400);
+                echo json_encode(['error' => 'A file with the new name already exists']);
+                break;
+            }
+
+            if (rename($oldPath, $newPath)) {
+                $oldUrl = '/upload/' . $oldName;
+                $newUrl = '/upload/' . $newName;
+
+                // Update database references
+                $pdo->prepare("UPDATE podcast_info SET cover_image = ? WHERE cover_image = ?")->execute([$newUrl, $oldUrl]);
+                $pdo->prepare("UPDATE podcast_info SET logo_image = ? WHERE logo_image = ?")->execute([$newUrl, $oldUrl]);
+                $pdo->prepare("UPDATE podcast_info SET about_image = ? WHERE about_image = ?")->execute([$newUrl, $oldUrl]);
+                $pdo->prepare("UPDATE podcast_info SET favicon_image = ? WHERE favicon_image = ?")->execute([$newUrl, $oldUrl]);
+                $pdo->prepare("UPDATE podcast_info SET social_image = ? WHERE social_image = ?")->execute([$newUrl, $oldUrl]);
+
+                $pdo->prepare("UPDATE hosts SET image_url = ? WHERE image_url = ?")->execute([$newUrl, $oldUrl]);
+                $pdo->prepare("UPDATE episodes SET image_url = ? WHERE image_url = ?")->execute([$newUrl, $oldUrl]);
+                $pdo->prepare("UPDATE platforms SET icon_url = ? WHERE icon_url = ?")->execute([$newUrl, $oldUrl]);
+
+                echo json_encode(['success' => true, 'newName' => $newName, 'newUrl' => $newUrl]);
+            } else {
+                http_response_code(500);
+                echo json_encode(['error' => 'Failed to rename file']);
+            }
+            break;
+
         // --- Uploads ---
         case ($endpoint === 'upload' && $method === 'POST'):
             if (!isset($_FILES['image'])) {
