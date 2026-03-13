@@ -3,3 +3,9 @@
 
   ➜  Local:   http://localhost:5173/
   ➜  Network: use --host to expose
+6:26:21 AM [vite] (client) hmr update /src/components/CustomPlayer.tsx, /src/index.css
+6:26:21 AM [vite] (client) page reload vite_output.txt
+6:26:43 AM [vite] (client) hmr update /src/components/CustomPlayer.tsx, /src/index.css
+6:26:43 AM [vite] (client) page reload vite_output.txt
+6:26:48 AM [vite] (client) hmr update /src/components/CustomPlayer.tsx, /src/index.css
+6:26:48 AM [vite] (client) page reload vite_output.txt
