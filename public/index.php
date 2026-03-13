@@ -4,7 +4,7 @@ require_once __DIR__ . '/config.php';
 // Try to load the basic info from database
 $title = "Starting Grid - Der Formel-1-Podcast";
 $description = "Der wöchentliche Formel-1-Podcast mit Kevin Scheuren und Dennis Lewandowski. Wir besprechen alles rund um die Königsklasse des Motorsports.";
-$image = "";
+$image = "https://storage.googleapis.com/aistudio-user-content-prod-eu-west2/0b4d4559-4592-4217-91a0-5e36746f3d9b/startinggrid_logo.png";
 
 $isEpisode = false;
 $episodeTitle = "";
