@@ -24,3 +24,5 @@
 9:06:36 AM [vite] (client) page reload vite_output.txt
 9:06:42 AM [vite] (client) hmr update /src/pages/Home.tsx, /src/index.css
 9:06:42 AM [vite] (client) page reload vite_output.txt
+9:14:54 AM [vite] (client) hmr update /src/pages/Impressum.tsx, /src/index.css
+9:14:54 AM [vite] (client) page reload vite_output.txt

@@ -41,14 +41,6 @@ export default function Impressum() {
       <Header info={info} />
 
       <main className="flex-1 max-w-[1200px] mx-auto px-6 w-full pt-20 pb-16 md:pt-32 md:pb-32">
-        <Link
-          to="/"
-          className="inline-flex items-center gap-2 text-f1red hover:text-white transition-colors mb-12 font-mono uppercase tracking-wider"
-        >
-          <ChevronLeft className="w-5 h-5" />
-          <span>Zurück zur Übersicht</span>
-        </Link>
-
         {loading ? (
           <div className="flex justify-center py-20">
             <div className="w-8 h-8 border-2 border-f1red border-t-transparent rounded-full animate-spin" />
@@ -62,6 +54,12 @@ export default function Impressum() {
             <div className="relative bg-[#1a1a1a] rounded-2xl border border-white/10 p-8 md:p-12 shadow-2xl overflow-hidden backdrop-blur-xl">
 
               <div className="relative z-10">
+                <div className="mb-4 md:mb-6">
+                  <Link to="/" className="inline-flex items-center gap-2 text-f1red hover:text-white transition-colors font-mono text-sm uppercase tracking-wider">
+                    <ChevronLeft className="w-4 h-4" /> Zurück zur Übersicht
+                  </Link>
+                </div>
+
                 <div className="flex items-center gap-4 mb-8">
                   <h1 className="text-3xl md:text-5xl font-display font-bold uppercase tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-white to-white/50">
                     Impressum
