@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { PodcastInfo, Host, Episode, Platform, MediaFile } from '../types';
-import { Save, Plus, Trash2, Edit2, Check, X, Upload, Settings, Users, Mic, Rss, Image as LucideImage, RefreshCw, ArrowUpCircle } from 'lucide-react';
+import { Save, Plus, Trash2, Edit2, Check, X, Upload, Settings, Users, Mic, Rss, Image as LucideImage, RefreshCw, ArrowUpCircle, FolderOpen } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Modal from '../components/Modal';
 import Notification from '../components/Notification';
+import MediaSelector from '../components/MediaSelector';
 
 export default function Admin() {
   const [info, setInfo] = useState<PodcastInfo | null>(null);
@@ -20,6 +21,7 @@ export default function Admin() {
   
   const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [modalConfig, setModalConfig] = useState<{ isOpen: boolean; title: string; message: string; onConfirm: () => void; confirmText?: string } | null>(null);
+  const [mediaSelectorTarget, setMediaSelectorTarget] = useState<{ type: string; id?: number } | null>(null);
 
   const showNotification = (message: string, type: 'success' | 'error' = 'success') => {
     setNotification({ message, type });
@@ -371,6 +373,33 @@ export default function Admin() {
     }, ...(Array.isArray(episodes) ? episodes : [])]);
   };
 
+  const handleMediaSelect = (url: string) => {
+    if (!mediaSelectorTarget) return;
+
+    const { type, id } = mediaSelectorTarget;
+
+    if (type === 'favicon_image' && info) {
+      setInfo({ ...info, favicon_image: url });
+    } else if (type === 'social_image' && info) {
+      setInfo({ ...info, social_image: url });
+    } else if (type === 'cover_image' && info) {
+      setInfo({ ...info, cover_image: url });
+    } else if (type === 'logo_image' && info) {
+      setInfo({ ...info, logo_image: url });
+    } else if (type === 'about_image' && info) {
+      setInfo({ ...info, about_image: url });
+    } else if (type === 'host_image' && id !== undefined) {
+      setHosts((Array.isArray(hosts) ? hosts : []).map(h => h.id === id ? { ...h, image_url: url } : h));
+    } else if (type === 'episode_image' && id !== undefined) {
+      setEpisodes((Array.isArray(episodes) ? episodes : []).map(ep => ep.id === id ? { ...ep, image_url: url } : ep));
+    } else if (type === 'platform_icon' && id !== undefined) {
+      setPlatforms((Array.isArray(platforms) ? platforms : []).map(p => p.id === id ? { ...p, icon_url: url } : p));
+      // Optionally trigger save here or let user click save
+    }
+
+    setMediaSelectorTarget(null);
+  };
+
   if (loading) return <div className="min-h-screen bg-transparent flex items-center justify-center p-8 text-white">Lade Admin...</div>;
 
   return (
@@ -483,7 +512,15 @@ export default function Admin() {
                     className="flex-1 bg-[#141414] border border-white/10 rounded-lg p-3 text-white focus:border-red-500 outline-none"
                     placeholder="Wird als kleines Icon im Browser-Tab angezeigt"
                   />
-                  <label className="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg cursor-pointer flex items-center justify-center transition-colors">
+                  <button
+                    type="button"
+                    onClick={() => setMediaSelectorTarget({ type: 'favicon_image' })}
+                    className="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg flex items-center justify-center transition-colors"
+                    title="Aus Media Center wählen"
+                  >
+                    <FolderOpen className="w-5 h-5" />
+                  </button>
+                  <label className="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg cursor-pointer flex items-center justify-center transition-colors" title="Hochladen">
                     <Upload className="w-5 h-5" />
                     <input type="file" className="hidden" accept="image/*" onChange={async (e) => {
                       if (e.target.files && e.target.files[0]) {
@@ -505,7 +542,15 @@ export default function Admin() {
                     className="flex-1 bg-[#141414] border border-white/10 rounded-lg p-3 text-white focus:border-red-500 outline-none"
                     placeholder="Optional: Ein Bild für geteilte Links auf Plattformen"
                   />
-                  <label className="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg cursor-pointer flex items-center justify-center transition-colors">
+                  <button
+                    type="button"
+                    onClick={() => setMediaSelectorTarget({ type: 'social_image' })}
+                    className="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg flex items-center justify-center transition-colors"
+                    title="Aus Media Center wählen"
+                  >
+                    <FolderOpen className="w-5 h-5" />
+                  </button>
+                  <label className="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg cursor-pointer flex items-center justify-center transition-colors" title="Hochladen">
                     <Upload className="w-5 h-5" />
                     <input type="file" className="hidden" accept="image/*" onChange={async (e) => {
                       if (e.target.files && e.target.files[0]) {
@@ -526,7 +571,15 @@ export default function Admin() {
                     onChange={e => setInfo({ ...info, cover_image: e.target.value })}
                     className="flex-1 bg-[#141414] border border-white/10 rounded-lg p-3 text-white focus:border-red-500 outline-none"
                   />
-                  <label className="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg cursor-pointer flex items-center justify-center transition-colors">
+                  <button
+                    type="button"
+                    onClick={() => setMediaSelectorTarget({ type: 'cover_image' })}
+                    className="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg flex items-center justify-center transition-colors"
+                    title="Aus Media Center wählen"
+                  >
+                    <FolderOpen className="w-5 h-5" />
+                  </button>
+                  <label className="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg cursor-pointer flex items-center justify-center transition-colors" title="Hochladen">
                     <Upload className="w-5 h-5" />
                     <input type="file" className="hidden" accept="image/*" onChange={async (e) => {
                       if (e.target.files && e.target.files[0]) {
@@ -548,7 +601,15 @@ export default function Admin() {
                     className="flex-1 bg-[#141414] border border-white/10 rounded-lg p-3 text-white focus:border-red-500 outline-none"
                     placeholder="Optional: Ersetzt den Text 'Starting Grid' oben in der Leiste"
                   />
-                  <label className="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg cursor-pointer flex items-center justify-center transition-colors">
+                  <button
+                    type="button"
+                    onClick={() => setMediaSelectorTarget({ type: 'logo_image' })}
+                    className="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg flex items-center justify-center transition-colors"
+                    title="Aus Media Center wählen"
+                  >
+                    <FolderOpen className="w-5 h-5" />
+                  </button>
+                  <label className="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg cursor-pointer flex items-center justify-center transition-colors" title="Hochladen">
                     <Upload className="w-5 h-5" />
                     <input type="file" className="hidden" accept="image/*" onChange={async (e) => {
                       if (e.target.files && e.target.files[0]) {
@@ -606,7 +667,15 @@ export default function Admin() {
                     className="flex-1 bg-[#141414] border border-white/10 rounded-lg p-3 text-white focus:border-red-500 outline-none"
                     placeholder="Optional: Ein Bild für den Über-uns-Bereich"
                   />
-                  <label className="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg cursor-pointer flex items-center justify-center transition-colors">
+                  <button
+                    type="button"
+                    onClick={() => setMediaSelectorTarget({ type: 'about_image' })}
+                    className="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg flex items-center justify-center transition-colors"
+                    title="Aus Media Center wählen"
+                  >
+                    <FolderOpen className="w-5 h-5" />
+                  </button>
+                  <label className="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg cursor-pointer flex items-center justify-center transition-colors" title="Hochladen">
                     <Upload className="w-5 h-5" />
                     <input type="file" className="hidden" accept="image/*" onChange={async (e) => {
                       if (e.target.files && e.target.files[0]) {
@@ -666,7 +735,15 @@ export default function Admin() {
                         onChange={e => setHosts((Array.isArray(hosts) ? hosts : []).map(h => h.id === host.id ? { ...h, image_url: e.target.value } : h))}
                         className="flex-1 bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:border-red-500 outline-none"
                       />
-                      <label className="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg cursor-pointer flex items-center justify-center transition-colors">
+                      <button
+                        type="button"
+                        onClick={() => setMediaSelectorTarget({ type: 'host_image', id: host.id })}
+                        className="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg flex items-center justify-center transition-colors"
+                        title="Aus Media Center wählen"
+                      >
+                        <FolderOpen className="w-5 h-5" />
+                      </button>
+                      <label className="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg cursor-pointer flex items-center justify-center transition-colors" title="Hochladen">
                         <Upload className="w-5 h-5" />
                         <input type="file" className="hidden" accept="image/*" onChange={async (e) => {
                           if (e.target.files && e.target.files[0]) {
@@ -788,7 +865,7 @@ export default function Admin() {
                 </div>
                 <div className="mb-4">
                   <label className="block text-sm font-mono text-gray-400 mb-2">Bild URL (Optional)</label>
-                  <div className="flex gap-4">
+                  <div className="flex gap-2">
                     <input 
                       type="text" 
                       value={episode.image_url || ''} 
@@ -796,23 +873,23 @@ export default function Admin() {
                       className="flex-1 bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:border-red-500 outline-none"
                       placeholder="https://..."
                     />
-                    <div className="relative">
-                      <input 
-                        type="file" 
-                        accept="image/*"
-                        onChange={async (e) => {
-                          const file = e.target.files?.[0];
-                          if (file) {
-                            const url = await handleImageUpload(file);
-                            if (url) setEpisodes((Array.isArray(episodes) ? episodes : []).map(ep => ep.id === episode.id ? { ...ep, image_url: url } : ep));
-                          }
-                        }}
-                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                      />
-                      <button className="bg-white/10 hover:bg-white/20 text-white px-4 py-3 rounded-lg font-bold flex items-center gap-2 h-full">
-                        <Upload className="w-4 h-4" />
-                      </button>
-                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setMediaSelectorTarget({ type: 'episode_image', id: episode.id })}
+                      className="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg flex items-center justify-center transition-colors"
+                      title="Aus Media Center wählen"
+                    >
+                      <FolderOpen className="w-5 h-5" />
+                    </button>
+                    <label className="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg cursor-pointer flex items-center justify-center transition-colors" title="Hochladen">
+                      <Upload className="w-5 h-5" />
+                      <input type="file" className="hidden" accept="image/*" onChange={async (e) => {
+                        if (e.target.files && e.target.files[0]) {
+                          const url = await handleImageUpload(e.target.files[0]);
+                          if (url) setEpisodes((Array.isArray(episodes) ? episodes : []).map(ep => ep.id === episode.id ? { ...ep, image_url: url } : ep));
+                        }
+                      }} />
+                    </label>
                   </div>
                   {episode.image_url && (
                     <div className="mt-4 w-32 h-32 rounded-lg overflow-hidden border border-white/10">
@@ -915,6 +992,15 @@ export default function Admin() {
                         />
                       </label>
                     </div>
+                    <button
+                      type="button"
+                      onClick={() => setMediaSelectorTarget({ type: 'platform_icon', id: platform.id })}
+                      className="bg-white/10 hover:bg-white/20 w-16 h-16 rounded-lg flex items-center justify-center transition-colors shrink-0"
+                      title="Aus Media Center wählen"
+                    >
+                      <FolderOpen className="w-5 h-5" />
+                    </button>
+
                     <div className="flex-1">
                       <input 
                         type="text" 
@@ -1073,6 +1159,12 @@ export default function Admin() {
           onClose={() => setNotification(null)}
         />
       )}
+
+      <MediaSelector
+        isOpen={mediaSelectorTarget !== null}
+        onClose={() => setMediaSelectorTarget(null)}
+        onSelect={handleMediaSelect}
+      />
     </div>
   );
 }
