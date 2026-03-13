@@ -236,7 +236,7 @@ export default function Home() {
       <Header info={info} />
 
       {/* Hero Section */}
-      <section id="hero" className="pt-24 pb-6 md:pt-32 md:pb-10 px-4 sm:px-6 relative overflow-hidden min-h-[85vh] md:min-h-[90vh] flex items-center">
+      <section id="hero" className="pt-24 pb-16 md:pt-32 md:pb-32 px-4 sm:px-6 relative overflow-hidden">
         <AnimatedBackground opacity={0.8} />
 
         <div className="max-w-7xl mx-auto w-full mt-8 md:mt-0">
@@ -367,7 +367,7 @@ export default function Home() {
       </section>
 
       {/* Marquee Ticker (Track with Curbs) */}
-      <div className="relative py-6 md:py-8 bg-kerb overflow-hidden transform -skew-y-1 z-20 shadow-2xl mt-5 -mt-2.5 -mb-10 md:-mb-16">
+      <div className="relative py-6 md:py-8 bg-kerb overflow-hidden transform -skew-y-1 z-20 shadow-2xl -mb-10 md:-mb-16">
         {/* Asphalt Track with Track Limits (White Outline) */}
         <div className="absolute top-1 bottom-1 md:top-1.5 md:bottom-1.5 left-0 w-full bg-[#151515] border-y-2 border-white flex items-center">
         </div>
