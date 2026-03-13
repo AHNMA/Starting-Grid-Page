@@ -5,3 +5,16 @@
   ➜  Network: use --host to expose
 8:34:10 AM [vite] (client) hmr update /src/pages/Impressum.tsx, /src/index.css
 8:34:10 AM [vite] (client) page reload vite_output.txt
+8:43:18 AM [vite] (client) page reload package.json
+8:43:18 AM [vite] (client) page reload vite_output.txt
+8:43:28 AM [vite] (client) hmr update /src/pages/Impressum.tsx, /src/index.css
+8:43:28 AM [vite] (client) page reload vite_output.txt
+8:43:32 AM [vite] (client) hmr update /src/pages/Impressum.tsx, /src/index.css
+8:43:32 AM [vite] (client) page reload vite_output.txt
+8:44:02 AM [vite] (client) ✨ new dependencies optimized: remark-breaks
+8:44:02 AM [vite] (client) ✨ optimized dependencies changed. reloading
+8:44:02 AM [vite] (client) page reload vite_output.txt
+8:44:26 AM [vite] (client) hmr update /src/pages/Impressum.tsx, /src/index.css
+8:44:26 AM [vite] (client) page reload vite_output.txt
+8:45:35 AM [vite] (client) hmr update /src/pages/Impressum.tsx, /src/index.css
+8:45:35 AM [vite] (client) page reload vite_output.txt
