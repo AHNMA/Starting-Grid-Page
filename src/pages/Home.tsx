@@ -394,7 +394,7 @@ export default function Home() {
       <section id="about" className="pt-24 pb-16 md:pt-48 md:pb-32 px-4 sm:px-6 relative bg-f1gray overflow-hidden z-10">
         <AnimatedBackground opacity={0.4} />
         <div className="max-w-7xl mx-auto relative z-10">
-          <div className="flex items-end justify-between mb-8 md:mb-16 border-b border-white/10 pb-4 md:pb-6">
+          <div className="flex items-end justify-between mb-8 md:mb-16">
             <div>
               <p className="text-f1red font-mono font-bold tracking-widest uppercase mb-1 md:mb-2 text-sm md:text-base">Über Uns</p>
               <h3 className="text-4xl sm:text-5xl md:text-7xl font-display font-black uppercase italic">Der Podcast</h3>
@@ -446,7 +446,7 @@ export default function Home() {
       <section id="hosts" className="py-16 md:py-32 px-4 sm:px-6 bg-f1dark relative z-0 overflow-hidden">
         <AnimatedBackground opacity={0.4} />
         <div className="max-w-7xl mx-auto relative z-10">
-          <div className="flex items-end justify-between mb-8 md:mb-16 border-b border-white/10 pb-4 md:pb-6">
+          <div className="flex items-end justify-between mb-8 md:mb-16">
             <div>
               <p className="text-f1red font-mono font-bold tracking-widest uppercase mb-1 md:mb-2 text-sm md:text-base">Starting Grid</p>
               <h3 className="text-4xl sm:text-5xl md:text-7xl font-display font-black uppercase italic">Unsere Hosts</h3>
@@ -517,7 +517,7 @@ export default function Home() {
       <section id="episodes" className="py-16 md:py-32 px-4 sm:px-6 relative bg-f1dark overflow-hidden">
         <AnimatedBackground opacity={0.4} />
         <div className="max-w-7xl mx-auto relative z-10">
-          <div className="flex items-end justify-between mb-8 md:mb-12 border-b border-white/10 pb-4 md:pb-6">
+          <div className="flex items-end justify-between mb-8 md:mb-12">
             <div>
               <p className="text-f1red font-mono font-bold tracking-widest uppercase mb-1 md:mb-2 text-sm md:text-base">Archiv</p>
               <h3 className="text-4xl sm:text-5xl md:text-7xl font-display font-black uppercase italic">Letzte Ausgaben</h3>
