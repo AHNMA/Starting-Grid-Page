@@ -414,46 +414,46 @@ export default function Admin() {
         </div>
 
         {/* Tabs */}
-        <div className="flex border-b border-white/10 mb-8 overflow-x-auto">
+        <div className="flex border-b border-white/10 mb-8 overflow-x-auto scrollbar-hide">
           <button 
             onClick={() => setActiveTab('info')} 
-            className={`flex items-center gap-2 px-6 py-4 font-bold uppercase tracking-widest whitespace-nowrap transition-colors ${activeTab === 'info' ? 'border-b-2 border-red-600 text-red-500' : 'text-gray-400 hover:text-white'}`}
+            className={`flex items-center gap-1.5 px-3 py-3 text-xs font-bold uppercase tracking-widest whitespace-nowrap transition-colors ${activeTab === 'info' ? 'border-b-2 border-red-600 text-red-500' : 'text-gray-400 hover:text-white'}`}
           >
-            <Settings className="w-5 h-5" />
+            <Settings className="w-4 h-4" />
             Website-Einstellungen
           </button>
           <button
             onClick={() => setActiveTab('about')}
-            className={`flex items-center gap-2 px-6 py-4 font-bold uppercase tracking-widest whitespace-nowrap transition-colors ${activeTab === 'about' ? 'border-b-2 border-red-600 text-red-500' : 'text-gray-400 hover:text-white'}`}
+            className={`flex items-center gap-1.5 px-3 py-3 text-xs font-bold uppercase tracking-widest whitespace-nowrap transition-colors ${activeTab === 'about' ? 'border-b-2 border-red-600 text-red-500' : 'text-gray-400 hover:text-white'}`}
           >
-            <Settings className="w-5 h-5" />
+            <Settings className="w-4 h-4" />
             Über uns
           </button>
           <button 
             onClick={() => setActiveTab('hosts')} 
-            className={`flex items-center gap-2 px-6 py-4 font-bold uppercase tracking-widest whitespace-nowrap transition-colors ${activeTab === 'hosts' ? 'border-b-2 border-red-600 text-red-500' : 'text-gray-400 hover:text-white'}`}
+            className={`flex items-center gap-1.5 px-3 py-3 text-xs font-bold uppercase tracking-widest whitespace-nowrap transition-colors ${activeTab === 'hosts' ? 'border-b-2 border-red-600 text-red-500' : 'text-gray-400 hover:text-white'}`}
           >
-            <Users className="w-5 h-5" />
+            <Users className="w-4 h-4" />
             Hosts
           </button>
           <button 
             onClick={() => setActiveTab('episodes')} 
-            className={`flex items-center gap-2 px-6 py-4 font-bold uppercase tracking-widest whitespace-nowrap transition-colors ${activeTab === 'episodes' ? 'border-b-2 border-red-600 text-red-500' : 'text-gray-400 hover:text-white'}`}
+            className={`flex items-center gap-1.5 px-3 py-3 text-xs font-bold uppercase tracking-widest whitespace-nowrap transition-colors ${activeTab === 'episodes' ? 'border-b-2 border-red-600 text-red-500' : 'text-gray-400 hover:text-white'}`}
           >
-            <Mic className="w-5 h-5" />
+            <Mic className="w-4 h-4" />
             Episoden
           </button>
           <button 
             onClick={() => setActiveTab('platforms')} 
-            className={`flex items-center gap-2 px-6 py-4 font-bold uppercase tracking-widest whitespace-nowrap transition-colors ${activeTab === 'platforms' ? 'border-b-2 border-red-600 text-red-500' : 'text-gray-400 hover:text-white'}`}
+            className={`flex items-center gap-1.5 px-3 py-3 text-xs font-bold uppercase tracking-widest whitespace-nowrap transition-colors ${activeTab === 'platforms' ? 'border-b-2 border-red-600 text-red-500' : 'text-gray-400 hover:text-white'}`}
           >
-            <Upload className="w-5 h-5" />
+            <Upload className="w-4 h-4" />
             Plattformen
           </button>
 
           <button
             onClick={() => setActiveTab('media')}
-            className={`flex items-center gap-2 px-6 py-4 font-bold uppercase tracking-widest whitespace-nowrap transition-colors ${activeTab === 'media' ? 'border-b-2 border-red-600 text-red-500' : 'text-gray-400 hover:text-white'}`}
+            className={`flex items-center gap-1.5 px-3 py-3 text-xs font-bold uppercase tracking-widest whitespace-nowrap transition-colors ${activeTab === 'media' ? 'border-b-2 border-red-600 text-red-500' : 'text-gray-400 hover:text-white'}`}
           >
             <LucideImage className="w-4 h-4" />
             Media
