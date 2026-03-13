@@ -335,8 +335,8 @@ if ($endpoint === 'login' && $method === 'POST') {
         $requiresAuth = true;
     } else {
         if (!in_array($endpoint, $publicEndpointsGet)) {
-            // Check for dynamic path patterns, e.g., episodes/my-slug
-            if (preg_match('@^episodes/([^/]+)$@', $endpoint) || preg_match('@^episodes/([^/]+)/paragraphs$@', $endpoint) || preg_match('@^hosts/([^/]+)$@', $endpoint) || preg_match('@^platforms/([^/]+)$@', $endpoint)) {
+            // Check for dynamic path patterns, e.g., episode/my-slug
+            if (preg_match('@^episodes/([^/]+)$@', $endpoint) || preg_match('@^episode/([^/]+)$@', $endpoint) || preg_match('@^episodes/([^/]+)/paragraphs$@', $endpoint) || preg_match('@^hosts/([^/]+)$@', $endpoint) || preg_match('@^platforms/([^/]+)$@', $endpoint)) {
                 $requiresAuth = false;
             } else {
                 $requiresAuth = true;
