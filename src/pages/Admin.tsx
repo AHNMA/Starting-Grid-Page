@@ -15,6 +15,9 @@ export default function Admin() {
 
 
   const [loading, setLoading] = useState(true);
+  const [token, setToken] = useState<string | null>(localStorage.getItem('adminToken'));
+  const [passwordInput, setPasswordInput] = useState('');
+  const [loginError, setLoginError] = useState('');
   const [activeTab, setActiveTab] = useState<'info' | 'about' | 'hosts' | 'episodes' | 'platforms' | 'media'>('info');
   const [mediaFiles, setMediaFiles] = useState<MediaFile[]>([]);
   const [isUploadingMedia, setIsUploadingMedia] = useState(false);
@@ -36,12 +39,30 @@ export default function Admin() {
     setNotification({ message, type });
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('adminToken');
+    setToken(null);
+  };
+
+  const fetchWithAuth = async (url: string, options: RequestInit = {}) => {
+    const headers = { ...options.headers } as Record<string, string>;
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+    const res = await fetch(url, { ...options, headers });
+    if (res.status === 401 || res.status === 403) {
+      handleLogout();
+      throw new Error('Sitzung abgelaufen. Bitte erneut einloggen.');
+    }
+    return res;
+  };
+
   const handleImageUpload = async (file: File) => {
     const formData = new FormData();
     formData.append('image', file);
     
     try {
-      const res = await fetch('/api/upload', {
+      const res = await fetchWithAuth('/api/upload', {
         method: 'POST',
         body: formData
       });
@@ -52,9 +73,9 @@ export default function Admin() {
         showNotification('Fehler beim Upload: ' + data.error, 'error');
         return null;
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      showNotification('Upload fehlgeschlagen. Stelle sicher, dass die upload.php auf dem Server liegt und CORS erlaubt ist.', 'error');
+      showNotification(err.message || 'Upload fehlgeschlagen.', 'error');
       return null;
     }
   };
@@ -63,7 +84,7 @@ export default function Admin() {
     setLoading(true);
     try {
       const url = limit ? `/api/admin/rss-import?limit=${limit}` : '/api/admin/rss-import';
-      const res = await fetch(url, { method: 'POST' });
+      const res = await fetchWithAuth(url, { method: 'POST' });
       const data = await res.json();
       if (data.success) {
         showNotification(`${data.imported} Episoden importiert!`, 'success');
@@ -73,9 +94,9 @@ export default function Admin() {
       } else {
         showNotification('Fehler beim Import: ' + data.error, 'error');
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      showNotification('Import fehlgeschlagen.', 'error');
+      showNotification(err.message || 'Import fehlgeschlagen.', 'error');
     } finally {
       setLoading(false);
     }
@@ -129,7 +150,7 @@ export default function Admin() {
     formData.append('image', file);
 
     try {
-      const res = await fetch('/api/upload', {
+      const res = await fetchWithAuth('/api/upload', {
         method: 'POST',
         body: formData,
       });
@@ -151,7 +172,7 @@ export default function Admin() {
 
   const deleteMedia = async (filename: string) => {
     try {
-      const res = await fetch('/api/media', {
+      const res = await fetchWithAuth('/api/media', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ filename })
@@ -204,7 +225,7 @@ export default function Admin() {
         }
 
         try {
-          const res = await fetch('/api/media', {
+          const res = await fetchWithAuth('/api/media', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ oldName: file.name, newName: val })
@@ -228,40 +249,52 @@ export default function Admin() {
 
   const handleSaveInfo = async () => {
     if (!info) return;
-    await fetch('/api/podcast', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(info)
-    });
-    showNotification('Info gespeichert!', 'success');
+    try {
+      await fetchWithAuth('/api/podcast', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(info)
+      });
+      showNotification('Info gespeichert!', 'success');
+    } catch (err: any) {
+      showNotification(err.message || 'Fehler beim Speichern', 'error');
+    }
   };
 
   const handleSaveHost = async (host: Host) => {
-    await fetch(`/api/hosts/${host.id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(host)
-    });
-    showNotification('Host gespeichert!', 'success');
+    try {
+      await fetchWithAuth(`/api/hosts/${host.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(host)
+      });
+      showNotification('Host gespeichert!', 'success');
+    } catch (err: any) {
+      showNotification(err.message || 'Fehler beim Speichern', 'error');
+    }
   };
 
   const handleSaveEpisode = async (episode: Episode) => {
-    if (episode.id === 0) {
-      const res = await fetch('/api/episodes', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(episode)
-      });
-      const data = await res.json();
-      setEpisodes((Array.isArray(episodes) ? episodes : []).map(e => e.id === 0 ? { ...e, id: data.id } : e));
-    } else {
-      await fetch(`/api/episodes/${episode.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(episode)
-      });
+    try {
+      if (episode.id === 0) {
+        const res = await fetchWithAuth('/api/episodes', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(episode)
+        });
+        const data = await res.json();
+        setEpisodes((Array.isArray(episodes) ? episodes : []).map(e => e.id === 0 ? { ...e, id: data.id } : e));
+      } else {
+        await fetchWithAuth(`/api/episodes/${episode.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(episode)
+        });
+      }
+      showNotification('Episode gespeichert!', 'success');
+    } catch (err: any) {
+      showNotification(err.message || 'Fehler beim Speichern', 'error');
     }
-    showNotification('Episode gespeichert!', 'success');
   };
 
   const handleDeleteEpisode = async (id: number) => {
@@ -271,10 +304,14 @@ export default function Admin() {
       message: 'Möchtest du diese Episode wirklich unwiderruflich löschen?',
       confirmText: 'Löschen',
       onConfirm: async () => {
-        await fetch(`/api/episodes/${id}`, { method: 'DELETE' });
-        setEpisodes((Array.isArray(episodes) ? episodes : []).filter(e => e.id !== id));
-        setModalConfig(null);
-        showNotification('Episode gelöscht!', 'success');
+        try {
+          await fetchWithAuth(`/api/episodes/${id}`, { method: 'DELETE' });
+          setEpisodes((Array.isArray(episodes) ? episodes : []).filter(e => e.id !== id));
+          setModalConfig(null);
+          showNotification('Episode gelöscht!', 'success');
+        } catch (err: any) {
+          showNotification(err.message || 'Fehler beim Löschen', 'error');
+        }
       }
     });
   };
@@ -288,7 +325,7 @@ export default function Admin() {
       onConfirm: async () => {
         setLoading(true);
         try {
-          const res = await fetch('/api/admin/episodes/clear', { method: 'DELETE' });
+          const res = await fetchWithAuth('/api/admin/episodes/clear', { method: 'DELETE' });
           const data = await res.json();
           if (data.success) {
             setEpisodes([]);
@@ -296,9 +333,9 @@ export default function Admin() {
           } else {
             showNotification('Fehler beim Löschen: ' + data.error, 'error');
           }
-        } catch (err) {
+        } catch (err: any) {
           console.error(err);
-          showNotification('Löschen fehlgeschlagen.', 'error');
+          showNotification(err.message || 'Löschen fehlgeschlagen.', 'error');
         } finally {
           setLoading(false);
           setModalConfig(null);
@@ -309,15 +346,15 @@ export default function Admin() {
 
   const handleSavePlatform = async (platform: Platform) => {
     try {
-      await fetch(`/api/platforms/${platform.id}`, {
+      await fetchWithAuth(`/api/platforms/${platform.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(platform)
       });
       showNotification('Plattform gespeichert!', 'success');
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      showNotification('Fehler beim Speichern.', 'error');
+      showNotification(err.message || 'Fehler beim Speichern.', 'error');
     }
   };
 
@@ -326,7 +363,7 @@ export default function Admin() {
     formData.append('icon', file);
     
     try {
-      const res = await fetch(`/api/platforms/${platformId}/icon`, {
+      const res = await fetchWithAuth(`/api/platforms/${platformId}/icon`, {
         method: 'POST',
         body: formData
       });
@@ -337,9 +374,9 @@ export default function Admin() {
       } else {
         showNotification('Fehler beim Upload: ' + data.error, 'error');
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      showNotification('Upload fehlgeschlagen.', 'error');
+      showNotification(err.message || 'Upload fehlgeschlagen.', 'error');
     }
   };
 
@@ -351,7 +388,7 @@ export default function Admin() {
     };
     
     try {
-      const res = await fetch('/api/platforms', {
+      const res = await fetchWithAuth('/api/platforms', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newPlatform)
@@ -361,9 +398,9 @@ export default function Admin() {
         setPlatforms([...(Array.isArray(platforms) ? platforms : []), { ...newPlatform, id: data.id, icon_name: 'rss' }]);
         showNotification('Plattform hinzugefügt!', 'success');
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      showNotification('Fehler beim Hinzufügen.', 'error');
+      showNotification(err.message || 'Fehler beim Hinzufügen.', 'error');
     }
   };
 
@@ -375,12 +412,12 @@ export default function Admin() {
       confirmText: 'Löschen',
       onConfirm: async () => {
         try {
-          await fetch(`/api/platforms/${id}`, { method: 'DELETE' });
+          await fetchWithAuth(`/api/platforms/${id}`, { method: 'DELETE' });
           setPlatforms((Array.isArray(platforms) ? platforms : []).filter(p => p.id !== id));
           showNotification('Plattform gelöscht!', 'success');
-        } catch (err) {
+        } catch (err: any) {
           console.error(err);
-          showNotification('Fehler beim Löschen.', 'error');
+          showNotification(err.message || 'Fehler beim Löschen.', 'error');
         }
         setModalConfig(null);
       }
@@ -424,6 +461,67 @@ export default function Admin() {
 
     setMediaSelectorTarget(null);
   };
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoginError('');
+    try {
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: passwordInput })
+      });
+      const data = await res.json();
+      if (data.success && data.token) {
+        localStorage.setItem('adminToken', data.token);
+        setToken(data.token);
+      } else {
+        setLoginError('Ungültiges Passwort');
+      }
+    } catch (err) {
+      setLoginError('Fehler bei der Anmeldung');
+    }
+  };
+
+  if (!token) {
+    return (
+      <div className="min-h-screen bg-[#141414]/80 backdrop-blur-md flex items-center justify-center p-8 text-white font-sans">
+        <Helmet>
+          <title>Admin Login - Starting Grid</title>
+        </Helmet>
+        <div className="max-w-md w-full bg-white/5 p-8 rounded-3xl border border-white/10 shadow-2xl">
+          <h1 className="text-3xl font-black uppercase italic text-center mb-8 tracking-wider">
+            Admin <span className="text-red-600">Login</span>
+          </h1>
+          <form onSubmit={handleLogin} className="space-y-6">
+            <div>
+              <label className="block text-sm font-mono text-gray-400 mb-2">Passwort</label>
+              <input
+                type="password"
+                value={passwordInput}
+                onChange={e => setPasswordInput(e.target.value)}
+                className="w-full bg-[#141414] border border-white/10 rounded-lg p-3 text-white focus:border-red-500 outline-none transition-colors"
+                placeholder="Passwort eingeben"
+                autoFocus
+              />
+            </div>
+            {loginError && <p className="text-red-500 text-sm font-bold">{loginError}</p>}
+            <button
+              type="submit"
+              className="w-full bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-bold uppercase tracking-widest transition-colors flex justify-center items-center gap-2"
+            >
+              Einloggen
+            </button>
+            <div className="text-center mt-6">
+              <Link to="/" className="text-gray-500 hover:text-white text-sm transition-colors uppercase tracking-widest font-bold">
+                Zurück zur Website
+              </Link>
+            </div>
+          </form>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) return <div className="min-h-screen bg-transparent flex items-center justify-center p-8 text-white">Lade Admin...</div>;
 
@@ -648,12 +746,16 @@ export default function Admin() {
               <button
                 onClick={async () => {
                   if (!info) return;
-                  await fetch('/api/podcast', {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(info)
-                  });
-                  showNotification('Website-Einstellungen gespeichert!', 'success');
+                  try {
+                    await fetchWithAuth('/api/podcast', {
+                      method: 'PUT',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify(info)
+                    });
+                    showNotification('Website-Einstellungen gespeichert!', 'success');
+                  } catch (err: any) {
+                    showNotification(err.message || 'Fehler beim Speichern!', 'error');
+                  }
                 }}
                 className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-bold flex items-center gap-2"
               >
@@ -714,12 +816,16 @@ export default function Admin() {
               <button 
                 onClick={async () => {
                   if (!info) return;
-                  await fetch('/api/podcast', {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(info)
-                  });
-                  showNotification('Über-uns-Einstellungen gespeichert!', 'success');
+                  try {
+                    await fetchWithAuth('/api/podcast', {
+                      method: 'PUT',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify(info)
+                    });
+                    showNotification('Über-uns-Einstellungen gespeichert!', 'success');
+                  } catch (err: any) {
+                    showNotification(err.message || 'Fehler beim Speichern!', 'error');
+                  }
                 }}
                 className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-bold flex items-center gap-2"
               >

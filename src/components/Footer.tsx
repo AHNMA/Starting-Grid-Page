@@ -30,9 +30,6 @@ export default function Footer() {
         </a>{' '}
         © {new Date().getFullYear()}
       </p>
-      <Link to="/admin" className="text-f1red/50 hover:text-f1red transition-colors uppercase tracking-widest text-xs border border-f1red/20 px-4 py-2 rounded hover:bg-f1red/10">
-        Telemetrie Zugang (Admin)
-      </Link>
     </footer>
   );
 }

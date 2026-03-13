@@ -47,7 +47,55 @@ if ($method === 'POST' || $method === 'PUT' || $method === 'DELETE') {
     }
 }
 
+// --- Default values for Authentication ---
+if (!defined('ADMIN_PASSWORD')) define('ADMIN_PASSWORD', 'default_password');
+if (!defined('ADMIN_TOKEN_SECRET')) define('ADMIN_TOKEN_SECRET', 'default_secret');
+
 // --- Helper Functions ---
+
+// Authentication Helper
+function requireAuth() {
+    $headers = getallheaders();
+    $authHeader = $headers['Authorization'] ?? '';
+
+    if (preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
+        $token = $matches[1];
+
+        $parts = explode('.', $token);
+        if (count($parts) === 3) {
+            $header = base64_decode($parts[0]);
+            $payload = base64_decode($parts[1]);
+            $signatureProvided = $parts[2];
+
+            $signatureExpected = hash_hmac('sha256', $parts[0] . "." . $parts[1], ADMIN_TOKEN_SECRET);
+
+            // Check if token is valid and not expired
+            if (hash_equals($signatureExpected, $signatureProvided)) {
+                $payloadData = json_decode($payload, true);
+                if (isset($payloadData['exp']) && $payloadData['exp'] >= time()) {
+                    return true;
+                }
+            }
+        }
+    }
+
+    http_response_code(401);
+    echo json_encode(['error' => 'Unauthorized']);
+    exit;
+}
+
+function generateToken() {
+    $header = json_encode(['typ' => 'JWT', 'alg' => 'HS256']);
+    $payload = json_encode(['admin' => true, 'exp' => time() + 86400]); // Valid for 24 hours
+
+    $base64UrlHeader = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($header));
+    $base64UrlPayload = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($payload));
+
+    $signature = hash_hmac('sha256', $base64UrlHeader . "." . $base64UrlPayload, ADMIN_TOKEN_SECRET);
+
+    return $base64UrlHeader . "." . $base64UrlPayload . "." . $signature;
+}
+
 function generateSlug($string) {
     // Convert German umlauts and sharp S
     $search = ['Ä', 'Ö', 'Ü', 'ä', 'ö', 'ü', 'ß'];
@@ -251,8 +299,47 @@ function ensureDatabaseInitialized($pdo) {
 
 ensureDatabaseInitialized($pdo);
 
+// Protect specific endpoints
+// We only allow GET for public data.
+// Everything else requires auth, plus specific GET admin endpoints.
+$requiresAuth = false;
+$publicEndpointsGet = ['podcast', 'hosts', 'episodes', 'platforms', 'media'];
+$publicEndpointsPost = []; // e.g. login itself is handled inside
+
+if ($endpoint === 'login' && $method === 'POST') {
+    // allow
+} else {
+    if ($method !== 'GET') {
+        $requiresAuth = true;
+    } else {
+        if (!in_array($endpoint, $publicEndpointsGet)) {
+            // Check for dynamic path patterns, e.g., episodes/my-slug
+            if (preg_match('@^episodes/([^/]+)$@', $endpoint) || preg_match('@^episodes/([^/]+)/paragraphs$@', $endpoint) || preg_match('@^hosts/([^/]+)$@', $endpoint) || preg_match('@^platforms/([^/]+)$@', $endpoint)) {
+                $requiresAuth = false;
+            } else {
+                $requiresAuth = true;
+            }
+        }
+    }
+}
+
+if ($requiresAuth) {
+    requireAuth();
+}
+
 try {
     switch (true) {
+        // --- Authentication ---
+        case ($endpoint === 'login' && $method === 'POST'):
+            $providedPassword = $inputData['password'] ?? '';
+            if ($providedPassword === ADMIN_PASSWORD) {
+                echo json_encode(["success" => true, "token" => generateToken()]);
+            } else {
+                http_response_code(401);
+                echo json_encode(["success" => false, "error" => "Invalid password"]);
+            }
+            break;
+
         // --- Podcast Info ---
         case ($endpoint === 'podcast' && $method === 'GET'):
             $stmt = $pdo->query("SELECT * FROM podcast_info WHERE id = 1");
