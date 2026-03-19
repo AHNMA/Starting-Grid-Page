@@ -34,6 +34,7 @@ export default function Header({ info }: HeaderProps) {
           <a href="/#about" className="hover:text-white hover:text-shadow-glow transition-all">Der Podcast</a>
           <a href="/#hosts" className="hover:text-white hover:text-shadow-glow transition-all">Unsere Hosts</a>
           <a href="/#episodes" className="hover:text-white hover:text-shadow-glow transition-all">Archiv</a>
+          <a href="/shop" className="hover:text-white hover:text-shadow-glow transition-all">Shop</a>
         </nav>
         <button
           className="md:hidden text-white p-2"
@@ -50,6 +51,7 @@ export default function Header({ info }: HeaderProps) {
           <a href="/#about" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-f1red transition-colors">Der Podcast</a>
           <a href="/#hosts" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-f1red transition-colors">Unsere Hosts</a>
           <a href="/#episodes" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-f1red transition-colors">Archiv</a>
+          <a href="/shop" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-f1red transition-colors">Shop</a>
         </div>
       )}
     </header>
