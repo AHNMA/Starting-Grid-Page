@@ -4,9 +4,12 @@ import Footer from "../components/Footer";
 import GlobalBackground from "../components/GlobalBackground";
 import { PodcastInfo } from "../types";
 import { Helmet } from "react-helmet-async";
+import { useNavigate } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
 
 const Shop: React.FC = () => {
   const [info, setInfo] = useState<PodcastInfo | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetch("/api/podcast")
@@ -19,6 +22,7 @@ const Shop: React.FC = () => {
       locale: "de_DE",
       prefix: "https://starting-grid.myspreadshop.de",
       baseId: "myShop",
+      basketId: "myBasket", // <--- Warenkorb hier injecten
     };
 
     // Externes Skript dynamisch laden
@@ -52,7 +56,23 @@ const Shop: React.FC = () => {
 
       <main className="flex-grow relative z-10 pt-20 pb-16 md:pt-32 md:pb-32 flex flex-col items-center">
         <div className="w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-          {/* CSS-Injection um die Standard Spreadshop Header/Footer zu verstecken */}
+          {/* Custom Header mit Zurück-Button und Warenkorb-Platzhalter */}
+          <div className="flex justify-between items-center mb-6">
+            <button
+              onClick={() => navigate(-1)}
+              className="flex items-center space-x-2 text-white/70 hover:text-white transition-colors duration-200"
+            >
+              <ArrowLeft size={20} />
+              <span className="font-semibold uppercase tracking-wide">
+                Zurück
+              </span>
+            </button>
+
+            {/* Hier platziert Spreadshop automatisch das Warenkorb-Icon */}
+            <div id="myBasket"></div>
+          </div>
+
+          {/* CSS-Injection um die Standard Spreadshop Header/Footer und Breadcrumbs zu verstecken */}
           <style
             dangerouslySetInnerHTML={{
               __html: `
@@ -67,6 +87,12 @@ const Shop: React.FC = () => {
             .starting-grid-shop-wrapper .sprd-footer,
             .starting-grid-shop-wrapper .sprd-footer__wrapper,
             .starting-grid-shop-wrapper footer[class*="sprd"] {
+                display: none !important;
+            }
+
+            /* Breadcrumbs entfernen */
+            .starting-grid-shop-wrapper .sprd-breadcrumb,
+            .starting-grid-shop-wrapper #sprd-breadcrumb {
                 display: none !important;
             }
 
