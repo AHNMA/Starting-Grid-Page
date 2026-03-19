@@ -23,7 +23,7 @@ const Shop: React.FC = () => {
       baseId: "myShop",
       basketId: "myBasket",
       // NEU: Zwingt den Shop, direkt mit der Übersicht "Alle Produkte" zu starten
-      startToken: "-/all",
+      startToken: 'all',
     };
 
     // Externes Skript dynamisch laden
