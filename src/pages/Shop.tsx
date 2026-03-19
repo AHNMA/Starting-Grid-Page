@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import GlobalBackground from "../components/GlobalBackground";
 import { PodcastInfo } from "../types";
 import { Helmet } from "react-helmet-async";
-import { useNavigate } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
 
 const Shop: React.FC = () => {
   const [info, setInfo] = useState<PodcastInfo | null>(null);
@@ -22,7 +21,9 @@ const Shop: React.FC = () => {
       locale: "de_DE",
       prefix: "https://starting-grid.myspreadshop.de",
       baseId: "myShop",
-      basketId: "myBasket", // <--- Warenkorb hier injecten
+      basketId: "myBasket",
+      // NEU: Zwingt den Shop, direkt mit der Übersicht "Alle Produkte" zu starten
+      startToken: "-/all",
     };
 
     // Externes Skript dynamisch laden
@@ -56,23 +57,20 @@ const Shop: React.FC = () => {
 
       <main className="flex-grow relative z-10 pt-20 pb-16 md:pt-32 md:pb-32 flex flex-col items-center">
         <div className="w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-          {/* Custom Header mit Zurück-Button und Warenkorb-Platzhalter */}
-          <div className="flex justify-between items-center mb-6">
+          {/* Custom Shop Navigation (Zurück & Warenkorb) */}
+          <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-800">
             <button
               onClick={() => navigate(-1)}
-              className="flex items-center space-x-2 text-white/70 hover:text-white transition-colors duration-200"
+              className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors font-bold uppercase tracking-wider text-sm"
             >
-              <ArrowLeft size={20} />
-              <span className="font-semibold uppercase tracking-wide">
-                Zurück
-              </span>
+              <span className="text-xl leading-none">&larr;</span> Zurück
             </button>
 
-            {/* Hier platziert Spreadshop automatisch das Warenkorb-Icon */}
-            <div id="myBasket"></div>
+            {/* Container für den ausgelagerten Spreadshop Warenkorb */}
+            <div id="myBasket" className="starting-grid-basket"></div>
           </div>
 
-          {/* CSS-Injection um die Standard Spreadshop Header/Footer und Breadcrumbs zu verstecken */}
+          {/* CSS-Injection um ungewollte Spreadshop Elemente zu verstecken */}
           <style
             dangerouslySetInnerHTML={{
               __html: `
@@ -90,23 +88,33 @@ const Shop: React.FC = () => {
                 display: none !important;
             }
 
-            /* Breadcrumbs entfernen */
+            /* Verstecke die internen Breadcrumbs von Spreadshop */
+            .starting-grid-shop-wrapper #sprd-breadcrumb,
             .starting-grid-shop-wrapper .sprd-breadcrumb,
-            .starting-grid-shop-wrapper #sprd-breadcrumb {
+            .starting-grid-shop-wrapper nav[class*="breadcrumb"] {
                 display: none !important;
             }
 
-            /* Entfernt leere Abstände oben */
             .starting-grid-shop-wrapper #sprd-main,
             .starting-grid-shop-wrapper .sprd-main {
                 padding-top: 0 !important;
                 margin-top: 0 !important;
             }
+
+            /* Helles Icon für den Warenkorb auf dunklem Grund */
+            .starting-grid-basket svg {
+                fill: #ffffff !important;
+                width: 28px !important;
+                height: 28px !important;
+            }
+            .starting-grid-basket .sprd-basket-info {
+                color: #ffffff !important;
+            }
           `,
             }}
           />
 
-          {/* Container für den Shop */}
+          {/* Container für den eigentlichen Shop */}
           <div id="myShop" className="starting-grid-shop-wrapper w-full">
             <a href="https://starting-grid.myspreadshop.de">starting-grid</a>
           </div>
