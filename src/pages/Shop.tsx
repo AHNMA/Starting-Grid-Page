@@ -52,7 +52,7 @@ const Shop: React.FC = () => {
       <GlobalBackground />
       {info && <Header info={info} />}
 
-      <main className="relative z-10 flex-grow pt-32 pb-16 md:pb-32 px-4 sm:px-6 max-w-7xl mx-auto w-full flex flex-col">
+      <main className="relative z-10 flex-grow pt-24 md:pt-24 pb-16 md:pb-32 px-4 sm:px-6 max-w-7xl mx-auto w-full flex flex-col">
         <article className="bg-[#151515] border border-white/5 rounded-3xl overflow-hidden shadow-2xl relative">
           <div className="p-6 md:p-12 relative z-10 w-full">
             <div className="w-full">
@@ -214,9 +214,19 @@ const Shop: React.FC = () => {
                 }
 
                 /* Burger Menü für Mobile anzeigen */
-                .starting-grid-shop-wrapper .sprd-header__burgerbutton {
-                    display: flex !important;
-                    align-items: center !important;
+                @media (max-width: 767px) {
+                    .starting-grid-shop-wrapper .sprd-header__burgerbutton {
+                        display: flex !important;
+                        align-items: center !important;
+                    }
+                    .starting-grid-shop-wrapper .sprd-navigation {
+                        display: none !important;
+                    }
+                }
+                @media (min-width: 768px) {
+                    .starting-grid-shop-wrapper .sprd-header__burgerbutton {
+                        display: none !important;
+                    }
                 }
 
                 /* Burger Menü Icon Farbe (Dark Mode) */
