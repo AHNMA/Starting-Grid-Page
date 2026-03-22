@@ -66,28 +66,28 @@ const Shop: React.FC = () => {
                 }
 
                 /* Den Spreadshop Header komplett als transparente Flex-Row über dem Inhalt stylen */
-                .starting-grid-shop-wrapper #sprd-header,
-                .starting-grid-shop-wrapper .sprd-header,
-                .starting-grid-shop-wrapper .sprd-header__wrapper,
-                .starting-grid-shop-wrapper header[class*="sprd"] {
+                #sprd-header,
+                .sprd-header__wrapper {
                     display: flex !important;
                     justify-content: flex-end !important;
                     align-items: center !important;
-                    background: transparent !important;
-                    border: none !important;
                     border-bottom: 1px solid #1f2937 !important; /* Tailwind border-gray-800 */
-                    margin-bottom: 2rem !important;
-                    padding: 0 !important;
                     padding-bottom: 1rem !important;
-                    min-height: 40px !important;
+                    margin-bottom: 1.5rem !important;
+                    background: transparent !important;
                     box-shadow: none !important;
+                    padding-top: 0 !important;
+                    padding-left: 0 !important;
+                    padding-right: 0 !important;
                 }
 
                 /* Verstecke Logo, Navigation, Suchleiste im Header radikal */
-                .starting-grid-shop-wrapper .sprd-header__burgerbutton,
-                .starting-grid-shop-wrapper .sprd-header__title,
-                .starting-grid-shop-wrapper .sprd-header__search,
-                .starting-grid-shop-wrapper .sprd-header-search {
+                .sprd-header__title,
+                .sprd-header__image,
+                .sprd-navigation,
+                .sprd-departments,
+                .sprd-header__search,
+                .sprd-header-search {
                     display: none !important;
                 }
 
