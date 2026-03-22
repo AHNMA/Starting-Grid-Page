@@ -19,8 +19,7 @@ const Shop: React.FC = () => {
       locale: "de_DE",
       prefix: "https://starting-grid.myspreadshop.de",
       baseId: "myShop",
-      basketId: "myBasket",
-      // NEU: Zwingt den Shop, direkt mit der Übersicht "Alle Produkte" zu starten
+      // Zwingt den Shop, direkt mit der Übersicht "Alle Produkte" zu starten
       startToken: "all",
     };
 
@@ -56,69 +55,139 @@ const Shop: React.FC = () => {
       <main className="relative z-10 flex-grow pt-32 pb-16 md:pb-32 px-4 sm:px-6 max-w-7xl mx-auto w-full flex flex-col">
         <article className="bg-[#151515] border border-white/5 rounded-3xl overflow-hidden shadow-2xl relative">
           <div className="p-6 md:p-12 relative z-10 w-full">
-            {/* Custom Shop Navigation (Zurück & Warenkorb) */}
-            <div className="flex justify-end items-center mb-6 pb-4 border-b border-gray-800 min-h-[50px]">
-              {/* Container für den ausgelagerten Spreadshop Warenkorb */}
-              <div id="myBasket" className="starting-grid-basket"></div>
-            </div>
+            <div className="w-full">
+              {/* CSS-Injection für Spreadshop Elemente */}
+              <style
+                dangerouslySetInnerHTML={{
+                  __html: `
+                /* Container des Headers anzeigen, um Spreadshop Layout intakt zu lassen */
+                .starting-grid-shop-wrapper .sprd-header-container {
+                    display: block !important;
+                }
 
-            {/* CSS-Injection um ungewollte Spreadshop Elemente zu verstecken */}
-            <style
-              dangerouslySetInnerHTML={{
-                __html: `
-            .starting-grid-shop-wrapper #sprd-header,
-            .starting-grid-shop-wrapper .sprd-header,
-            .starting-grid-shop-wrapper .sprd-header__wrapper,
-            .starting-grid-shop-wrapper header[class*="sprd"] {
-                display: none !important;
-            }
+                /* Den Spreadshop Header komplett als transparente Flex-Row über dem Inhalt stylen */
+                .starting-grid-shop-wrapper #sprd-header,
+                .starting-grid-shop-wrapper .sprd-header,
+                .starting-grid-shop-wrapper .sprd-header__wrapper,
+                .starting-grid-shop-wrapper header[class*="sprd"] {
+                    display: flex !important;
+                    justify-content: flex-end !important;
+                    align-items: center !important;
+                    background: transparent !important;
+                    border: none !important;
+                    border-bottom: 1px solid #1f2937 !important; /* Tailwind border-gray-800 */
+                    margin-bottom: 2rem !important;
+                    padding: 0 !important;
+                    padding-bottom: 1rem !important;
+                    min-height: 40px !important;
+                    box-shadow: none !important;
+                }
 
-            .starting-grid-shop-wrapper #sprd-footer,
-            .starting-grid-shop-wrapper .sprd-footer,
-            .starting-grid-shop-wrapper .sprd-footer__wrapper,
-            .starting-grid-shop-wrapper footer[class*="sprd"] {
-                display: none !important;
-            }
+                /* Verstecke Logo, Navigation, Suchleiste im Header radikal */
+                .starting-grid-shop-wrapper .sprd-header__burgerbutton,
+                .starting-grid-shop-wrapper .sprd-header__title,
+                .starting-grid-shop-wrapper .sprd-header__search,
+                .starting-grid-shop-wrapper .sprd-header-search {
+                    display: none !important;
+                }
 
-            /* Breadcrumbs Styling für dunklen Hintergrund */
-            .starting-grid-shop-wrapper #sprd-breadcrumb,
-            .starting-grid-shop-wrapper .sprd-breadcrumb {
-                color: #9ca3af !important;
-            }
+                /* Container für den Warenkorb im Header zwingend sichtbar machen */
+                .starting-grid-shop-wrapper .sprd-header__actions {
+                    display: flex !important;
+                    justify-content: flex-end !important;
+                    width: auto !important;
+                    margin: 0 !important;
+                    padding: 0 !important;
+                }
 
-            .starting-grid-shop-wrapper #sprd-breadcrumb a,
-            .starting-grid-shop-wrapper .sprd-breadcrumb a {
-                color: #ffffff !important;
-                text-decoration: none !important;
-            }
+                /* Sichtbarkeit des Warenkorb-Buttons erzwingen */
+                .starting-grid-shop-wrapper .sprd-basket-indicator {
+                    display: flex !important;
+                    align-items: center !important;
+                    visibility: visible !important;
+                    opacity: 1 !important;
+                }
 
-            .starting-grid-shop-wrapper #sprd-breadcrumb a:hover,
-            .starting-grid-shop-wrapper .sprd-breadcrumb a:hover {
-                color: #e10600 !important;
-            }
+                /* --- PROMO BANNER KORREKTUR --- */
+                /* Verhindert, dass der weiße Kasten links vom Warenkorb klebt */
+                .starting-grid-shop-wrapper .sprd-promo-header {
+                    position: absolute !important;
+                    top: 10px !important;
+                    left: 0 !important;
+                    background: transparent !important;
+                    color: white !important;
+                    box-shadow: none !important;
+                    display: flex !important;
+                    align-items: center !important;
+                    padding: 0 !important;
+                }
+                .starting-grid-shop-wrapper .sprd-promo-header__center {
+                    color: #e5e7eb !important; /* Tailwind gray-200 */
+                }
+                .starting-grid-shop-wrapper .sprd-promo__button {
+                    background: #e10600 !important; /* F1 Red */
+                    color: white !important;
+                    border: none !important;
+                    padding: 4px 8px !important;
+                    border-radius: 4px !important;
+                }
 
-            .starting-grid-shop-wrapper #sprd-main,
-            .starting-grid-shop-wrapper .sprd-main {
-                padding-top: 0 !important;
-                margin-top: 0 !important;
-            }
+                /* Footer ausblenden */
+                .starting-grid-shop-wrapper #sprd-footer,
+                .starting-grid-shop-wrapper .sprd-footer,
+                .starting-grid-shop-wrapper .sprd-footer__wrapper,
+                .starting-grid-shop-wrapper footer[class*="sprd"] {
+                    display: none !important;
+                }
 
-            /* Helles Icon für den Warenkorb auf dunklem Grund */
-            .starting-grid-basket svg {
-                fill: #ffffff !important;
-                width: 28px !important;
-                height: 28px !important;
-            }
-            .starting-grid-basket .sprd-basket-info {
-                color: #ffffff !important;
-            }
-          `,
-              }}
-            />
+                .starting-grid-shop-wrapper #sprd-main,
+                .starting-grid-shop-wrapper .sprd-main {
+                    padding-top: 0 !important;
+                    margin-top: 0 !important;
+                }
 
-            {/* Container für den eigentlichen Shop */}
-            <div id="myShop" className="starting-grid-shop-wrapper w-full">
-              <a href="https://starting-grid.myspreadshop.de">starting-grid</a>
+                /* --- WARENKORB STYLING --- */
+                .starting-grid-shop-wrapper #sprd-basket svg,
+                .starting-grid-shop-wrapper .sprd-basket-indicator svg {
+                    fill: #ffffff !important;
+                    width: 28px !important;
+                    height: 28px !important;
+                }
+                .starting-grid-shop-wrapper #sprd-basket .sprd-basket-info,
+                .starting-grid-shop-wrapper .sprd-basket-indicator .sprd-basket-info {
+                    color: #ffffff !important;
+                }
+
+                /* Warenkorb-Badge (Anzahl) */
+                .starting-grid-shop-wrapper .sprd-basket-indicator__count {
+                    background-color: #e10600 !important; /* F1 Red */
+                    color: #ffffff !important;
+                }
+
+                /* --- BREADCRUMB STYLING --- */
+                .starting-grid-shop-wrapper #sprd-breadcrumb,
+                .starting-grid-shop-wrapper .sprd-breadcrumb {
+                    color: #9ca3af !important;
+                }
+                .starting-grid-shop-wrapper #sprd-breadcrumb a,
+                .starting-grid-shop-wrapper .sprd-breadcrumb a {
+                    color: #ffffff !important;
+                    text-decoration: none !important;
+                }
+                .starting-grid-shop-wrapper #sprd-breadcrumb a:hover,
+                .starting-grid-shop-wrapper .sprd-breadcrumb a:hover {
+                    color: #e10600 !important;
+                }
+              `,
+                }}
+              />
+
+              {/* Container für den eigentlichen Shop */}
+              <div id="myShop" className="starting-grid-shop-wrapper w-full">
+                <a href="https://starting-grid.myspreadshop.de">
+                  starting-grid
+                </a>
+              </div>
             </div>
           </div>
         </article>
