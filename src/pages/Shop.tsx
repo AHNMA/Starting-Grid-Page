@@ -23,7 +23,7 @@ const Shop: React.FC = () => {
       baseId: "myShop",
       basketId: "myBasket",
       // NEU: Zwingt den Shop, direkt mit der Übersicht "Alle Produkte" zu starten
-      startToken: 'all',
+      startToken: "all",
     };
 
     // Externes Skript dynamisch laden
@@ -55,25 +55,26 @@ const Shop: React.FC = () => {
       <GlobalBackground />
       {info && <Header info={info} />}
 
-      <main className="flex-grow relative z-10 pt-20 pb-16 md:pt-32 md:pb-32 flex flex-col items-center">
-        <div className="w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-          {/* Custom Shop Navigation (Zurück & Warenkorb) */}
-          <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-800">
-            <button
-              onClick={() => navigate(-1)}
-              className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors font-bold uppercase tracking-wider text-sm"
-            >
-              <span className="text-xl leading-none">&larr;</span> Zurück
-            </button>
+      <main className="relative z-10 flex-grow pt-32 pb-16 md:pb-32 px-4 sm:px-6 max-w-7xl mx-auto w-full flex flex-col">
+        <article className="bg-gradient-to-br from-f1gray to-f1dark border border-white/5 rounded-3xl overflow-hidden shadow-2xl relative">
+          <div className="p-6 md:p-12 relative z-10 w-full">
+            {/* Custom Shop Navigation (Zurück & Warenkorb) */}
+            <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-800">
+              <button
+                onClick={() => navigate(-1)}
+                className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors font-bold uppercase tracking-wider text-sm"
+              >
+                <span className="text-xl leading-none">&larr;</span> Zurück
+              </button>
 
-            {/* Container für den ausgelagerten Spreadshop Warenkorb */}
-            <div id="myBasket" className="starting-grid-basket"></div>
-          </div>
+              {/* Container für den ausgelagerten Spreadshop Warenkorb */}
+              <div id="myBasket" className="starting-grid-basket"></div>
+            </div>
 
-          {/* CSS-Injection um ungewollte Spreadshop Elemente zu verstecken */}
-          <style
-            dangerouslySetInnerHTML={{
-              __html: `
+            {/* CSS-Injection um ungewollte Spreadshop Elemente zu verstecken */}
+            <style
+              dangerouslySetInnerHTML={{
+                __html: `
             .starting-grid-shop-wrapper #sprd-header,
             .starting-grid-shop-wrapper .sprd-header,
             .starting-grid-shop-wrapper .sprd-header__wrapper,
@@ -111,14 +112,15 @@ const Shop: React.FC = () => {
                 color: #ffffff !important;
             }
           `,
-            }}
-          />
+              }}
+            />
 
-          {/* Container für den eigentlichen Shop */}
-          <div id="myShop" className="starting-grid-shop-wrapper w-full">
-            <a href="https://starting-grid.myspreadshop.de">starting-grid</a>
+            {/* Container für den eigentlichen Shop */}
+            <div id="myShop" className="starting-grid-shop-wrapper w-full">
+              <a href="https://starting-grid.myspreadshop.de">starting-grid</a>
+            </div>
           </div>
-        </div>
+        </article>
       </main>
 
       <Footer />
