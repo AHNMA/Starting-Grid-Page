@@ -60,15 +60,22 @@ const Shop: React.FC = () => {
               <style
                 dangerouslySetInnerHTML={{
                   __html: `
-                /* Container des Headers anzeigen, um Spreadshop Layout intakt zu lassen */
+                /* Container des Headers - CSS Grid für perfekte Ausrichtung */
                 .starting-grid-shop-wrapper .sprd-header-container {
-                    display: block !important;
-                    position: relative !important;
+                    display: grid !important;
+                    grid-template-columns: 1fr auto !important;
+                    grid-template-rows: auto auto !important;
+                    grid-template-areas:
+                        "promo promo"
+                        "nav cart" !important;
+                    width: 100% !important;
+                    gap: 1rem 0 !important; /* Abstand nach Promo */
+                    align-items: center !important;
                 }
 
-                /* --- PROMO BANNER KORREKTUR --- */
-                /* Promo Banner - Ganz oben, volle Breite, zentriert */
+                /* 1. PROMO BANNER (Ganz oben, über beide Spalten) */
                 .starting-grid-shop-wrapper .sprd-promo-header {
+                    grid-area: promo !important;
                     position: relative !important;
                     top: auto !important;
                     left: auto !important;
@@ -80,7 +87,6 @@ const Shop: React.FC = () => {
                     justify-content: center !important;
                     align-items: center !important;
                     padding: 0 0 1rem 0 !important;
-                    margin-bottom: 1rem !important;
                     border-bottom: 1px solid #1f2937 !important; /* Tailwind gray-800 */
                     width: 100% !important;
                 }
@@ -103,34 +109,119 @@ const Shop: React.FC = () => {
                     display: none !important;
                 }
 
-                /* Den Header-Container (mit dem Warenkorb) auf die rechte Seite schieben */
-                .starting-grid-shop-wrapper #sprd-header,
-                .starting-grid-shop-wrapper .sprd-header__wrapper {
+                /* 2. NAVIGATION (Linke Seite) */
+                .starting-grid-shop-wrapper .sprd-navigation {
+                    grid-area: nav !important;
+                    background: transparent !important;
+                    padding: 0 !important;
+                    margin: 0 !important;
+                    box-shadow: none !important;
+                    border: none !important;
+                }
+
+                /* 3. WARENKORB (Rechte Seite im Header) */
+                .starting-grid-shop-wrapper .sprd-header {
+                    grid-area: cart !important;
+                    position: static !important;
+                    width: auto !important;
+                    height: auto !important;
+                    background: transparent !important;
+                    border: none !important;
+                    box-shadow: none !important;
+                    padding: 0 !important;
+                    margin: 0 !important;
                     display: flex !important;
                     justify-content: flex-end !important;
                     align-items: center !important;
-                    border-bottom: none !important;
-                    padding-bottom: 0 !important;
-                    margin-bottom: 0 !important;
-                    background: transparent !important;
-                    box-shadow: none !important;
-                    padding-top: 0 !important;
-                    padding-left: 0 !important;
-                    padding-right: 0 !important;
-                    position: absolute !important;
-                    top: 100% !important;
-                    right: 0 !important;
-                    z-index: 10 !important;
                 }
 
-                /* Verstecke Logo, Navigation, Suchleiste im Header radikal */
-                .sprd-header__title,
-                .sprd-header__image,
-                .sprd-navigation,
-                .sprd-departments,
-                .sprd-header__search,
-                .sprd-header-search {
+                /* Navigation Links Styling für Dark Mode */
+                .starting-grid-shop-wrapper .sprd-department-filter {
+                    display: flex !important;
+                    flex-wrap: wrap !important;
+                    gap: 15px !important;
+                    background: transparent !important;
+                    justify-content: flex-start !important;
+                }
+                .starting-grid-shop-wrapper .sprd-nav-link {
+                    color: #9ca3af !important; /* Tailwind gray-400 */
+                    text-decoration: none !important;
+                    font-weight: 500 !important;
+                    background: transparent !important;
+                    padding: 8px 12px !important;
+                    border-radius: 6px !important;
+                    transition: all 0.2s ease !important;
+                    display: flex !important;
+                    align-items: center !important;
+                    gap: 5px !important;
+                    border: none !important; /* Verstecke Spreadshop Borders */
+                }
+
+                /* Spreadshop "Active" oder Hover Style überschreiben */
+                .starting-grid-shop-wrapper .sprd-nav-link:hover,
+                .starting-grid-shop-wrapper .sprd-nav-link.sprd-nav-link--active,
+                .starting-grid-shop-wrapper .customHighlight {
+                    background: #1f2937 !important; /* Tailwind gray-800 */
+                    color: #ffffff !important;
+                    box-shadow: none !important;
+                    border-color: transparent !important;
+                }
+
+                /* Spreadshop Roter Balken unter dem aktiven Link (pseudo-element) verstecken */
+                .starting-grid-shop-wrapper .sprd-nav-link::after,
+                .starting-grid-shop-wrapper .sprd-nav-link--active::after {
                     display: none !important;
+                }
+
+                .starting-grid-shop-wrapper .sprd-nav-link__icon {
+                    fill: #9ca3af !important;
+                    width: 10px !important;
+                    height: 10px !important;
+                }
+                .starting-grid-shop-wrapper .sprd-nav-link:hover .sprd-nav-link__icon,
+                .starting-grid-shop-wrapper .sprd-nav-link--active .sprd-nav-link__icon {
+                     fill: #ffffff !important;
+                }
+
+                /* Dropdown Menüs (falls geöffnet) */
+                .starting-grid-shop-wrapper .sprd-department-filter__menu {
+                    background: #1f2937 !important; /* Tailwind gray-800 */
+                    border: 1px solid rgba(255,255,255,0.1) !important;
+                    border-radius: 8px !important;
+                    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5) !important;
+                    padding: 8px 0 !important;
+                    margin-top: 5px !important;
+                }
+                .starting-grid-shop-wrapper .sprd-department-filter__entry {
+                    color: #d1d5db !important;
+                    padding: 8px 16px !important;
+                    font-size: 0.9rem !important;
+                    text-decoration: none !important;
+                    display: block !important;
+                }
+                .starting-grid-shop-wrapper .sprd-department-filter__entry:hover {
+                    background: rgba(255,255,255,0.05) !important;
+                    color: #ffffff !important;
+                }
+
+                /* Verstecke Logo und Suchleiste */
+                .starting-grid-shop-wrapper .sprd-header__title,
+                .starting-grid-shop-wrapper .sprd-header__image,
+                .starting-grid-shop-wrapper .sprd-header__search,
+                .starting-grid-shop-wrapper .sprd-header-search,
+                .starting-grid-shop-wrapper .sprd-departments {
+                    display: none !important;
+                }
+
+                /* Burger Menü für Mobile anzeigen */
+                .starting-grid-shop-wrapper .sprd-header__burgerbutton {
+                    display: flex !important;
+                    align-items: center !important;
+                }
+
+                /* Burger Menü Icon Farbe (Dark Mode) */
+                .starting-grid-shop-wrapper .sprd-header__burgerbutton svg {
+                    fill: #ffffff !important;
                 }
 
                 /* Container für den Warenkorb im Header zwingend sichtbar machen */
@@ -140,6 +231,7 @@ const Shop: React.FC = () => {
                     width: auto !important;
                     margin: 0 !important;
                     padding: 0 !important;
+                    flex-shrink: 0 !important;
                 }
 
                 /* Sichtbarkeit des Warenkorb-Buttons erzwingen */
@@ -190,6 +282,7 @@ const Shop: React.FC = () => {
                     padding: 0 !important;
                     display: block !important;
                     padding-bottom: 1.5rem !important;
+                    padding-top: 1.5rem !important;
                 }
                 .starting-grid-shop-wrapper #sprd-breadcrumb a,
                 .starting-grid-shop-wrapper .sprd-breadcrumb a {
