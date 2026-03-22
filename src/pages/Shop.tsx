@@ -63,22 +63,64 @@ const Shop: React.FC = () => {
                 /* Container des Headers anzeigen, um Spreadshop Layout intakt zu lassen */
                 .starting-grid-shop-wrapper .sprd-header-container {
                     display: block !important;
+                    position: relative !important;
                 }
 
-                /* Den Spreadshop Header komplett als transparente Flex-Row über dem Inhalt stylen */
-                #sprd-header,
-                .sprd-header__wrapper {
+                /* --- PROMO BANNER KORREKTUR --- */
+                /* Promo Banner - Ganz oben, volle Breite, zentriert */
+                .starting-grid-shop-wrapper .sprd-promo-header {
+                    position: relative !important;
+                    top: auto !important;
+                    left: auto !important;
+                    background: transparent !important;
+                    color: white !important;
+                    box-shadow: none !important;
+                    display: flex !important;
+                    flex-wrap: wrap !important;
+                    justify-content: center !important;
+                    align-items: center !important;
+                    padding: 0 0 1rem 0 !important;
+                    margin-bottom: 1rem !important;
+                    border-bottom: 1px solid #1f2937 !important; /* Tailwind gray-800 */
+                    width: 100% !important;
+                }
+                .starting-grid-shop-wrapper .sprd-promo-header__center {
+                    color: #e5e7eb !important; /* Tailwind gray-200 */
+                    display: flex !important;
+                    align-items: center !important;
+                    gap: 10px !important;
+                }
+                .starting-grid-shop-wrapper .sprd-promo__button {
+                    background: #e10600 !important; /* F1 Red */
+                    color: white !important;
+                    border: none !important;
+                    padding: 4px 12px !important;
+                    border-radius: 4px !important;
+                    cursor: pointer !important;
+                    font-weight: bold !important;
+                }
+                .starting-grid-shop-wrapper .sprd-promo__toggle {
+                    display: none !important;
+                }
+
+                /* Den Header-Container (mit dem Warenkorb) auf die rechte Seite schieben */
+                .starting-grid-shop-wrapper #sprd-header,
+                .starting-grid-shop-wrapper .sprd-header__wrapper {
                     display: flex !important;
                     justify-content: flex-end !important;
                     align-items: center !important;
-                    border-bottom: 1px solid #1f2937 !important; /* Tailwind border-gray-800 */
-                    padding-bottom: 1rem !important;
-                    margin-bottom: 1.5rem !important;
+                    border-bottom: none !important;
+                    padding-bottom: 0 !important;
+                    margin-bottom: 0 !important;
                     background: transparent !important;
                     box-shadow: none !important;
                     padding-top: 0 !important;
                     padding-left: 0 !important;
                     padding-right: 0 !important;
+                    position: absolute !important;
+                    top: 100% !important;
+                    right: 0 !important;
+                    z-index: 10 !important;
                 }
 
                 /* Verstecke Logo, Navigation, Suchleiste im Header radikal */
@@ -108,30 +150,6 @@ const Shop: React.FC = () => {
                     opacity: 1 !important;
                 }
 
-                /* --- PROMO BANNER KORREKTUR --- */
-                /* Verhindert, dass der weiße Kasten links vom Warenkorb klebt */
-                .starting-grid-shop-wrapper .sprd-promo-header {
-                    position: absolute !important;
-                    top: 10px !important;
-                    left: 0 !important;
-                    background: transparent !important;
-                    color: white !important;
-                    box-shadow: none !important;
-                    display: flex !important;
-                    align-items: center !important;
-                    padding: 0 !important;
-                }
-                .starting-grid-shop-wrapper .sprd-promo-header__center {
-                    color: #e5e7eb !important; /* Tailwind gray-200 */
-                }
-                .starting-grid-shop-wrapper .sprd-promo__button {
-                    background: #e10600 !important; /* F1 Red */
-                    color: white !important;
-                    border: none !important;
-                    padding: 4px 8px !important;
-                    border-radius: 4px !important;
-                }
-
                 /* Footer ausblenden */
                 .starting-grid-shop-wrapper #sprd-footer,
                 .starting-grid-shop-wrapper .sprd-footer,
@@ -143,7 +161,7 @@ const Shop: React.FC = () => {
                 .starting-grid-shop-wrapper #sprd-main,
                 .starting-grid-shop-wrapper .sprd-main {
                     padding-top: 0 !important;
-                    margin-top: 0 !important;
+                    margin-top: 1rem !important;
                 }
 
                 /* --- WARENKORB STYLING --- */
@@ -168,11 +186,18 @@ const Shop: React.FC = () => {
                 .starting-grid-shop-wrapper #sprd-breadcrumb,
                 .starting-grid-shop-wrapper .sprd-breadcrumb {
                     color: #9ca3af !important;
+                    margin: 0 !important;
+                    padding: 0 !important;
+                    display: block !important;
+                    padding-bottom: 1.5rem !important;
                 }
                 .starting-grid-shop-wrapper #sprd-breadcrumb a,
                 .starting-grid-shop-wrapper .sprd-breadcrumb a {
                     color: #ffffff !important;
                     text-decoration: none !important;
+                    font-size: 1rem !important;
+                    text-transform: uppercase !important;
+                    font-weight: bold !important;
                 }
                 .starting-grid-shop-wrapper #sprd-breadcrumb a:hover,
                 .starting-grid-shop-wrapper .sprd-breadcrumb a:hover {
