@@ -63,11 +63,11 @@ const Shop: React.FC = () => {
                 /* Container des Headers - CSS Grid für perfekte Ausrichtung */
                 .starting-grid-shop-wrapper .sprd-header-container {
                     display: grid !important;
-                    grid-template-columns: 1fr auto !important;
+                    grid-template-columns: 1fr !important;
                     grid-template-rows: auto auto !important;
                     grid-template-areas:
-                        "promo promo"
-                        "nav cart" !important;
+                        "promo"
+                        "nav" !important;
                     width: 100% !important;
                     gap: 1rem 0 !important; /* Abstand nach Promo */
                     align-items: center !important;
@@ -119,12 +119,14 @@ const Shop: React.FC = () => {
                     border: none !important;
                 }
 
-                /* 3. WARENKORB (Rechte Seite im Header) */
+                /* 3. WARENKORB (Fixiert in der React Top-Bar) */
                 .starting-grid-shop-wrapper .sprd-header {
-                    grid-area: cart !important;
-                    position: static !important;
+                    position: fixed !important;
+                    top: 0 !important;
+                    right: 16px !important; /* Standard Tailwind px-4 padding */
+                    height: 64px !important; /* Standard Header Höhe (h-16) */
                     width: auto !important;
-                    height: auto !important;
+                    z-index: 9999 !important; /* Über dem Header */
                     background: transparent !important;
                     border: none !important;
                     box-shadow: none !important;
@@ -133,6 +135,26 @@ const Shop: React.FC = () => {
                     display: flex !important;
                     justify-content: flex-end !important;
                     align-items: center !important;
+                }
+
+                @media (min-width: 640px) {
+                    .starting-grid-shop-wrapper .sprd-header {
+                        right: 24px !important; /* sm:px-6 */
+                    }
+                }
+
+                @media (min-width: 768px) {
+                    .starting-grid-shop-wrapper .sprd-header {
+                        height: 80px !important; /* md:h-20 */
+                        right: 24px !important; /* sm:px-6 */
+                    }
+                }
+
+                @media (min-width: 1280px) {
+                    /* Ab hier greift max-w-7xl (1280px), also ist right abhängig von window width */
+                     .starting-grid-shop-wrapper .sprd-header {
+                         right: max(24px, calc((100vw - 1280px) / 2 + 24px)) !important;
+                     }
                 }
 
                 /* Navigation Links Styling für Dark Mode */
@@ -237,11 +259,20 @@ const Shop: React.FC = () => {
                 /* Container für den Warenkorb im Header zwingend sichtbar machen */
                 .starting-grid-shop-wrapper .sprd-header__actions {
                     display: flex !important;
-                    justify-content: flex-end !important;
-                    width: auto !important;
+                    justify-content: center !important;
+                    align-items: center !important;
+                    width: 40px !important;
+                    height: 40px !important;
                     margin: 0 !important;
                     padding: 0 !important;
                     flex-shrink: 0 !important;
+                }
+
+                @media (min-width: 768px) {
+                    .starting-grid-shop-wrapper .sprd-header__actions {
+                        width: 50px !important;
+                        height: 50px !important;
+                    }
                 }
 
                 /* Sichtbarkeit des Warenkorb-Buttons erzwingen */
