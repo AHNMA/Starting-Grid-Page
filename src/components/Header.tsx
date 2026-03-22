@@ -48,64 +48,74 @@ export default function Header({ info }: HeaderProps) {
           )}
         </a>
         <div className="flex items-center gap-4 flex-1 justify-end">
-          <nav className="hidden md:flex gap-4 lg:gap-8 text-sm font-display font-bold uppercase tracking-widest text-gray-400">
-            <a
-              href="/#hero"
-              className="hover:text-white hover:text-shadow-glow transition-all"
-            >
-              Aktuelle Ausgabe
-            </a>
-            <a
-              href="/#about"
-              className="hover:text-white hover:text-shadow-glow transition-all"
-            >
-              Der Podcast
-            </a>
-            <a
-              href="/#hosts"
-              className="hover:text-white hover:text-shadow-glow transition-all"
-            >
-              Unsere Hosts
-            </a>
-            <a
-              href="/#episodes"
-              className="hover:text-white hover:text-shadow-glow transition-all"
-            >
-              Archiv
-            </a>
-            <a
-              href="/shop"
-              className="hover:text-white hover:text-shadow-glow transition-all"
-            >
-              Shop
-            </a>
-          </nav>
+          {!isShopPage ? (
+            <>
+              <nav className="hidden md:flex gap-4 lg:gap-8 text-sm font-display font-bold uppercase tracking-widest text-gray-400">
+                <a
+                  href="/#hero"
+                  className="hover:text-white hover:text-shadow-glow transition-all"
+                >
+                  Aktuelle Ausgabe
+                </a>
+                <a
+                  href="/#about"
+                  className="hover:text-white hover:text-shadow-glow transition-all"
+                >
+                  Der Podcast
+                </a>
+                <a
+                  href="/#hosts"
+                  className="hover:text-white hover:text-shadow-glow transition-all"
+                >
+                  Unsere Hosts
+                </a>
+                <a
+                  href="/#episodes"
+                  className="hover:text-white hover:text-shadow-glow transition-all"
+                >
+                  Archiv
+                </a>
+                <a
+                  href="/shop"
+                  className="hover:text-white hover:text-shadow-glow transition-all"
+                >
+                  Shop
+                </a>
+              </nav>
 
-          <button
-            className="md:hidden text-white p-2"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          >
-            {isMobileMenuOpen ? (
-              <X className="w-6 h-6" />
-            ) : (
-              <Menu className="w-6 h-6" />
-            )}
-          </button>
-
-          {/* Container für das Spreadshop-Warenkorb-Symbol */}
-          {isShopPage && (
-            <div
-              id="shop-cart-placeholder"
-              className="w-[40px] h-[40px] md:w-[50px] md:h-[50px] flex-shrink-0 relative flex items-center justify-center"
-            >
-              {/* Das Spreadshop Warenkorb-Symbol wird via CSS hierher "teleportiert" */}
+              <button
+                className="md:hidden text-white p-2"
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              >
+                {isMobileMenuOpen ? (
+                  <X className="w-6 h-6" />
+                ) : (
+                  <Menu className="w-6 h-6" />
+                )}
+              </button>
+            </>
+          ) : (
+            <div className="flex items-center gap-4 lg:gap-8">
+              <a
+                href="/"
+                className="text-sm font-display font-bold uppercase tracking-widest text-gray-400 hover:text-white hover:text-shadow-glow transition-all"
+              >
+                Zurück zur Seite
+              </a>
+              {/* Container für das Spreadshop-Warenkorb-Symbol */}
+              <div
+                id="shop-cart-placeholder"
+                className="w-[40px] h-[40px] md:w-[50px] md:h-[50px] flex-shrink-0 relative z-[100] flex items-center justify-center"
+              >
+                {/* Das Spreadshop Warenkorb-Symbol wird via CSS hierher "teleportiert" */}
+              </div>
             </div>
           )}
         </div>
       </div>
 
       {/* Mobile Menu */}
-      {isMobileMenuOpen && (
+      {!isShopPage && isMobileMenuOpen && (
         <div className="md:hidden bg-f1dark border-b border-white/10 px-4 py-4 flex flex-col gap-4 font-display font-bold uppercase tracking-widest text-lg">
           <a
             href="/#hero"
