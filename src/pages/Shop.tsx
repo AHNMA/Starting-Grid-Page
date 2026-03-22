@@ -44,7 +44,7 @@ const Shop: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col relative overflow-hidden bg-f1dark text-white font-sans">
+    <div className="min-h-screen flex flex-col relative overflow-hidden text-white font-sans">
       <Helmet>
         <title>Shop - {info?.seo_title || "Starting Grid"}</title>
       </Helmet>
