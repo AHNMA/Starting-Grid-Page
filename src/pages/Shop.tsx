@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import GlobalBackground from "../components/GlobalBackground";
@@ -8,7 +7,6 @@ import { Helmet } from "react-helmet-async";
 
 const Shop: React.FC = () => {
   const [info, setInfo] = useState<PodcastInfo | null>(null);
-  const navigate = useNavigate();
 
   useEffect(() => {
     fetch("/api/podcast")
@@ -59,14 +57,7 @@ const Shop: React.FC = () => {
         <article className="bg-[#151515] border border-white/5 rounded-3xl overflow-hidden shadow-2xl relative">
           <div className="p-6 md:p-12 relative z-10 w-full">
             {/* Custom Shop Navigation (Zurück & Warenkorb) */}
-            <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-800">
-              <button
-                onClick={() => navigate(-1)}
-                className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors font-bold uppercase tracking-wider text-sm"
-              >
-                <span className="text-xl leading-none">&larr;</span> Zurück
-              </button>
-
+            <div className="flex justify-end items-center mb-6 pb-4 border-b border-gray-800 min-h-[50px]">
               {/* Container für den ausgelagerten Spreadshop Warenkorb */}
               <div id="myBasket" className="starting-grid-basket"></div>
             </div>
@@ -89,11 +80,21 @@ const Shop: React.FC = () => {
                 display: none !important;
             }
 
-            /* Verstecke die internen Breadcrumbs von Spreadshop */
+            /* Breadcrumbs Styling für dunklen Hintergrund */
             .starting-grid-shop-wrapper #sprd-breadcrumb,
-            .starting-grid-shop-wrapper .sprd-breadcrumb,
-            .starting-grid-shop-wrapper nav[class*="breadcrumb"] {
-                display: none !important;
+            .starting-grid-shop-wrapper .sprd-breadcrumb {
+                color: #9ca3af !important;
+            }
+
+            .starting-grid-shop-wrapper #sprd-breadcrumb a,
+            .starting-grid-shop-wrapper .sprd-breadcrumb a {
+                color: #ffffff !important;
+                text-decoration: none !important;
+            }
+
+            .starting-grid-shop-wrapper #sprd-breadcrumb a:hover,
+            .starting-grid-shop-wrapper .sprd-breadcrumb a:hover {
+                color: #e10600 !important;
             }
 
             .starting-grid-shop-wrapper #sprd-main,
