@@ -54,7 +54,7 @@ const Shop: React.FC = () => {
 
       <main className="pb-16 md:pb-32 px-4 sm:px-6 max-w-7xl mx-auto relative flex-1 w-full flex flex-col">
         <article className="bg-[#151515] border border-white/5 rounded-3xl overflow-hidden shadow-2xl relative">
-          <div className="p-6 md:p-12 relative z-10 w-full">
+          <div className="p-6 md:p-12 relative w-full">
             <div className="w-full">
               {/* CSS-Injection für Spreadshop Elemente */}
               <style
