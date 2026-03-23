@@ -60,22 +60,16 @@ const Shop: React.FC = () => {
               <style
                 dangerouslySetInnerHTML={{
                   __html: `
-                /* Container des Headers - CSS Grid für perfekte Ausrichtung */
+                /* Container des Headers - Verstecke den ursprünglichen Header-Bereich, da Elemente teleportiert werden */
                 .starting-grid-shop-wrapper .sprd-header-container {
-                    display: grid !important;
-                    grid-template-columns: 1fr !important;
-                    grid-template-rows: auto auto !important;
-                    grid-template-areas:
-                        "promo"
-                        "nav" !important;
+                    display: block !important;
                     width: 100% !important;
-                    gap: 1rem 0 !important; /* Abstand nach Promo */
-                    align-items: center !important;
+                    margin: 0 !important;
+                    padding: 0 !important;
                 }
 
-                /* 1. PROMO BANNER (Ganz oben, über beide Spalten) */
+                /* 1. PROMO BANNER (Bleibt normal sichtbar, da nicht Teil des Headers) */
                 .starting-grid-shop-wrapper .sprd-promo-header {
-                    grid-area: promo !important;
                     position: relative !important;
                     top: auto !important;
                     left: auto !important;
@@ -109,17 +103,32 @@ const Shop: React.FC = () => {
                     display: none !important;
                 }
 
-                /* 2. NAVIGATION (Linke Seite) */
+                /* 2. NAVIGATION (Zentriert im Top-Menü auf Desktop) */
                 .starting-grid-shop-wrapper .sprd-navigation {
-                    grid-area: nav !important;
+                    position: fixed !important;
+                    top: 0 !important;
+                    left: 50% !important;
+                    transform: translateX(-50%) !important;
+                    height: 64px !important; /* Standard Header Höhe (h-16) */
+                    z-index: 9999 !important;
                     background: transparent !important;
                     padding: 0 !important;
                     margin: 0 !important;
                     box-shadow: none !important;
                     border: none !important;
+                    display: flex !important;
+                    align-items: center !important;
+                    justify-content: center !important;
+                    width: auto !important;
                 }
 
-                /* 3. WARENKORB (Fixiert in der React Top-Bar) */
+                @media (min-width: 768px) {
+                    .starting-grid-shop-wrapper .sprd-navigation {
+                        height: 80px !important; /* md:h-20 */
+                    }
+                }
+
+                /* 3. WARENKORB / BURGER MENU (Rechts fixiert im Top-Menü) */
                 .starting-grid-shop-wrapper .sprd-header {
                     position: fixed !important;
                     top: 0 !important;
@@ -157,73 +166,102 @@ const Shop: React.FC = () => {
                      }
                 }
 
-                /* Navigation Links Styling für Dark Mode */
+                /* Navigation Links Styling - Angepasst an Top-Menü */
                 .starting-grid-shop-wrapper .sprd-department-filter {
                     display: flex !important;
-                    flex-wrap: wrap !important;
-                    gap: 15px !important;
+                    flex-wrap: nowrap !important; /* Verhindert Umbrüche im Top-Menü */
+                    gap: 16px !important; /* Wie gap-4 im Header */
                     background: transparent !important;
-                    justify-content: flex-start !important;
+                    align-items: center !important;
+                    justify-content: center !important;
+                    height: 100% !important;
+                    margin: 0 !important;
+                    padding: 0 !important;
                 }
+
+                @media (min-width: 1024px) {
+                    .starting-grid-shop-wrapper .sprd-department-filter {
+                        gap: 32px !important; /* lg:gap-8 */
+                    }
+                }
+
                 .starting-grid-shop-wrapper .sprd-nav-link {
-                    color: #9ca3af !important; /* Tailwind gray-400 */
+                    color: #9ca3af !important; /* text-gray-400 */
                     text-decoration: none !important;
-                    font-weight: 500 !important;
                     background: transparent !important;
-                    padding: 8px 12px !important;
-                    border-radius: 6px !important;
+                    padding: 0 !important; /* Keine Padding-Box, da es Textlinks sind */
+                    border-radius: 0 !important;
                     transition: all 0.2s ease !important;
                     display: flex !important;
                     align-items: center !important;
                     gap: 5px !important;
-                    border: none !important; /* Verstecke Spreadshop Borders */
+                    border: none !important;
+
+                    /* Styling wie im Header */
+                    font-family: var(--font-display, "Barlow Condensed", ui-sans-serif, system-ui, sans-serif) !important;
+                    font-size: 0.875rem !important; /* text-sm */
+                    line-height: 1.25rem !important;
+                    font-weight: 700 !important; /* font-bold */
+                    text-transform: uppercase !important; /* uppercase */
+                    letter-spacing: 0.1em !important; /* tracking-widest */
                 }
 
-                /* Spreadshop "Active" oder Hover Style überschreiben */
+                /* Hover & Active States (Wie im Header: weiß & Text-Shadow) */
                 .starting-grid-shop-wrapper .sprd-nav-link:hover,
                 .starting-grid-shop-wrapper .sprd-nav-link.sprd-nav-link--active,
                 .starting-grid-shop-wrapper .customHighlight {
-                    background: #1f2937 !important; /* Tailwind gray-800 */
-                    color: #ffffff !important;
+                    background: transparent !important; /* Kein grauer Hintergrund mehr */
+                    color: #ffffff !important; /* hover:text-white */
+                    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5) !important; /* hover:text-shadow-glow (simuliert) */
                     box-shadow: none !important;
                     border-color: transparent !important;
                 }
 
-                /* Spreadshop Roter Balken unter dem aktiven Link (pseudo-element) verstecken */
+                /* Spreadshop Roter Balken unter dem aktiven Link verstecken */
                 .starting-grid-shop-wrapper .sprd-nav-link::after,
                 .starting-grid-shop-wrapper .sprd-nav-link--active::after {
                     display: none !important;
                 }
 
+                /* Pfeil-Icon bei Dropdowns anpassen */
                 .starting-grid-shop-wrapper .sprd-nav-link__icon {
                     fill: #9ca3af !important;
-                    width: 10px !important;
-                    height: 10px !important;
+                    width: 12px !important;
+                    height: 12px !important;
+                    transition: fill 0.2s ease !important;
                 }
                 .starting-grid-shop-wrapper .sprd-nav-link:hover .sprd-nav-link__icon,
                 .starting-grid-shop-wrapper .sprd-nav-link--active .sprd-nav-link__icon {
                      fill: #ffffff !important;
                 }
 
-                /* Dropdown Menüs (falls geöffnet) */
+                /* Dropdown Menüs (falls geöffnet) - an Header angepasst */
                 .starting-grid-shop-wrapper .sprd-department-filter__menu {
-                    background: #1f2937 !important; /* Tailwind gray-800 */
+                    background: #111111 !important; /* f1dark */
                     border: 1px solid rgba(255,255,255,0.1) !important;
-                    border-radius: 8px !important;
+                    border-top: 2px solid #E10600 !important; /* f1red border oben wie im Header */
+                    border-radius: 0 0 8px 8px !important;
                     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5) !important;
                     padding: 8px 0 !important;
-                    margin-top: 5px !important;
+                    margin-top: 15px !important; /* Abstand zum Menü */
                 }
                 .starting-grid-shop-wrapper .sprd-department-filter__entry {
-                    color: #d1d5db !important;
-                    padding: 8px 16px !important;
-                    font-size: 0.9rem !important;
+                    color: #9ca3af !important;
+                    padding: 10px 20px !important;
                     text-decoration: none !important;
                     display: block !important;
+
+                    /* Styling */
+                    font-family: var(--font-display, "Barlow Condensed", ui-sans-serif, system-ui, sans-serif) !important;
+                    font-size: 0.875rem !important; /* text-sm */
+                    font-weight: 700 !important; /* font-bold */
+                    text-transform: uppercase !important; /* uppercase */
+                    letter-spacing: 0.1em !important; /* tracking-widest */
+                    transition: all 0.2s ease !important;
                 }
                 .starting-grid-shop-wrapper .sprd-department-filter__entry:hover {
-                    background: rgba(255,255,255,0.05) !important;
-                    color: #ffffff !important;
+                    background: transparent !important;
+                    color: #E10600 !important; /* f1red hover */
                 }
 
                 /* Verstecke Logo und Suchleiste */
@@ -235,11 +273,12 @@ const Shop: React.FC = () => {
                     display: none !important;
                 }
 
-                /* Burger Menü für Mobile anzeigen */
+                /* Burger Menü für Mobile anzeigen (im Top-Menü verstecken, wenn Desktop) */
                 @media (max-width: 767px) {
                     .starting-grid-shop-wrapper .sprd-header__burgerbutton {
                         display: flex !important;
                         align-items: center !important;
+                        margin-right: 12px !important; /* Abstand zum Warenkorb */
                     }
                     .starting-grid-shop-wrapper .sprd-navigation {
                         display: none !important;
