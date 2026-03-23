@@ -47,7 +47,9 @@ export default function Header({ info }: HeaderProps) {
             </>
           )}
         </a>
-        <div className="flex items-center gap-4 flex-1 justify-end">
+        <div
+          className={`flex items-center gap-4 flex-1 ${isShopPage ? "justify-between ml-4 md:ml-8" : "justify-end"}`}
+        >
           {!isShopPage ? (
             <>
               <nav className="hidden md:flex gap-4 lg:gap-8 text-sm font-display font-bold uppercase tracking-widest text-gray-400">
@@ -95,21 +97,37 @@ export default function Header({ info }: HeaderProps) {
               </button>
             </>
           ) : (
-            <div className="flex items-center gap-4 lg:gap-8">
+            <>
               <a
                 href="/"
-                className="text-sm font-display font-bold uppercase tracking-widest text-gray-400 hover:text-white hover:text-shadow-glow transition-all"
+                className="text-sm font-display font-bold uppercase tracking-widest text-gray-400 hover:text-white hover:text-shadow-glow transition-all whitespace-nowrap hidden md:block"
               >
                 Zurück zur Seite
               </a>
-              {/* Container für das Spreadshop-Warenkorb-Symbol */}
+              <a
+                href="/"
+                className="text-sm font-display font-bold uppercase tracking-widest text-gray-400 hover:text-white hover:text-shadow-glow transition-all whitespace-nowrap md:hidden"
+              >
+                Zurück
+              </a>
+
+              {/* Platzhalter für die Spreadshop Navigation (Kategorien) */}
+              <div
+                id="shop-nav-placeholder"
+                className="hidden md:flex flex-1 justify-center relative z-[100]"
+              >
+                {/* Die Navigation wird per CSS hierher teleportiert */}
+              </div>
+              <div className="md:hidden flex-1"></div>
+
+              {/* Container für das Spreadshop-Warenkorb-Symbol / Burger Menu */}
               <div
                 id="shop-cart-placeholder"
-                className="w-[40px] h-[40px] md:w-[50px] md:h-[50px] flex-shrink-0 relative z-[100] flex items-center justify-center"
+                className="w-[40px] h-[40px] md:w-[50px] md:h-[50px] flex-shrink-0 relative z-[100] flex items-center justify-end"
               >
-                {/* Das Spreadshop Warenkorb-Symbol wird via CSS hierher "teleportiert" */}
+                {/* Das Spreadshop Warenkorb-Symbol und Burger-Menü werden via CSS hierher teleportiert */}
               </div>
-            </div>
+            </>
           )}
         </div>
       </div>
