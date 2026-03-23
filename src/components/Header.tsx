@@ -114,7 +114,7 @@ export default function Header({ info }: HeaderProps) {
               {/* Platzhalter für die Spreadshop Navigation (Kategorien) */}
               <div
                 id="shop-nav-placeholder"
-                className="hidden md:flex flex-1 justify-center relative z-[100]"
+                className="hidden md:flex flex-1 justify-end pr-4 lg:pr-8 relative z-[100]"
               >
                 {/* Die Navigation wird per CSS hierher teleportiert */}
               </div>

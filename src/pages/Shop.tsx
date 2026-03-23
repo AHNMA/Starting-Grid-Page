@@ -103,12 +103,11 @@ const Shop: React.FC = () => {
                     display: none !important;
                 }
 
-                /* 2. NAVIGATION (Zentriert im Top-Menü auf Desktop) */
+                /* 2. NAVIGATION (Rechtsbündig neben dem Warenkorb auf Desktop) */
                 .starting-grid-shop-wrapper .sprd-navigation {
                     position: fixed !important;
                     top: 0 !important;
-                    left: 50% !important;
-                    transform: translateX(-50%) !important;
+                    right: calc(16px + 40px) !important; /* Standard Tailwind padding + Breite des Warenkorbs */
                     height: 64px !important; /* Standard Header Höhe (h-16) */
                     z-index: 9999 !important;
                     background: transparent !important;
@@ -118,14 +117,28 @@ const Shop: React.FC = () => {
                     border: none !important;
                     display: flex !important;
                     align-items: center !important;
-                    justify-content: center !important;
+                    justify-content: flex-end !important;
                     width: auto !important;
+                }
+
+                @media (min-width: 640px) {
+                    .starting-grid-shop-wrapper .sprd-navigation {
+                        right: calc(24px + 40px) !important; /* sm:px-6 + Warenkorb */
+                    }
                 }
 
                 @media (min-width: 768px) {
                     .starting-grid-shop-wrapper .sprd-navigation {
                         height: 80px !important; /* md:h-20 */
+                        right: calc(24px + 50px) !important; /* sm:px-6 + md:w-[50px] Warenkorb */
                     }
+                }
+
+                @media (min-width: 1280px) {
+                    /* Ab hier greift max-w-7xl (1280px), also ist right abhängig von window width */
+                     .starting-grid-shop-wrapper .sprd-navigation {
+                         right: calc(max(24px, calc((100vw - 1280px) / 2 + 24px)) + 50px) !important;
+                     }
                 }
 
                 /* 3. WARENKORB / BURGER MENU (Rechts fixiert im Top-Menü) */
@@ -144,6 +157,7 @@ const Shop: React.FC = () => {
                     display: flex !important;
                     justify-content: flex-end !important;
                     align-items: center !important;
+                    flex-direction: row-reverse !important; /* Umkehrung für Mobile: Burger rechts, Warenkorb links */
                 }
 
                 @media (min-width: 640px) {
@@ -278,7 +292,8 @@ const Shop: React.FC = () => {
                     .starting-grid-shop-wrapper .sprd-header__burgerbutton {
                         display: flex !important;
                         align-items: center !important;
-                        margin-right: 12px !important; /* Abstand zum Warenkorb */
+                        margin-left: 12px !important; /* Abstand zum Warenkorb (links davon, da row-reverse) */
+                        margin-right: 0 !important;
                     }
                     .starting-grid-shop-wrapper .sprd-navigation {
                         display: none !important;
@@ -287,6 +302,9 @@ const Shop: React.FC = () => {
                 @media (min-width: 768px) {
                     .starting-grid-shop-wrapper .sprd-header__burgerbutton {
                         display: none !important;
+                    }
+                    .starting-grid-shop-wrapper .sprd-header {
+                        flex-direction: row !important; /* Desktop: Wieder normale Richtung */
                     }
                 }
 
