@@ -480,7 +480,7 @@ const Shop: React.FC = () => {
                 .starting-grid-shop-wrapper .sprd-header__burgerbutton {
                     width: 24px !important;
                     height: 24px !important;
-                    display: flex !important;
+                    display: none !important; /* Desktop default: hide */
                     align-items: center !important;
                     justify-content: center !important;
                     padding: 0 !important;
@@ -492,6 +492,12 @@ const Shop: React.FC = () => {
                     background-size: contain !important;
                     background-repeat: no-repeat !important;
                     background-position: center !important;
+                }
+
+                @media (max-width: 767px) {
+                    .starting-grid-shop-wrapper .sprd-header__burgerbutton {
+                        display: flex !important; /* Mobile: show */
+                    }
                 }
 
                 /* X-Icon (Close) anzeigen, wenn das Menü offen ist */
