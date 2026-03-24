@@ -91,6 +91,18 @@ const Shop: React.FC = () => {
                     margin-top: 0 !important;
                 }
 
+                /* --- SPREADSHOP BODY-SVG-SPACER VERNICHTEN --- */
+                /* Zielt exakt auf das von Spreadshop in den Body injizierte 150px-Div, das das unsichtbare SVG enthält */
+                body > div:has(> svg[display="none"]) {
+                    display: none !important;
+                    height: 0 !important;
+                    width: 0 !important;
+                    margin: 0 !important;
+                    padding: 0 !important;
+                    position: absolute !important;
+                    overflow: hidden !important;
+                }
+
                 /* Container des Headers - Verstecke den ursprünglichen Header-Bereich, da Elemente teleportiert werden */
                 .starting-grid-shop-wrapper .sprd-header-container {
                     display: block !important;
