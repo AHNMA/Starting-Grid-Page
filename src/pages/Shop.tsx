@@ -332,7 +332,9 @@ const Shop: React.FC = () => {
                 .sprd-burgermenu {
                     background: #111111 !important; /* f1dark */
                     top: 64px !important; /* Unterhalb des Mobile-Headers (h-16) */
-                    height: calc(100vh - 64px) !important;
+                    height: auto !important; /* An Inhalt anpassen anstatt feste Höhe */
+                    max-height: calc(100vh - 64px) !important; /* Falls doch mehr Inhalt als Platz, nicht übers Fenster hinaus wachsen */
+                    overflow-y: auto !important; /* ... und scrollbar machen */
                     width: 100vw !important;
                     border-top: 1px solid rgba(255,255,255,0.1) !important;
                     z-index: 9998 !important; /* Knapp unter dem Top-Header */
@@ -341,7 +343,7 @@ const Shop: React.FC = () => {
                 @media (min-width: 768px) {
                     .sprd-burgermenu {
                         top: 80px !important; /* Unterhalb des md-Headers (h-20) */
-                        height: calc(100vh - 80px) !important;
+                        max-height: calc(100vh - 80px) !important;
                     }
                 }
 
