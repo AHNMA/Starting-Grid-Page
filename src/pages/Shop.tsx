@@ -73,6 +73,13 @@ const Shop: React.FC = () => {
                     width: 100% !important;
                     margin: 0 !important;
                     padding: 0 !important;
+                    height: auto !important;
+                    min-height: 0 !important;
+                }
+
+                .starting-grid-shop-wrapper .sprd-header__placeholder,
+                .starting-grid-shop-wrapper .sprd-header-placeholder {
+                    display: none !important;
                 }
 
                 /* 1. PROMO BANNER (Bleibt normal sichtbar, da nicht Teil des Headers) */
