@@ -98,19 +98,6 @@ export default function Header({ info }: HeaderProps) {
             </>
           ) : (
             <>
-              <a
-                href="/"
-                className="text-sm font-display font-bold uppercase tracking-widest text-gray-400 hover:text-white hover:text-shadow-glow transition-all whitespace-nowrap hidden md:block"
-              >
-                Zurück zur Seite
-              </a>
-              <a
-                href="/"
-                className="text-sm font-display font-bold uppercase tracking-widest text-gray-400 hover:text-white hover:text-shadow-glow transition-all whitespace-nowrap md:hidden"
-              >
-                Zurück
-              </a>
-
               {/* Platzhalter für die Spreadshop Navigation (Kategorien) */}
               <div
                 id="shop-nav-placeholder"

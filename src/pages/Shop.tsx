@@ -31,6 +31,49 @@ const Shop: React.FC = () => {
     script.async = true;
     document.body.appendChild(script);
 
+    // MutationObserver für das dynamische Einfügen des Zurück-Buttons
+    const observer = new MutationObserver((mutations) => {
+      // Desktop Menü: .sprd-department-filter
+      const desktopNav = document.querySelector(".sprd-department-filter");
+      if (desktopNav && !document.getElementById("custom-back-link-desktop")) {
+        const backLinkContainer = document.createElement("div");
+        backLinkContainer.className = "sprd-department-filter__openmenu";
+        backLinkContainer.id = "custom-back-link-desktop";
+
+        const backLink = document.createElement("a");
+        backLink.href = "/";
+        backLink.className = "sprd-nav-link";
+        backLink.textContent = "Zurück zur Seite";
+
+        backLinkContainer.appendChild(backLink);
+
+        // Als erstes Element (ganz links) einfügen
+        desktopNav.insertBefore(backLinkContainer, desktopNav.firstChild);
+      }
+
+      // Mobile Menü: .sprd-burgermenu__navigation
+      const mobileNav = document.querySelector(".sprd-burgermenu__navigation");
+      if (mobileNav && !document.getElementById("custom-back-link-mobile")) {
+        const backLinkContainer = document.createElement("li");
+        backLinkContainer.className = "sprd-burgermenu__item";
+        backLinkContainer.id = "custom-back-link-mobile";
+
+        // CSS Margin top hinzufügen, damit es sich als letztes Element etwas abhebt
+        backLinkContainer.style.marginTop = "16px";
+
+        const backLink = document.createElement("a");
+        backLink.href = "/";
+        backLink.textContent = "Zurück";
+
+        backLinkContainer.appendChild(backLink);
+
+        // Als letztes Element (ganz unten) in der Navigation einfügen
+        mobileNav.appendChild(backLinkContainer);
+      }
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
+
     // Cleanup beim Verlassen der Seite
     return () => {
       const existingScript = document.querySelector(
@@ -40,6 +83,7 @@ const Shop: React.FC = () => {
         document.body.removeChild(existingScript);
       }
       delete (window as any).spread_shop_config;
+      observer.disconnect();
     };
   }, []);
 
@@ -285,13 +329,13 @@ const Shop: React.FC = () => {
                     letter-spacing: 0.1em !important; /* tracking-widest */
                 }
 
-                /* Hover & Active States (Wie im Header: weiß & Text-Shadow) */
+                /* Hover & Active States (Kein Text-Shadow / Glow mehr, Farbe wie im Zurück-Button bzw. weiß) */
                 .starting-grid-shop-wrapper .sprd-nav-link:hover,
                 .starting-grid-shop-wrapper .sprd-nav-link.sprd-nav-link--active,
                 .starting-grid-shop-wrapper .customHighlight {
-                    background: transparent !important; /* Kein grauer Hintergrund mehr */
-                    color: #ffffff !important; /* hover:text-white */
-                    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5) !important; /* hover:text-shadow-glow (simuliert) */
+                    background: transparent !important;
+                    color: #ffffff !important;
+                    text-shadow: none !important;
                     box-shadow: none !important;
                     border-color: transparent !important;
                 }
@@ -344,7 +388,8 @@ const Shop: React.FC = () => {
                 }
                 .starting-grid-shop-wrapper .sprd-department-filter__entry:hover {
                     background: transparent !important;
-                    color: #E10600 !important; /* f1red hover */
+                    color: #ffffff !important;
+                    text-shadow: none !important;
                 }
 
                 /* Verstecke Logo und Suchleiste */
@@ -458,12 +503,13 @@ const Shop: React.FC = () => {
                     box-shadow: none !important;
                 }
 
-                /* Hover-Farbe f1red */
+                /* Hover-Farbe (Weiß, ohne Leuchten, wie der restliche Text-Hover) */
                 body .sprd-burgermenu .sprd-burgermenu__menu-title:hover,
                 body .sprd-burgermenu .sprd-burgermenu__item > a:hover,
                 body .sprd-burgermenu .sprd-burgermenu__item > button:hover,
                 body nav.sprd-burgermenu .sprd-burgermenu__item > *:hover {
-                    color: #E10600 !important; /* f1red */
+                    color: #ffffff !important;
+                    text-shadow: none !important;
                 }
 
                 /* Unterkategorien (Dropdowns) im Mobile Menu anpassen */
@@ -488,6 +534,7 @@ const Shop: React.FC = () => {
 
                 body .sprd-burgermenu__submenu .sprd-burgermenu__menu-title:hover {
                     color: #ffffff !important;
+                    text-shadow: none !important;
                 }
 
                 /* Pfeil-Icon beim Aufklappen */
@@ -518,7 +565,8 @@ const Shop: React.FC = () => {
                 }
                 body .sprd-burgermenu__footer-item > a:hover,
                 body .sprd-burgermenu__footer-item .sprd-link:hover {
-                    color: #E10600 !important;
+                    color: #ffffff !important;
+                    text-shadow: none !important;
                 }
 
                 /* Burger Menü Icon Farbe (Dark Mode) */
