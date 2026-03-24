@@ -107,7 +107,7 @@ const Shop: React.FC = () => {
                 .starting-grid-shop-wrapper .sprd-navigation {
                     position: fixed !important;
                     top: 0 !important;
-                    right: calc(16px + 40px) !important; /* Standard Tailwind padding + Breite des Warenkorbs */
+                    right: calc(16px + 40px + 16px) !important; /* Standard Tailwind padding + Breite des Warenkorbs + Abstand (16px) */
                     height: 64px !important; /* Standard Header Höhe (h-16) */
                     z-index: 9999 !important;
                     background: transparent !important;
@@ -123,21 +123,27 @@ const Shop: React.FC = () => {
 
                 @media (min-width: 640px) {
                     .starting-grid-shop-wrapper .sprd-navigation {
-                        right: calc(24px + 40px) !important; /* sm:px-6 + Warenkorb */
+                        right: calc(24px + 40px + 16px) !important; /* sm:px-6 + Warenkorb + Abstand (16px) */
                     }
                 }
 
                 @media (min-width: 768px) {
                     .starting-grid-shop-wrapper .sprd-navigation {
                         height: 80px !important; /* md:h-20 */
-                        right: calc(24px + 50px) !important; /* sm:px-6 + md:w-[50px] Warenkorb */
+                        right: calc(24px + 50px + 16px) !important; /* sm:px-6 + md:w-[50px] Warenkorb + Abstand (16px) */
+                    }
+                }
+
+                @media (min-width: 1024px) {
+                    .starting-grid-shop-wrapper .sprd-navigation {
+                        right: calc(24px + 50px + 32px) !important; /* Abstand analog zu lg:gap-8 (32px) */
                     }
                 }
 
                 @media (min-width: 1280px) {
                     /* Ab hier greift max-w-7xl (1280px), also ist right abhängig von window width */
                      .starting-grid-shop-wrapper .sprd-navigation {
-                         right: calc(max(24px, calc((100vw - 1280px) / 2 + 24px)) + 50px) !important;
+                         right: calc(max(24px, calc((100vw - 1280px) / 2 + 24px)) + 50px + 32px) !important;
                      }
                 }
 
