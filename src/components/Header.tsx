@@ -134,7 +134,7 @@ export default function Header({ info }: HeaderProps) {
 
       {/* Mobile Menu */}
       {!isShopPage && isMobileMenuOpen && (
-        <div className="md:hidden bg-f1dark border-b border-white/10 px-4 py-4 flex flex-col gap-4 font-display font-bold uppercase tracking-widest text-lg">
+        <div className="md:hidden bg-f1dark border-b border-white/10 px-4 py-4 flex flex-col gap-4 font-display font-bold uppercase tracking-widest text-lg text-gray-200">
           <a
             href="/#hero"
             onClick={() => setIsMobileMenuOpen(false)}
