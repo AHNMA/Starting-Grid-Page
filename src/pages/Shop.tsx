@@ -327,6 +327,148 @@ const Shop: React.FC = () => {
                     }
                 }
 
+                /* --- BURGER MENU OVERLAY (SPREADSHOP) --- */
+                /* Mobile-Menü Container unter dem React Header platzieren */
+                .sprd-burgermenu {
+                    background: #111111 !important; /* f1dark */
+                    top: 64px !important; /* Unterhalb des Mobile-Headers (h-16) */
+                    height: calc(100vh - 64px) !important;
+                    width: 100vw !important;
+                    border-top: 1px solid rgba(255,255,255,0.1) !important;
+                    z-index: 9998 !important; /* Knapp unter dem Top-Header */
+                }
+
+                @media (min-width: 768px) {
+                    .sprd-burgermenu {
+                        top: 80px !important; /* Unterhalb des md-Headers (h-20) */
+                        height: calc(100vh - 80px) !important;
+                    }
+                }
+
+                /* Inneren Header des Spreadshop-Burger-Menüs verstecken (da wir unseren eigenen Top-Header haben) */
+                .sprd-burgermenu__header {
+                    display: none !important;
+                }
+
+                .sprd-burgermenu__content {
+                    padding: 16px !important; /* py-4 px-4 wie in Header.tsx */
+                    background: #111111 !important;
+                }
+
+                .sprd-burgermenu__navigation {
+                    display: flex !important;
+                    flex-direction: column !important;
+                    gap: 16px !important; /* gap-4 */
+                    margin: 0 !important;
+                    padding: 0 !important;
+                }
+
+                .sprd-burgermenu__item {
+                    border: none !important;
+                    margin: 0 !important;
+                    padding: 0 !important;
+                }
+
+                /* Menü Links Styling */
+                body .sprd-burgermenu .sprd-burgermenu__menu-title,
+                body .sprd-burgermenu .sprd-burgermenu__item > a,
+                body .sprd-burgermenu .sprd-burgermenu__item > button,
+                body nav.sprd-burgermenu .sprd-burgermenu__item > *,
+                body nav.sprd-burgermenu .sprd-link {
+                    font-family: var(--font-display, "Barlow Condensed", ui-sans-serif, system-ui, sans-serif) !important;
+                    font-size: 1.125rem !important; /* text-lg */
+                    font-weight: 700 !important; /* font-bold */
+                    text-transform: uppercase !important; /* uppercase */
+                    letter-spacing: 0.1em !important; /* tracking-widest */
+                    color: #e5e7eb !important; /* text-gray-200 / standard für menü */
+                    text-decoration: none !important;
+                    display: flex !important;
+                    align-items: center !important;
+                    justify-content: flex-start !important;
+                    width: 100% !important;
+                    background: transparent !important;
+                    border: none !important;
+                    box-shadow: none !important;
+                    padding: 0 !important;
+                    text-align: left !important;
+                    transition: color 0.2s ease !important;
+                }
+
+                body nav.sprd-burgermenu .sprd-lbc-s3,
+                body .sprd-burgermenu__item.sprd-lbc-s3,
+                body .sprd-burgermenu__item,
+                body .sprd-burgermenu__header.sprd-lbc-s3,
+                body .sprd-burgermenu__menu-title,
+                body .sprd-burgermenu__footer,
+                body .sprd-burgermenu__footer-item {
+                    border-bottom: none !important;
+                    border-top: none !important;
+                    border: none !important;
+                    box-shadow: none !important;
+                }
+
+                /* Hover-Farbe f1red */
+                body .sprd-burgermenu .sprd-burgermenu__menu-title:hover,
+                body .sprd-burgermenu .sprd-burgermenu__item > a:hover,
+                body .sprd-burgermenu .sprd-burgermenu__item > button:hover,
+                body nav.sprd-burgermenu .sprd-burgermenu__item > *:hover {
+                    color: #E10600 !important; /* f1red */
+                }
+
+                /* Unterkategorien (Dropdowns) im Mobile Menu anpassen */
+                body .sprd-burgermenu__submenu {
+                    background: #151515 !important; /* Etwas heller als f1dark für Kontrast */
+                    border-left: 2px solid #E10600 !important;
+                    margin-top: 8px !important;
+                    padding-left: 16px !important;
+                    padding-bottom: 8px !important;
+                    padding-top: 8px !important;
+                }
+
+                body .sprd-burgermenu__submenu .sprd-burgermenu__menu-title {
+                    font-size: 1rem !important; /* etwas kleiner für sub-items */
+                    color: #9ca3af !important; /* text-gray-400 */
+                    margin-bottom: 12px !important;
+                }
+                body .sprd-burgermenu__submenu .sprd-burgermenu__menu-title:last-child {
+                    margin-bottom: 0 !important;
+                }
+
+                body .sprd-burgermenu__submenu .sprd-burgermenu__menu-title:hover {
+                    color: #ffffff !important;
+                }
+
+                /* Pfeil-Icon beim Aufklappen */
+                body .sprd-burgermenu__menu-toggle {
+                    fill: #9ca3af !important;
+                    width: 14px !important;
+                    height: 14px !important;
+                    margin-left: 8px !important;
+                }
+
+                /* Footer-Links im Burgermenü (z.B. "Über uns") */
+                body .sprd-burgermenu__footer {
+                    margin-top: 32px !important;
+                    padding-top: 16px !important;
+                    border-top: 1px solid rgba(255,255,255,0.05) !important;
+                    display: flex !important;
+                    flex-direction: column !important;
+                    gap: 16px !important;
+                }
+                body .sprd-burgermenu__footer-item > a,
+                body .sprd-burgermenu__footer-item .sprd-link {
+                    font-family: var(--font-display, "Barlow Condensed", ui-sans-serif, system-ui, sans-serif) !important;
+                    font-size: 0.875rem !important; /* text-sm */
+                    color: #9ca3af !important; /* text-gray-400 */
+                    text-decoration: none !important;
+                    text-transform: uppercase !important;
+                    letter-spacing: 0.05em !important;
+                }
+                body .sprd-burgermenu__footer-item > a:hover,
+                body .sprd-burgermenu__footer-item .sprd-link:hover {
+                    color: #E10600 !important;
+                }
+
                 /* Burger Menü Icon Farbe (Dark Mode) */
                 .starting-grid-shop-wrapper .sprd-header__burgerbutton svg {
                     fill: #ffffff !important;
