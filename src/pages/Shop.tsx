@@ -257,7 +257,7 @@ const Shop: React.FC = () => {
                     border-radius: 0 0 8px 8px !important;
                     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5) !important;
                     padding: 8px 0 !important;
-                    margin-top: 15px !important; /* Abstand zum Menü */
+                    margin-top: 0 !important; /* Kein Abstand zum Menü, sonst bricht der Hover ab */
                 }
                 .starting-grid-shop-wrapper .sprd-department-filter__entry {
                     color: #9ca3af !important;
