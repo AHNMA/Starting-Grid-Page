@@ -159,7 +159,7 @@ export default function EpisodeDetail() {
       <Header info={info} />
 
       {/* Main Content */}
-      <main className="pt-32 pb-16 md:pb-32 px-4 sm:px-6 max-w-7xl mx-auto relative z-10 flex-1 w-full">
+      <main className="pt-[86px] md:pt-32 pb-16 md:pb-32 px-4 sm:px-6 max-w-7xl mx-auto relative z-10 flex-1 w-full">
 
         <article className="bg-gradient-to-br from-f1gray to-f1dark border border-white/5 rounded-3xl overflow-hidden shadow-2xl relative">
 
