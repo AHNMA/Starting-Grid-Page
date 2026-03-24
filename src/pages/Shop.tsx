@@ -309,10 +309,7 @@ const Shop: React.FC = () => {
                 /* Burger Menü für Mobile anzeigen (im Top-Menü verstecken, wenn Desktop) */
                 @media (max-width: 767px) {
                     .starting-grid-shop-wrapper .sprd-header__burgerbutton {
-                        display: flex !important;
-                        align-items: center !important;
-                        margin-left: 12px !important; /* Abstand zum Warenkorb (links davon, da row-reverse) */
-                        margin-right: 0 !important;
+                        display: flex !important; /* Zeige Burger-Button auf Mobile */
                     }
                     .starting-grid-shop-wrapper .sprd-navigation {
                         display: none !important;
@@ -336,7 +333,8 @@ const Shop: React.FC = () => {
                     max-height: calc(100vh - 64px) !important; /* Falls doch mehr Inhalt als Platz, nicht übers Fenster hinaus wachsen */
                     overflow-y: auto !important; /* ... und scrollbar machen */
                     width: 100vw !important;
-                    border-top: 1px solid rgba(255,255,255,0.1) !important;
+                    border-top: none !important;
+                    border-bottom: 1px solid rgba(255,255,255,0.1) !important;
                     z-index: 9998 !important; /* Knapp unter dem Top-Header */
                 }
 
@@ -379,6 +377,7 @@ const Shop: React.FC = () => {
                 body nav.sprd-burgermenu .sprd-link {
                     font-family: var(--font-display, "Barlow Condensed", ui-sans-serif, system-ui, sans-serif) !important;
                     font-size: 1.125rem !important; /* text-lg */
+                    line-height: 1.75rem !important; /* text-lg leading (28px) */
                     font-weight: 700 !important; /* font-bold */
                     text-transform: uppercase !important; /* uppercase */
                     letter-spacing: 0.1em !important; /* tracking-widest */
@@ -429,6 +428,7 @@ const Shop: React.FC = () => {
 
                 body .sprd-burgermenu__submenu .sprd-burgermenu__menu-title {
                     font-size: 1rem !important; /* etwas kleiner für sub-items */
+                    line-height: 1.5rem !important;
                     color: #9ca3af !important; /* text-gray-400 */
                     margin-bottom: 12px !important;
                 }
@@ -472,8 +472,32 @@ const Shop: React.FC = () => {
                 }
 
                 /* Burger Menü Icon Farbe (Dark Mode) */
-                .starting-grid-shop-wrapper .sprd-header__burgerbutton svg {
-                    fill: #ffffff !important;
+                .starting-grid-shop-wrapper .sprd-header__burgerbutton svg,
+                .starting-grid-shop-wrapper .sprd-header__burgerbutton > div {
+                    display: none !important; /* Verstecke native Spreadshop SVGs und Bars */
+                }
+
+                .starting-grid-shop-wrapper .sprd-header__burgerbutton {
+                    width: 24px !important;
+                    height: 24px !important;
+                    display: flex !important;
+                    align-items: center !important;
+                    justify-content: center !important;
+                    padding: 0 !important;
+                    margin-left: 12px !important;
+                    background: transparent !important;
+                    border: none !important;
+                    /* Lucide Menu Icon (Stroke: 2px, Color: #ffffff) */
+                    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>') !important;
+                    background-size: contain !important;
+                    background-repeat: no-repeat !important;
+                    background-position: center !important;
+                }
+
+                /* X-Icon (Close) anzeigen, wenn das Menü offen ist */
+                body:has(.sprd-burgermenu--open) .starting-grid-shop-wrapper .sprd-header__burgerbutton {
+                    /* Lucide X Icon (Stroke: 2px, Color: #ffffff) */
+                    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>') !important;
                 }
 
                 /* Container für den Warenkorb im Header zwingend sichtbar machen */
