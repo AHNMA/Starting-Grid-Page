@@ -52,7 +52,10 @@ const Shop: React.FC = () => {
       <GlobalBackground />
       <Header info={info} />
 
-      <main className="pt-16 md:pt-32 pb-16 md:pb-32 px-4 sm:px-6 max-w-7xl mx-auto relative flex-1 w-full flex flex-col">
+      <main
+        id="shop-main-container"
+        className="pb-16 md:pb-32 px-4 sm:px-6 max-w-7xl mx-auto relative flex-1 w-full flex flex-col"
+      >
         <article className="bg-[#151515] border border-white/5 rounded-3xl overflow-hidden shadow-2xl relative">
           <div className="p-6 md:p-12 relative z-auto w-full">
             <div className="w-full">
@@ -60,6 +63,27 @@ const Shop: React.FC = () => {
               <style
                 dangerouslySetInnerHTML={{
                   __html: `
+                /* --- KONTROLLE ÜBER MAIN-PADDING ERZWINGEN --- */
+                #shop-main-container {
+                    padding-top: 86px !important;
+                }
+                @media (min-width: 768px) {
+                    #shop-main-container {
+                        padding-top: 128px !important; /* entspricht md:pt-32 */
+                    }
+                }
+
+                /* --- UNSICHTBARE SVG-SPACER ELIMINIEREN --- */
+                .starting-grid-shop-wrapper > svg[display="none"],
+                #myShop > svg[display="none"],
+                .starting-grid-shop-wrapper > div > svg[display="none"] {
+                    height: 0 !important;
+                    min-height: 0 !important;
+                    margin: 0 !important;
+                    padding: 0 !important;
+                    position: absolute !important;
+                }
+
                 /* --- SPREADSHOP BODY-OFFSET BLOCKIEREN --- */
                 /* Verhindert, dass Spreadshop beim Laden dynamisch Platz für seinen eigenen, versteckten Header schafft */
                 body {
