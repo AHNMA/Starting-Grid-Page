@@ -60,6 +60,13 @@ const Shop: React.FC = () => {
               <style
                 dangerouslySetInnerHTML={{
                   __html: `
+                /* --- SPREADSHOP BODY-OFFSET BLOCKIEREN --- */
+                /* Verhindert, dass Spreadshop beim Laden dynamisch Platz für seinen eigenen, versteckten Header schafft */
+                body {
+                    padding-top: 0 !important;
+                    margin-top: 0 !important;
+                }
+
                 /* Container des Headers - Verstecke den ursprünglichen Header-Bereich, da Elemente teleportiert werden */
                 .starting-grid-shop-wrapper .sprd-header-container {
                     display: block !important;
