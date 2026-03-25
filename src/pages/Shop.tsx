@@ -513,22 +513,70 @@ const Shop: React.FC = () => {
                 }
 
                 /* --- BURGER MENU GLOBAL LEFT ALIGNMENT --- */
-                body .sprd-burgermenu,
-                body .sprd-burgermenu * {
+                body .sprd-burgermenu {
                     text-align: left !important;
                 }
 
-                body .sprd-burgermenu a,
-                body .sprd-burgermenu button,
-                body .sprd-burgermenu li,
-                body .sprd-burgermenu__menu-title,
+                /* Reset Spreadshop centering which is usually applied via align-items: center or text-align: center on links */
+                body .sprd-burgermenu__navigation,
+                body .sprd-burgermenu__navigation * {
+                    text-align: left !important;
+                }
+
                 body .sprd-burgermenu__item {
+                    display: flex !important;
+                    flex-direction: column !important;
+                    align-items: flex-start !important;
+                    width: 100% !important;
+                }
+
+                body .sprd-burgermenu__item > a,
+                body .sprd-burgermenu__item > button,
+                body .sprd-burgermenu__item > .sprd-link,
+                body .sprd-burgermenu__item > .sprd-burgermenu__menu-title {
                     justify-content: flex-start !important;
                     text-align: left !important;
+                    display: flex !important;
+                    width: 100% !important;
+                    padding-left: 16px !important;
+                    padding-right: 16px !important;
+                    margin-left: 0 !important;
+                }
+
+                body .sprd-burgermenu__item .sprd-burgermenu__menu-title {
+                     padding-left: 16px !important;
+                }
+
+                body .sprd-burgermenu__item .sprd-burgermenu__menu-toggle {
+                    margin-left: auto !important; /* Push chevron to the right */
+                }
+
+                body .sprd-burgermenu__subitem {
+                    display: flex !important;
+                    flex-direction: column !important;
+                    align-items: flex-start !important;
+                    width: 100% !important;
+                }
+
+                body .sprd-burgermenu__subitem > a,
+                body .sprd-burgermenu__subitem > .sprd-link {
+                    justify-content: flex-start !important;
+                    text-align: left !important;
+                    display: flex !important;
+                    width: 100% !important;
+                    padding-left: 32px !important;
+                    padding-right: 16px !important;
+                }
+
+                body .sprd-burgermenu__navigation {
+                    align-items: flex-start !important;
+                    width: 100% !important;
+                    display: flex !important;
+                    flex-direction: column !important;
                 }
 
                 /* Unterkategorien (Dropdowns) im Mobile Menu anpassen */
-                body .sprd-burgermenu__submenu {
+                body .sprd-burgermenu__item > .sprd-burgermenu__navigation {
                     background: #151515 !important; /* Etwas heller als f1dark für Kontrast */
                     border-left: 2px solid #E10600 !important;
                     margin-top: 8px !important;
@@ -537,9 +585,8 @@ const Shop: React.FC = () => {
                     padding-top: 8px !important;
                 }
 
-                body .sprd-burgermenu__submenu .sprd-burgermenu__menu-title,
-                body .sprd-burgermenu__submenu a,
-                body .sprd-burgermenu__submenu button {
+                body .sprd-burgermenu__subitem a,
+                body .sprd-burgermenu__subitem .sprd-link {
                     font-size: 1rem !important; /* etwas kleiner für sub-items */
                     line-height: 1.5rem !important;
                     color: #9ca3af !important; /* text-gray-400 */
@@ -548,17 +595,16 @@ const Shop: React.FC = () => {
                     justify-content: flex-start !important;
                     width: 100% !important;
                     display: flex !important;
-                    padding-left: 16px !important; /* Ein wenig versetzt zum Eltern-Listenpunkt */
+                    padding-left: 32px !important; /* Ein wenig versetzt zum Eltern-Listenpunkt */
                 }
-                body .sprd-burgermenu__submenu .sprd-burgermenu__menu-title:last-child,
-                body .sprd-burgermenu__submenu a:last-child,
-                body .sprd-burgermenu__submenu button:last-child {
+
+                body .sprd-burgermenu__subitem:last-child a,
+                body .sprd-burgermenu__subitem:last-child .sprd-link {
                     margin-bottom: 0 !important;
                 }
 
-                body .sprd-burgermenu__submenu .sprd-burgermenu__menu-title:hover,
-                body .sprd-burgermenu__submenu a:hover,
-                body .sprd-burgermenu__submenu button:hover {
+                body .sprd-burgermenu__subitem a:hover,
+                body .sprd-burgermenu__subitem .sprd-link:hover {
                     color: #ffffff !important;
                     text-shadow: none !important;
                 }
