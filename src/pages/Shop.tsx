@@ -175,7 +175,7 @@ const Shop: React.FC = () => {
                     justify-content: center !important;
                     align-items: center !important;
                     padding: 0 0 1rem 0 !important;
-                    border-bottom: 1px solid #1f2937 !important; /* Tailwind gray-800 */
+                    border-bottom: 1px solid #e10600 !important; /* F1 Red */
                     width: 100% !important;
                 }
                 .starting-grid-shop-wrapper .sprd-promo-header__center {
