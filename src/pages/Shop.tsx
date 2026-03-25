@@ -512,27 +512,53 @@ const Shop: React.FC = () => {
                     text-shadow: none !important;
                 }
 
+                /* --- BURGER MENU GLOBAL LEFT ALIGNMENT --- */
+                body .sprd-burgermenu,
+                body .sprd-burgermenu * {
+                    text-align: left !important;
+                }
+
+                body .sprd-burgermenu a,
+                body .sprd-burgermenu button,
+                body .sprd-burgermenu li,
+                body .sprd-burgermenu__menu-title,
+                body .sprd-burgermenu__item {
+                    justify-content: flex-start !important;
+                    text-align: left !important;
+                }
+
                 /* Unterkategorien (Dropdowns) im Mobile Menu anpassen */
                 body .sprd-burgermenu__submenu {
                     background: #151515 !important; /* Etwas heller als f1dark für Kontrast */
                     border-left: 2px solid #E10600 !important;
                     margin-top: 8px !important;
-                    padding-left: 16px !important;
+                    padding-left: 0 !important;
                     padding-bottom: 8px !important;
                     padding-top: 8px !important;
                 }
 
-                body .sprd-burgermenu__submenu .sprd-burgermenu__menu-title {
+                body .sprd-burgermenu__submenu .sprd-burgermenu__menu-title,
+                body .sprd-burgermenu__submenu a,
+                body .sprd-burgermenu__submenu button {
                     font-size: 1rem !important; /* etwas kleiner für sub-items */
                     line-height: 1.5rem !important;
                     color: #9ca3af !important; /* text-gray-400 */
                     margin-bottom: 12px !important;
+                    text-align: left !important;
+                    justify-content: flex-start !important;
+                    width: 100% !important;
+                    display: flex !important;
+                    padding-left: 16px !important; /* Ein wenig versetzt zum Eltern-Listenpunkt */
                 }
-                body .sprd-burgermenu__submenu .sprd-burgermenu__menu-title:last-child {
+                body .sprd-burgermenu__submenu .sprd-burgermenu__menu-title:last-child,
+                body .sprd-burgermenu__submenu a:last-child,
+                body .sprd-burgermenu__submenu button:last-child {
                     margin-bottom: 0 !important;
                 }
 
-                body .sprd-burgermenu__submenu .sprd-burgermenu__menu-title:hover {
+                body .sprd-burgermenu__submenu .sprd-burgermenu__menu-title:hover,
+                body .sprd-burgermenu__submenu a:hover,
+                body .sprd-burgermenu__submenu button:hover {
                     color: #ffffff !important;
                     text-shadow: none !important;
                 }
