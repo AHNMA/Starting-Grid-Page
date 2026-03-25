@@ -453,7 +453,7 @@ const Shop: React.FC = () => {
                 .sprd-burgermenu__navigation {
                     display: flex !important;
                     flex-direction: column !important;
-                    gap: 16px !important; /* gap-4 */
+                    gap: 8px !important; /* gap-2 */
                     margin: 0 !important;
                     padding: 0 !important;
                 }
@@ -590,7 +590,7 @@ const Shop: React.FC = () => {
                     font-size: 1rem !important; /* etwas kleiner für sub-items */
                     line-height: 1.5rem !important;
                     color: #9ca3af !important; /* text-gray-400 */
-                    margin-bottom: 12px !important;
+                    margin-bottom: 8px !important;
                     text-align: left !important;
                     justify-content: flex-start !important;
                     width: 100% !important;
